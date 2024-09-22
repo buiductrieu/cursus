@@ -1,4 +1,4 @@
-namespace Cursus
+namespace Cursus.API
 {
     public class Program
     {
