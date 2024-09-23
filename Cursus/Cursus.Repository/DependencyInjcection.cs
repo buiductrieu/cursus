@@ -13,7 +13,12 @@ namespace Cursus.Repository
     {
         public static IServiceCollection AddRepository(this IServiceCollection services)
         {
+            // DI Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+
+            // DI UnitOfWork
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
