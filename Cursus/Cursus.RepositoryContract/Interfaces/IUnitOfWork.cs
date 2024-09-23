@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
-
         ICategoryRepository CategoryRepository { get; }
 
         Task SaveChanges();

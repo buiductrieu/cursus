@@ -11,12 +11,14 @@ namespace Cursus.Repository.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly CursusDbContext _db;
-        public UnitOfWork(CursusDbContext db)
+        private ICategoryRepository _categoryRepository;
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository)
         {
             _db = db;
+            _categoryRepository = categoryRepository;
         }
 
-        private ICategoryRepository _categoryRepository;
+        
         public ICategoryRepository CategoryRepository
         {
             get
@@ -27,6 +29,26 @@ namespace Cursus.Repository.Repository
                 }
                 return _categoryRepository;
             }
+        }
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _db.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public async Task SaveChanges()
