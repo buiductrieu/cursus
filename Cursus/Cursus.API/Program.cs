@@ -1,5 +1,6 @@
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
+using Cursus.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace Cursus.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddRepository();
 
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
