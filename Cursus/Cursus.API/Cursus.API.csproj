@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cursus.Repository\Cursus.Repository.csproj" />
     <ProjectReference Include="..\Cursus.Service\Cursus.Service.csproj" />
   </ItemGroup>
 
