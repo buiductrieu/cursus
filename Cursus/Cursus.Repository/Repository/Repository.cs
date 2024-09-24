@@ -16,10 +16,10 @@ namespace Cursus.Repository.Repository
         private readonly CursusDbContext _db;
         internal DbSet<T> dbSet;
 
-        public Repository(CursusDbContext db, DbSet<T> dbSet)
+        public Repository(CursusDbContext db)
         {
             _db = db;
-            this.dbSet = dbSet;
+            dbSet = db.Set<T>();
         }
 
         public async Task<T> AddAsync(T entity)
@@ -71,9 +71,10 @@ namespace Cursus.Repository.Repository
             return await query.FirstAsync();
         }
 
-        public Task<T> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            _db.Update(entity);
+            return entity;
         }
     }
 }

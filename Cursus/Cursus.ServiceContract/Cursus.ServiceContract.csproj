@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cursus.Data\Cursus.Data.csproj" />
+    <ProjectReference Include="..\Cursus.RepositoryContract\Cursus.RepositoryContract.csproj" />
   </ItemGroup>
 
 </Project>
