@@ -1,9 +1,10 @@
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Cursus.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Cursus.API
 {
@@ -12,17 +13,21 @@ namespace Cursus.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddRepository();
+            builder.Services.AddRepository().AddService();
 
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<CursusDbContext>()
-            .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<CursusDbContext>()
+                .AddDefaultTokenProviders();
 
             builder.Services.AddControllers();
+
+            // Configure Swagger services
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
@@ -33,6 +38,16 @@ namespace Cursus.API
             }
 
             // Configure the HTTP request pipeline.
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
+                    c.RoutePrefix = string.Empty;
+                });
+            }
 
             app.UseHttpsRedirection();
 
