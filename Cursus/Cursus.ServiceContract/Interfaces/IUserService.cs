@@ -9,6 +9,6 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IUserService
     {
-        public Task<ApplicationUser> UpdateUserProfile(string id, ApplicationUser usr);
+        public Task<ApplicationUser> UpdateUserProfile(string id,ApplicationUser usr);
     }
 }

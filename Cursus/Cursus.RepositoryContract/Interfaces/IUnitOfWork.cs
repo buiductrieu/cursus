@@ -9,6 +9,7 @@ namespace Cursus.RepositoryContract.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         ICategoryRepository CategoryRepository { get; }
+        IUserRepository userRepositiory { get; }
 
         Task SaveChanges();
     }

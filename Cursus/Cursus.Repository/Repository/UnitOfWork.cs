@@ -12,10 +12,12 @@ namespace Cursus.Repository.Repository
     {
         private readonly CursusDbContext _db;
         private ICategoryRepository _categoryRepository;
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository)
+        private IUserRepository _userRepository;
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, IUserRepository userRepository)
         {
             _db = db;
             _categoryRepository = categoryRepository;
+            _userRepository= userRepository;
         }
 
         
@@ -28,6 +30,17 @@ namespace Cursus.Repository.Repository
                     _categoryRepository = new CategoryRepository(_db);
                 }
                 return _categoryRepository;
+            }
+        }
+        public IUserRepository UserRepository
+        {
+            get
+            {
+                if (_userRepository == null)
+                {
+                    _userRepository = new UserRepository(_db);
+                }
+                return _userRepository;
             }
         }
 

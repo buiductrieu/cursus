@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    public class UserRepository : Repository<ApplicationUser>, IUserRepositiory
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     { 
-        public UserRepository(CursusDbContext db) : base(db, db.Set<ApplicationUser>())
+        public UserRepository(CursusDbContext db) : base(db)
         {
         }
-        public async Task<ApplicationUser> ExiProfile(string id)
+        public async Task<bool> ExiProfile(string id)
         {
-            return await GetAsync(filter:b => b.Id == id); 
+            return await GetAsync(filter:b => b.Id == id) !=null; 
         }
 
-        public Task<bool> UpdProfile(ApplicationUser usr)
+        public async Task<ApplicationUser> UpdProfile(ApplicationUser usr)
         {
-            throw new NotImplementedException();
+            return await UpdateAsync(usr);
         }
     }
 }
