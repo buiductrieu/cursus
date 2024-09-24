@@ -1,4 +1,5 @@
-﻿using Cursus.Service.Services;
+﻿using Cursus.Common.Helper;
+using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,7 @@ namespace Cursus.Service
         {
             // DI Service
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddScoped<APIResponse>();
 
             return services;
         }

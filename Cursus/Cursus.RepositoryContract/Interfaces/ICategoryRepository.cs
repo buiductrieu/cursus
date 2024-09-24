@@ -9,5 +9,6 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category>
     {
+        
     }
 }
