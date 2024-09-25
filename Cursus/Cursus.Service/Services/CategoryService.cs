@@ -1,4 +1,5 @@
-﻿using Cursus.Data.Entities;
+﻿using Cursus.Data.DTO.Category;
+using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using System;
@@ -17,35 +18,25 @@ namespace Cursus.Service.Services
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task<Category> AddCategory(Category category)
+
+        public Task<CategoryDTO> CreateCategory(CreateCategoryDTO dto)
         {
-            await _categoryRepository.AddAsync(category);
-            return category;
+            return _categoryRepository.CreateCategory(dto);
         }
 
-        public async Task<Category> DeleteCategory(Category category)
+        public Task<CategoryDTO> DeleteCategory(int id)
         {
-            await _categoryRepository.DeleteAsync(category);
-            return category;
+            return _categoryRepository.DeleteCategory(id);
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategories(Expression<Func<Category, bool>>? filter = null, string? includeProperties = null)
+        public Task<IEnumerable<CategoryDTO>> GetAllCategory()
         {
-            var output = await _categoryRepository.GetAllAsync(filter, includeProperties);
-            return output;
+            return _categoryRepository.GetAllCategory();
         }
 
-        public async Task<Category> GetCategory(Expression<Func<Category, bool>> filter, string? includeProperties = null)
+        public Task<CategoryDTO> UpdateCategory(int id, UpdateCategoryDTO dto)
         {
-            var output = await _categoryRepository.GetAsync(filter, includeProperties);
-            return output;
-        }
-
-        public async Task<Category> UpdateCategory(Category category)
-        {
-            await _categoryRepository.UpdateAsync(category);
-            return category;
-
+            return _categoryRepository.UpdateCategory(id, dto);
         }
     }
 }
