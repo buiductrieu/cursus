@@ -14,6 +14,7 @@ namespace Cursus.Service
             services.AddTransient<ICourseService, CourseService>();
             services.AddScoped<APIResponse>();
             services.AddTransient<IAdminService, AdminService>();
+            services.AddTransient<IUserService, UserService>();
                 
             return services;
         }

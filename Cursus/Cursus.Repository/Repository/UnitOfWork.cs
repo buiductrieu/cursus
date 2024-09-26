@@ -14,13 +14,15 @@ namespace Cursus.Repository.Repository
 		private ICategoryRepository _categoryRepository;
 		private ICourseRepository _courseRepository;
 		private IStepRepository _stepRepository;
+		private IUserRepository _userRepository;
 
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository)
+		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
 		{
 			_db = db;
 			_categoryRepository = categoryRepository;
 			_courseRepository = courseRepository;
 			_stepRepository = stepRepository;
+			_userRepository = userRepository;
 		}
 
 
@@ -59,8 +61,19 @@ namespace Cursus.Repository.Repository
 				return _stepRepository;
 			}
 		}
+        public IUserRepository userRepositiory
+        {
+            get
+            {
+                if (_userRepository == null)
+                {
+                    _userRepository = new UserRepository(_db);
+                }
+                return _userRepository;
+            }
+        }
 
-		private bool disposed = false;
+        private bool disposed = false;
 
 		protected virtual void Dispose(bool disposing)
 		{

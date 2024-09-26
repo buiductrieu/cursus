@@ -1,6 +1,7 @@
 ﻿using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,10 @@ namespace Cursus.Repository.Repository
         public async Task<ApplicationUser> UpdProfile(ApplicationUser usr)
         {
             return await UpdateAsync(usr);
+        }
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            return await _db.Users.AnyAsync(u => u.UserName == username);
         }
     }
 }

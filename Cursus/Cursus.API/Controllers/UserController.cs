@@ -2,7 +2,6 @@
 using Cursus.Data.DTO;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
-using Cursus.ServiceContract.Mapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -29,9 +28,7 @@ namespace Cursus.API.Controllers
             [ProducesResponseType(StatusCodes.Status400BadRequest)]
             public async Task<ActionResult<APIResponse>> UpdateUserProfile(string id, [FromBody]UserProfileUpdateDTO request)
             {
-            var user = request.MapToEntity();
-            var result = await _userService.UpdateUserProfile(id,user);
-            await _unitOfWork.SaveChanges();
+            var result = await _userService.UpdateUserProfile(id,request);
             if (result != null)
                 {
                     _response.IsSuccess = true;

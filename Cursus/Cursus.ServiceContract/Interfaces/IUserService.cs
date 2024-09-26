@@ -1,4 +1,5 @@
-﻿using Cursus.Data.Entities;
+﻿using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IUserService
     {
-        public Task<ApplicationUser> UpdateUserProfile(string id,ApplicationUser usr);
+        public Task<UserProfileUpdateDTO> UpdateUserProfile(string id, UserProfileUpdateDTO usr);
     }
 }
