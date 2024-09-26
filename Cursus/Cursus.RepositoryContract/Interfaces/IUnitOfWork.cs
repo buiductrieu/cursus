@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
@@ -10,6 +11,9 @@ namespace Cursus.RepositoryContract.Interfaces
     {
         ICategoryRepository CategoryRepository { get; }
 
+        ICourseRepository CourseRepository { get; }
+
+        IStepRepository StepRepository { get; }
         Task SaveChanges();
     }
 }
