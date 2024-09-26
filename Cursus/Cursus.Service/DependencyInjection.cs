@@ -13,7 +13,8 @@ namespace Cursus.Service
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<ICourseService, CourseService>();
             services.AddScoped<APIResponse>();
-
+            services.AddTransient<IAdminService, AdminService>();
+                
             return services;
         }
     }
