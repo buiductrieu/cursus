@@ -12,7 +12,8 @@ namespace Cursus.Service
             // DI Service
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddScoped<APIResponse>();
-
+            services.AddTransient<IAdminService, AdminService>();
+                
             return services;
         }
     }
