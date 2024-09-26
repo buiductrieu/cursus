@@ -1,6 +1,8 @@
 ﻿using Cursus.Common.Helper;
+using Cursus.Data.Models;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cursus.Service
@@ -11,6 +13,8 @@ namespace Cursus.Service
         {
             // DI Service
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IInstructorService, InstructorService>();
+            services.AddTransient<IAuthService, AuthService>();
             services.AddScoped<APIResponse>();
 
             return services;

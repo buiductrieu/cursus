@@ -1,5 +1,6 @@
 ﻿using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,12 @@ namespace Cursus.Repository.Repository
     {
         private readonly CursusDbContext _db;
         private ICategoryRepository _categoryRepository;
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository)
+        private IInstructorInfoRepository _instructorInfoRepository;
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, IInstructorInfoRepository instructorInfoRepository)
         {
             _db = db;
             _categoryRepository = categoryRepository;
+            _instructorInfoRepository = instructorInfoRepository;
         }
 
         
@@ -28,6 +31,18 @@ namespace Cursus.Repository.Repository
                     _categoryRepository = new CategoryRepository(_db);
                 }
                 return _categoryRepository;
+            }
+        }
+
+        public IInstructorInfoRepository InstructorInfoRepository
+        {
+            get
+            {
+                if( _instructorInfoRepository == null)
+                {
+                    _instructorInfoRepository = new InstructorRepository(_db);
+                }
+                return _instructorInfoRepository;
             }
         }
 

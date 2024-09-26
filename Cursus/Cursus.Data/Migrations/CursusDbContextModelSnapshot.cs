@@ -189,6 +189,36 @@ namespace Cursus.Data.Migrations
                     b.ToTable("CourseVersions");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.InstructorInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardProvider")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubmitCertificate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("InstructorInfos");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
                 {
                     b.Property<int>("Id")
@@ -438,6 +468,15 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.InstructorInfo", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>

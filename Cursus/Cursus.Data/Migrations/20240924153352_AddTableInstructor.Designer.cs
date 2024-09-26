@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20240923065921_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20240924153352_AddTableInstructor")]
+    partial class AddTableInstructor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,6 +190,36 @@ namespace Cursus.Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("CourseVersions");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.InstructorInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardProvider")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubmitCertificate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("InstructorInfos");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
@@ -441,6 +471,15 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.InstructorInfo", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>

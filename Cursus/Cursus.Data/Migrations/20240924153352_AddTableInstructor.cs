@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class AddTableInstructor : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,6 +171,28 @@ namespace Cursus.Data.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InstructorInfos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CardName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CardProvider = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InstructorInfos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InstructorInfos_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -346,6 +368,11 @@ namespace Cursus.Data.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InstructorInfos_UserId",
+                table: "InstructorInfos",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StepComments_StepId",
                 table: "StepComments",
                 column: "StepId");
@@ -386,6 +413,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseVersions");
+
+            migrationBuilder.DropTable(
+                name: "InstructorInfos");
 
             migrationBuilder.DropTable(
                 name: "StepComments");

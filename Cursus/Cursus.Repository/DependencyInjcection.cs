@@ -1,5 +1,6 @@
 ﻿using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,9 @@ namespace Cursus.Repository
     {
         public static IServiceCollection AddRepository(this IServiceCollection services)
         {
-            // DI Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-
-            // DI UnitOfWork
+            services.AddTransient<IInstructorInfoRepository, InstructorRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
