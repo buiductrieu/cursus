@@ -16,10 +16,12 @@ namespace Cursus.Repository
             // DI Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IAdminRepository, AdminRepository>();
+            
+
 
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
             return services;
         }
     }
