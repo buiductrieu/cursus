@@ -1,7 +1,9 @@
+using Cursus.Common.Helper;
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
 using Cursus.Service;
+using Cursus.ServiceContract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -14,6 +16,7 @@ namespace Cursus.API
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRepository().AddService();
+           
 
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
@@ -24,6 +27,7 @@ namespace Cursus.API
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();

@@ -32,6 +32,6 @@ namespace Cursus.Data.Entities
         
         public ICollection<CourseVersion> CourseVersions { get; set; } = new List<CourseVersion>();
 
-
-    }
+		public ICollection<Step> Steps { get; set; }
+	}
 }

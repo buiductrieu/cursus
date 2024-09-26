@@ -1,5 +1,6 @@
 ﻿using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,13 @@ namespace Cursus.Repository
             // DI Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IAdminRepository, AdminRepository>();
+            
 
-            // DI UnitOfWork
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ICourseRepository, CourseRepository>();
+			services.AddTransient<IStepRepository, StepRepository>();
+			// DI UnitOfWork
+			services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
