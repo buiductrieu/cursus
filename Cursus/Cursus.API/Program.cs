@@ -1,3 +1,4 @@
+using Cursus.Common.Helper;
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
@@ -24,6 +25,7 @@ namespace Cursus.API
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
