@@ -1,4 +1,5 @@
 ﻿using Cursus.Data.Entities;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using System;
@@ -12,15 +13,13 @@ namespace Cursus.Service.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
         public async Task<ApplicationUser> UpdateUserProfile(string id, ApplicationUser usr)
         {
-            var O_user = _userRepository.ExiProfile(id);
-            if (O_user == null)
-            {
-                return null;
-            }
-            await _userRepository.UpdProfile(usr);
-            return usr;
+            return await _userRepository.UpdProfile(usr);
         }
     }
 }

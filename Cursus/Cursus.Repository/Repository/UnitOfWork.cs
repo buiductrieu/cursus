@@ -32,7 +32,7 @@ namespace Cursus.Repository.Repository
                 return _categoryRepository;
             }
         }
-        public IUserRepository UserRepository
+        public IUserRepository userRepositiory
         {
             get
             {
@@ -43,6 +43,7 @@ namespace Cursus.Repository.Repository
                 return _userRepository;
             }
         }
+
 
         private bool disposed = false;
 

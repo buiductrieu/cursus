@@ -5,6 +5,6 @@ namespace Cursus.RepositoryContract.Interfaces
     public interface IUserRepository
     {
         public Task<ApplicationUser> UpdProfile(ApplicationUser usr);
-        public Task<bool> ExiProfile(string id);
+        public Task<ApplicationUser>? ExiProfile(string id);
     }
 }

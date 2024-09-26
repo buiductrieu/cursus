@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cursus.ServiceContract.DTO
+namespace Cursus.Data.DTO
 {
     public class UserProfileUpdateDTO
     {
@@ -14,7 +14,7 @@ namespace Cursus.ServiceContract.DTO
         [Required]
         public string Address { get; set; } = string.Empty;
         [Required]
-        public string PhoneNumber{ get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         [Required]
         public string UserName { get; set; } = string.Empty;
     }
