@@ -20,5 +20,9 @@ namespace Cursus.ServiceContract.Interfaces
        
         Task<PageListResponse<CourseResponseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20);
 		Task<CourseDTO> CreateCourseWithSteps(CourseDTO courseDTO);
-	}
+
+        Task<CourseDTO> UpdateCourseWithSteps(CourseDTO courseDTO);
+
+        Task<bool> DeleteCourse(int courseId);
+    }
 }
