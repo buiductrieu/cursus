@@ -28,14 +28,14 @@ namespace Cursus.Service.Services
         public async Task<UserProfileUpdateDTO> UpdateUserProfile(string id, UserProfileUpdateDTO usr)
         {
             // Retrieve the existing user profile
-            var O_user = await _unitOfWork.userRepositiory.ExiProfile(id);
+            var O_user = await _unitOfWork.UserRepository.ExiProfile(id);
             if (O_user == null)
             {
                 throw new Exception("User not found");
             }
 
             // Update the properties of the existing user
-            if (O_user.UserName != usr.UserName && await _unitOfWork.userRepositiory.UsernameExistsAsync(usr.UserName))
+            if (O_user.UserName != usr.UserName && await _unitOfWork.UserRepository.UsernameExistsAsync(usr.UserName))
             {
                 throw new Exception("Username already exists");
             }
@@ -46,7 +46,7 @@ namespace Cursus.Service.Services
                 O_user.Email = usr.Email;
         }
             // Update the user profile in the repository
-            await _unitOfWork.userRepositiory.UpdProfile(O_user);
+            await _unitOfWork.UserRepository.UpdProfile(O_user);
 
             // Save changes to the database
             await _unitOfWork.SaveChanges();

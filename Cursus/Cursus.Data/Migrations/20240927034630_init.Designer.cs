@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20240925080206_init")]
+    [Migration("20240927034630_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -168,6 +168,40 @@ namespace Cursus.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.CourseProgress", b =>
+                {
+                    b.Property<int>("ProgressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProgressId"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ProgressId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CourseProgresses");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseVersion", b =>
@@ -442,6 +476,25 @@ namespace Cursus.Data.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.CourseProgress", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("CourseProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.CourseVersion", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Course", "Course")
@@ -456,7 +509,7 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Course", "Course")
-                        .WithMany()
+                        .WithMany("Steps")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -545,6 +598,11 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("CourseProgresses");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Category", b =>
                 {
                     b.Navigation("Courses");
@@ -553,6 +611,8 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.Course", b =>
                 {
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>

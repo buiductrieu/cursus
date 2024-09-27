@@ -506,7 +506,7 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Course", "Course")
-                        .WithMany()
+                        .WithMany("Steps")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -608,6 +608,8 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.Course", b =>
                 {
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>

@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-	public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
 	{
 		private readonly CursusDbContext _db;
 		public ICategoryRepository CategoryRepository { get; }
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
-        private IUserRepository _userRepository { get; }
+        public IUserRepository UserRepository { get; }
+
 
         public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
 		{
