@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,7 @@ namespace Cursus.RepositoryContract.Interfaces
     {
         ICategoryRepository CategoryRepository { get; }
         IUserRepository UserRepository { get; }
+        IInstructorInfoRepository InstructorInfoRepository { get; }
 
         ICourseRepository CourseRepository { get; }
 

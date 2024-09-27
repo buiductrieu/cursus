@@ -39,6 +39,7 @@ namespace Cursus.Service.Services
             {
                 throw new Exception("Username already exists");
             }
+            O_user.UserName = usr.UserName;
             O_user.Address = usr.Address;
             O_user.PhoneNumber = usr.PhoneNumber;
             if(O_user.EmailConfirmed)

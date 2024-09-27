@@ -1,5 +1,6 @@
-﻿using Cursus.Data.Models;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,24 +10,37 @@ using System.Threading.Tasks;
 namespace Cursus.Repository.Repository
 {
     public class UnitOfWork : IUnitOfWork
-	{
-		private readonly CursusDbContext _db;
-		public ICategoryRepository CategoryRepository { get; }
+    {
+        private readonly CursusDbContext _db;
+        public ICategoryRepository CategoryRepository { get; }
+        private IInstructorInfoRepository _instructorInfoRepository;
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
         public IUserRepository UserRepository { get; }
 
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
-		{
-			_db = db;
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IInstructorInfoRepository instructorInfoRepository)
+        {
+            _db = db;
             CategoryRepository = categoryRepository;
             CourseRepository = courseRepository;
             StepRepository = stepRepository;
-			UserRepository = userRepository;
-		}
+            UserRepository = userRepository;
+            _instructorInfoRepository = instructorInfoRepository;
 
+        }
 
+        public IInstructorInfoRepository InstructorInfoRepository
+        {
+            get
+            {
+                if( _instructorInfoRepository == null)
+                {
+                    _instructorInfoRepository = new InstructorRepository(_db);
+                }
+                return _instructorInfoRepository;
+            }
+        }
 
         private bool disposed = false;
 
