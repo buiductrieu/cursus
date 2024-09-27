@@ -10,7 +10,7 @@ namespace Cursus.RepositoryContract.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         ICategoryRepository CategoryRepository { get; }
-        IUserRepository userRepositiory { get; }
+        IUserRepository UserRepository { get; }
 
         ICourseRepository CourseRepository { get; }
 

@@ -32,11 +32,11 @@ namespace Cursus.Repository.Repository
             try
             {
                 await GetAsync(filter: b => b.UserName.Equals(username));
-                return false;
+                return true;
             }
             catch (Exception e)
             {
-                return true;
+                return false;
             }
         }
     }
