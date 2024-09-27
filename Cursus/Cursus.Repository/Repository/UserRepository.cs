@@ -16,11 +16,11 @@ namespace Cursus.Repository.Repository
         private readonly CursusDbContext _db;
         public UserRepository(CursusDbContext db) : base(db)
         {
-            _db=db;
+            _db = db;
         }
         public async Task<ApplicationUser>? ExiProfile(string id)
         {
-            return await GetAsync(filter:b => b.Id.Equals(id)) ; 
+            return await GetAsync(filter: b => b.Id.Equals(id));
         }
 
         public async Task<ApplicationUser> UpdProfile(ApplicationUser usr)
@@ -29,7 +29,15 @@ namespace Cursus.Repository.Repository
         }
         public async Task<bool> UsernameExistsAsync(string username)
         {
-            return await _db.Users.AnyAsync(u => u.UserName == username);
+            try
+            {
+                await GetAsync(filter: b => b.UserName.Equals(username));
+                return false;
+            }
+            catch (Exception e)
+            {
+                return true;
+            }
         }
     }
 }

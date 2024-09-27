@@ -15,14 +15,12 @@ namespace Cursus.Service.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
-            _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
              _userManager = userManager;
@@ -30,14 +28,14 @@ namespace Cursus.Service.Services
         public async Task<UserProfileUpdateDTO> UpdateUserProfile(string id, UserProfileUpdateDTO usr)
         {
             // Retrieve the existing user profile
-            var O_user = await _userRepository.ExiProfile(id);
+            var O_user = await _unitOfWork.userRepositiory.ExiProfile(id);
             if (O_user == null)
             {
                 throw new Exception("User not found");
             }
 
             // Update the properties of the existing user
-            if (O_user.UserName != usr.UserName && await _userRepository.UsernameExistsAsync(usr.UserName))
+            if (O_user.UserName != usr.UserName && await _unitOfWork.userRepositiory.UsernameExistsAsync(usr.UserName))
             {
                 throw new Exception("Username already exists");
             }
@@ -48,7 +46,7 @@ namespace Cursus.Service.Services
                 O_user.Email = usr.Email;
         }
             // Update the user profile in the repository
-            await _userRepository.UpdProfile(O_user);
+            await _unitOfWork.userRepositiory.UpdProfile(O_user);
 
             // Save changes to the database
             await _unitOfWork.SaveChanges();
