@@ -48,5 +48,12 @@ namespace Cursus.Repository.Repository
             }
 
         }
+
+        public void SendEmailConfirmation(EmailRequestDTO request, string confirmLink)
+        {
+            var body = $"<h1>Email Confirmation</h1><p>Dear {request.toEmail},</p><p>Thank you for registering with us. Please confirm your email by clicking on the link below.</p><a href='{confirmLink}'>Click here to confirm your email</a>";
+            request.Body = body;
+            SendEmail(request);
+        }
     }
 }

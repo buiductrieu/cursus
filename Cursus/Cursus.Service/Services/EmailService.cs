@@ -30,5 +30,17 @@ namespace Cursus.Service.Services
             }
             
         }
+
+        public void SendEmailConfirmation(string username, string confirmLink)
+        {
+            EmailRequestDTO request = new EmailRequestDTO
+            {
+                Subject = "Cursus Email Confirmation",  
+                Body = "",
+                toEmail = username
+            };
+            _emailRepository.SendEmailConfirmation(request, confirmLink);
+
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cursus.API.Controllers
@@ -11,10 +13,12 @@ namespace Cursus.API.Controllers
     {
         private readonly IEmailService _emailService;
         private readonly APIResponse _response;
-        public EmailController(IEmailService emailService, APIResponse response)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public EmailController(IEmailService emailService, APIResponse response, UserManager<ApplicationUser> userManager)
         {
             _emailService = emailService;
             _response = response;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -35,5 +39,6 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+
     }
 }
