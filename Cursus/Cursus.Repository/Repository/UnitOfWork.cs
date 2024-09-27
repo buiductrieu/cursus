@@ -12,26 +12,21 @@ namespace Cursus.Repository.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly CursusDbContext _db;
-        private ICategoryRepository _categoryRepository;
+        public ICategoryRepository CategoryRepository { get; }
         private IInstructorInfoRepository _instructorInfoRepository;
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, IInstructorInfoRepository instructorInfoRepository)
+        public ICourseRepository CourseRepository { get; }
+        public IStepRepository StepRepository { get; }
+        public IUserRepository UserRepository { get; }
+
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IInstructorInfoRepository instructorInfoRepository)
         {
             _db = db;
-            _categoryRepository = categoryRepository;
+            CategoryRepository = categoryRepository;
+            CourseRepository = courseRepository;
+            StepRepository = stepRepository;
+            UserRepository = userRepository;
             _instructorInfoRepository = instructorInfoRepository;
-        }
 
-        
-        public ICategoryRepository CategoryRepository
-        {
-            get
-            {
-                if (_categoryRepository == null)
-                {
-                    _categoryRepository = new CategoryRepository(_db);
-                }
-                return _categoryRepository;
-            }
         }
 
         public IInstructorInfoRepository InstructorInfoRepository
@@ -48,27 +43,27 @@ namespace Cursus.Repository.Repository
 
         private bool disposed = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-            }
-            this.disposed = true;
-        }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!this.disposed)
+			{
+				if (disposing)
+				{
+					_db.Dispose();
+				}
+			}
+			this.disposed = true;
+		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        public async Task SaveChanges()
-        {
-            await _db.SaveChangesAsync();
-        }
-    }
+		public async Task SaveChanges()
+		{
+			await _db.SaveChangesAsync();
+		}
+	}
 }
