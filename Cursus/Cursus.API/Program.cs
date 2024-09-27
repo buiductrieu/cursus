@@ -1,3 +1,4 @@
+using Cursus.Common.Helper;
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
@@ -14,7 +15,7 @@ namespace Cursus.API
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRepository().AddService();
-
+            builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

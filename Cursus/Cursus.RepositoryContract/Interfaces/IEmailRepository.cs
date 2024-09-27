@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cursus.Common.Helper;
+using Cursus.Data.DTO;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    internal interface IEmailRepository
+    public interface IEmailRepository
     {
+        public void SendEmail(EmailRequestDTO request);
+        
     }
 }

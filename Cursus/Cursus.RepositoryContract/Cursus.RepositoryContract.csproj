@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cursus.Common\Cursus.Common.csproj" />
     <ProjectReference Include="..\Cursus.Data\Cursus.Data.csproj" />
   </ItemGroup>
 

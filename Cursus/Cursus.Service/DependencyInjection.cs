@@ -11,6 +11,9 @@ namespace Cursus.Service
         {
             // DI Service
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IEmailService, EmailService>();
+
+
             services.AddScoped<APIResponse>();
 
             return services;
