@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Cursus.Data.DTO;
+using Cursus.Data.DTO.Category;
 using Cursus.Data.Entities;
 
 namespace Cursus.Common.Helper
@@ -11,6 +12,11 @@ namespace Cursus.Common.Helper
             CreateMap<CourseDTO, Course>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())
                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+
+			//Course mapper
+			CreateMap<CourseDTO, Course>()
+			   .ForMember(dest => dest.Id, opt => opt.Ignore())
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
             CreateMap<StepDTO, Step>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -24,6 +30,30 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
+			CreateMap<Course, CourseDTO>();
+			CreateMap<Step, StepDTO>();
+
+			//User mapper
+			CreateMap<ApplicationUser, UserProfileUpdateDTO>();
+		
+			//Category mapper
+            CreateMap<CreateCategoryDTO, Category>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id for new records
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date)); 
+
+            CreateMap<UpdateCategoryDTO, Category>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) 
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore()); 
+
+            CreateMap<Category, CategoryDTO>()
+                .ForMember(dest => dest.Courses, opt => opt.MapFrom(src => src.Courses)); 
+
+            CreateMap<CategoryDTO, Category>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Courses, opt => opt.Ignore());
+			//
+        
+
 
             CreateMap<Course, CourseDTO>();
             CreateMap<Step, StepDTO>();
@@ -35,5 +65,5 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();
         }
-    }
+	}
 }

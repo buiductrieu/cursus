@@ -1,4 +1,4 @@
-﻿using Cursus.Data.Entities;
+using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
