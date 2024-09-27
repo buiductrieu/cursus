@@ -1,5 +1,7 @@
-﻿using Cursus.Data.DTO;
+﻿using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
+using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -18,10 +20,14 @@ namespace Cursus.Service.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
-        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _userManager = userManager;
-            _configuration = configuration; 
+            _configuration = configuration;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
         public async Task<(bool IsSuccess, string? Token, string? ErrorMessage)> LoginAsync(LoginRequestDTO loginRequestDTO)
         {
@@ -61,5 +67,29 @@ namespace Cursus.Service.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public async Task<ApplicationUser> RegisterAsync(UserRegisterDTO dto)
+        {
+            var user = _mapper.Map<ApplicationUser>(dto);   
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            
+            if (result.Succeeded == true)
+            {
+                await _unitOfWork.SaveChanges();
+                var userForReturn = await _userManager.FindByEmailAsync(user.Email);
+                return user;
+            }
+            else
+            {
+                throw new Exception("User not created");
+            }
+        }
+
+        public async Task<bool> ConfirmEmail(string username, string token)
+        {
+            var user = await _userManager.FindByEmailAsync(username) ?? throw (new Exception("User not found"));
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return result.Succeeded;
+        }
     }
 }
+

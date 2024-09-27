@@ -23,7 +23,7 @@ namespace Cursus.Service.Services
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-             _userManager = userManager;
+            _userManager = userManager;
         }
         public async Task<UserProfileUpdateDTO> UpdateUserProfile(string id, UserProfileUpdateDTO usr)
         {
@@ -42,27 +42,25 @@ namespace Cursus.Service.Services
             O_user.UserName = usr.UserName;
             O_user.Address = usr.Address;
             O_user.PhoneNumber = usr.PhoneNumber;
-            if(O_user.EmailConfirmed)
-        {
+            if (O_user.EmailConfirmed)
+            {
                 O_user.Email = usr.Email;
-        }
+            }
             // Update the user profile in the repository
             await _unitOfWork.UserRepository.UpdProfile(O_user);
 
             // Save changes to the database
             await _unitOfWork.SaveChanges();
-      
+
             // Map the updated user entity back to the DTO
             var userDTO = _mapper.Map<UserProfileUpdateDTO>(O_user);
             return userDTO;
         }
-
-
-
         public async Task<bool> CheckUserExistsAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             return user != null;
         }
+
     }
 }
