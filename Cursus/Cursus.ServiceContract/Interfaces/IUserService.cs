@@ -11,5 +11,6 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IUserService
     {
         public Task<UserProfileUpdateDTO> UpdateUserProfile(string id, UserProfileUpdateDTO usr);
+        Task<bool> CheckUserExistsAsync(string userId);
     }
 }

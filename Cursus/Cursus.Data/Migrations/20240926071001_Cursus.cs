@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20240926071001_Cursus.cs
     public partial class Cursus : Migration
+========
+    public partial class meme : Migration
+>>>>>>>> main:Cursus/Cursus.Data/Migrations/20240926061200_meme.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -200,6 +204,35 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CourseProgresses",
+                columns: table => new
+                {
+                    ProgressId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseProgresses", x => x.ProgressId);
+                    table.ForeignKey(
+                        name: "FK_CourseProgresses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseProgresses_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourseVersions",
                 columns: table => new
                 {
@@ -336,6 +369,16 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourseProgresses_CourseId",
+                table: "CourseProgresses",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseProgresses_UserId",
+                table: "CourseProgresses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Courses_CategoryId",
                 table: "Courses",
                 column: "CategoryId");
@@ -383,6 +426,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CourseProgresses");
 
             migrationBuilder.DropTable(
                 name: "CourseVersions");

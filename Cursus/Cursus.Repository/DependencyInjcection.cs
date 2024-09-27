@@ -25,6 +25,10 @@ namespace Cursus.Repository
 			services.AddTransient<IStepRepository, StepRepository>();
 			// DI UnitOfWork
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ICourseRepository, CourseRepository>();
+            services.AddTransient<IProgressRepository, ProgressRepository>();
+            // DI UnitOfWork
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
