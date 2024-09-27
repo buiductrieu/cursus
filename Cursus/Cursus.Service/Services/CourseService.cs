@@ -42,5 +42,44 @@ namespace Cursus.Service.Services
 			return savedCourseDTO;
 		}
 
-	}
+
+        public async Task<CourseDTO> UpdateCourseWithSteps(CourseDTO courseDTO)
+        {
+            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
+
+            if (existingCourse == null)
+                throw new Exception("Course not found.");
+
+            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name && c.Id != courseDTO.Id);
+
+            if (courseExists)
+                throw new Exception("Course name must be unique.");
+
+            if (courseDTO.Steps == null || !courseDTO.Steps.Any())
+                throw new Exception("Steps cannot be empty.");
+
+            _mapper.Map(courseDTO, existingCourse);
+
+            await _unitOfWork.SaveChanges();
+
+            var updatedCourseDTO = _mapper.Map<CourseDTO>(existingCourse);
+            return updatedCourseDTO;
+        }
+
+        public async Task<bool> DeleteCourse(int courseId)
+        {
+            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
+
+            if (existingCourse == null)
+                throw new Exception("Course not found.");
+
+
+          
+            await _unitOfWork.CourseRepository.DeleteAsync(existingCourse);
+            await _unitOfWork.SaveChanges();
+
+            return true; 
+        }
+
+    }
 }

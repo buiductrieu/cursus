@@ -7,5 +7,9 @@ namespace Cursus.ServiceContract.Interfaces
 	public interface ICourseService
 	{
 		Task<CourseDTO> CreateCourseWithSteps(CourseDTO courseDTO);
-	}
+
+        Task<CourseDTO> UpdateCourseWithSteps(CourseDTO courseDTO);
+
+        Task<bool> DeleteCourse(int courseId);
+    }
 }
