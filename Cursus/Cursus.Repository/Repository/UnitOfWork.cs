@@ -11,67 +11,21 @@ namespace Cursus.Repository.Repository
 	public class UnitOfWork : IUnitOfWork
 	{
 		private readonly CursusDbContext _db;
-		private ICategoryRepository _categoryRepository;
-		private ICourseRepository _courseRepository;
-		private IStepRepository _stepRepository;
-		private IUserRepository _userRepository;
+		public ICategoryRepository CategoryRepository { get; }
+        public ICourseRepository CourseRepository { get; }
+        public IStepRepository StepRepository { get; }
+        private IUserRepository _userRepository { get; }
 
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
 		{
 			_db = db;
-			_categoryRepository = categoryRepository;
-			_courseRepository = courseRepository;
-			_stepRepository = stepRepository;
-			_userRepository = userRepository;
+            CategoryRepository = categoryRepository;
+            CourseRepository = courseRepository;
+            StepRepository = stepRepository;
+			UserRepository = userRepository;
 		}
 
 
-		public ICategoryRepository CategoryRepository
-		{
-			get
-			{
-				if (_categoryRepository == null)
-				{
-					_categoryRepository = new CategoryRepository(_db);
-				}
-				return _categoryRepository;
-			}
-		}
-
-		public ICourseRepository CourseRepository
-		{
-			get
-			{
-				if (_courseRepository == null)
-				{
-					_courseRepository = new CourseRepository(_db);
-				}
-				return _courseRepository;
-			}
-		}
-
-		public IStepRepository StepRepository
-		{
-			get
-			{
-				if (_stepRepository == null)
-				{
-					_stepRepository = new StepRepository(_db);
-				}
-				return _stepRepository;
-			}
-		}
-        public IUserRepository userRepositiory
-        {
-            get
-            {
-                if (_userRepository == null)
-                {
-                    _userRepository = new UserRepository(_db);
-                }
-                return _userRepository;
-            }
-        }
 
         private bool disposed = false;
 
