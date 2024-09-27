@@ -28,7 +28,7 @@ namespace Cursus.Service.Services
         public async Task<PageListResponse<CourseResponseDTO>> GetCoursesAsync(string? searchTerm, string? sortColumn, string? sortOrder, int page = 1, int pageSize = 20)
         {
 
-            IEnumerable<Course> coursesRepo = await _repository.GetAllAsync(null, null);
+            IEnumerable<Course> coursesRepo = await _repository.GetAllAsync();
             var courses = coursesRepo.ToList();
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {

@@ -11,56 +11,21 @@ namespace Cursus.Repository.Repository
 	public class UnitOfWork : IUnitOfWork
 	{
 		private readonly CursusDbContext _db;
-		private ICategoryRepository _categoryRepository;
-		private ICourseRepository _courseRepository;
-		private IStepRepository _stepRepository;
+		public ICategoryRepository CategoryRepository { get; }
+        public ICourseRepository CourseRepository { get; }
+        public IStepRepository StepRepository { get; }
 
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository)
 		{
 			_db = db;
-			_categoryRepository = categoryRepository;
-			_courseRepository = courseRepository;
-			_stepRepository = stepRepository;
+            CategoryRepository = categoryRepository;
+            CourseRepository = courseRepository;
+            StepRepository = stepRepository;
 		}
 
 
-		public ICategoryRepository CategoryRepository
-		{
-			get
-			{
-				if (_categoryRepository == null)
-				{
-					_categoryRepository = new CategoryRepository(_db);
-				}
-				return _categoryRepository;
-			}
-		}
 
-		public ICourseRepository CourseRepository
-		{
-			get
-			{
-				if (_courseRepository == null)
-				{
-					_courseRepository = new CourseRepository(_db);
-				}
-				return _courseRepository;
-			}
-		}
-
-		public IStepRepository StepRepository
-		{
-			get
-			{
-				if (_stepRepository == null)
-				{
-					_stepRepository = new StepRepository(_db);
-				}
-				return _stepRepository;
-			}
-		}
-
-		private bool disposed = false;
+        private bool disposed = false;
 
 		protected virtual void Dispose(bool disposing)
 		{
