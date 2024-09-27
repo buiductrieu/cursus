@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cursus.Data.Entities;
 
 namespace Cursus.Data.Models
 {
@@ -28,6 +29,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<CourseVersion> CourseVersions { get; set; } = null!;
         public virtual DbSet<CourseProgress> CourseProgresses { get; set; } = null!;
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
+        public virtual DbSet<InstructorInfo> InstructorInfos { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

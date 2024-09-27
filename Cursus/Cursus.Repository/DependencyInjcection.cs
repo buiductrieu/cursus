@@ -1,5 +1,6 @@
 ﻿using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -14,9 +15,9 @@ namespace Cursus.Repository
     {
         public static IServiceCollection AddRepository(this IServiceCollection services)
         {
-            // DI Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IInstructorInfoRepository, InstructorRepository>();
             services.AddTransient<IAdminRepository, AdminRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             
