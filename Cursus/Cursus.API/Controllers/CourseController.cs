@@ -1,8 +1,5 @@
 ﻿using Cursus.Common.Helper;
-using Cursus.Data.DTO.CourseDTO;
-using Cursus.Data.Entities;
-using Cursus.RepositoryContract.Interfaces;
-using Cursus.Service.Services;
+using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -14,19 +11,40 @@ namespace Cursus.API.Controllers
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly APIResponse _response;
 
-        public CourseController(ICourseService courseService, APIResponse response, IUnitOfWork unitOfWork)
+        public CourseController(ICourseService courseService, APIResponse response)
+
         {
             _courseService = courseService;
             _response = response;
-            _unitOfWork = unitOfWork;
+        }
+
+        [HttpPost]
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> CreateCourse([FromBody] CourseDTO courseDto)
+        {
+            try
+            {
+                var createdCourse = await _courseService.CreateCourseWithSteps(courseDto);
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = createdCourse;
+                return Ok(_response);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add(e.Message);
+                return BadRequest(_response);
+            }
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetAllCourses([FromQuery] string? searchTerm,
         [FromQuery] string? sortColumn,
         [FromQuery] string? sortOrder,
@@ -35,7 +53,7 @@ namespace Cursus.API.Controllers
         {
             try
             {
-                
+
                 var result = await _courseService.GetCoursesAsync(
                     searchTerm: searchTerm,
                     sortColumn: sortColumn,
@@ -45,10 +63,10 @@ namespace Cursus.API.Controllers
                 );
                 if (result.Items.Any())
                 {
-                   
+
                     _response.IsSuccess = true;
                     _response.StatusCode = HttpStatusCode.OK;
-                    _response.Result = result; 
+                    _response.Result = result;
                     return Ok(_response);
                 }
                 else
@@ -68,6 +86,7 @@ namespace Cursus.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
         }
+
         [HttpGet("courses/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -76,7 +95,7 @@ namespace Cursus.API.Controllers
         {
             try
             {
-               
+
                 var courses = await _courseService.GetRegisteredCoursesByUserIdAsync(userId, page, pageSize);
 
                 if (courses != null && courses.Items.Any())
@@ -101,6 +120,6 @@ namespace Cursus.API.Controllers
             }
         }
 
-      
+
     }
 }

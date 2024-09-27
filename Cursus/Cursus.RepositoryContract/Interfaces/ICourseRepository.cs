@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    public interface ICourseRepository : IRepository<Course>
+	public interface ICourseRepository : IRepository<Course>
     {
-        
-    }
+		Task<bool> AnyAsync(Expression<Func<Course, bool>> predicate); 
+		Task<Course> GetAllIncludeStepsAsync(int courseId);
+	}
 }

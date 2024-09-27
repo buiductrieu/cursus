@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cursus.Data.DTO.CourseDTO
+namespace Cursus.Data.DTO
 {
     public class CourseResponseDTO
     {
@@ -15,7 +15,7 @@ namespace Cursus.Data.DTO.CourseDTO
         public string Name { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
-   
+
         public int CategoryId { get; set; }
 
         public DateTime DateCreated { get; set; }
