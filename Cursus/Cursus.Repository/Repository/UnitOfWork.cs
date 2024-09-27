@@ -14,13 +14,15 @@ namespace Cursus.Repository.Repository
 		public ICategoryRepository CategoryRepository { get; }
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
+        private IUserRepository _userRepository { get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository)
 		{
 			_db = db;
             CategoryRepository = categoryRepository;
             CourseRepository = courseRepository;
             StepRepository = stepRepository;
+			UserRepository = userRepository;
 		}
 
 
