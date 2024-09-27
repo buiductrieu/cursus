@@ -20,7 +20,7 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager))
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
