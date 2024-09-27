@@ -12,5 +12,7 @@ namespace Cursus.Data.Entities
         public bool Status { get; set; } = true;
 
         public string? Address { get; set; }
+
+        public ICollection<CourseProgress> CourseProgresses { get; set; } = new List<CourseProgress>();
     }
 }
