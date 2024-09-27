@@ -26,6 +26,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<StepComment> StepComments { get; set; } = null!;
         public virtual DbSet<StepContent> StepContents { get; set; } = null!;
         public virtual DbSet<CourseVersion> CourseVersions { get; set; } = null!;
+        public virtual DbSet<CourseProgress> CourseProgresses { get; set; } = null!;
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
