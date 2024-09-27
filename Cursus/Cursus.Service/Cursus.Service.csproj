@@ -27,6 +27,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Cursus.Common\Cursus.Common.csproj" />
     <ProjectReference Include="..\Cursus.Data\Cursus.Data.csproj" />
+    <ProjectReference Include="..\Cursus.RepositoryContract\Cursus.RepositoryContract.csproj" />
+    <ProjectReference Include="..\Cursus.Repository\Cursus.Repository.csproj" />
     <ProjectReference Include="..\Cursus.ServiceContract\Cursus.ServiceContract.csproj" />
   </ItemGroup>
 
