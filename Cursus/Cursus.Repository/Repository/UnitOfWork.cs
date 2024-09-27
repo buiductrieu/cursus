@@ -1,4 +1,4 @@
-﻿using Cursus.Data.Models;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using System;
@@ -17,6 +17,7 @@ namespace Cursus.Repository.Repository
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
         public IUserRepository UserRepository { get; }
+
 
         public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IInstructorInfoRepository instructorInfoRepository)
         {

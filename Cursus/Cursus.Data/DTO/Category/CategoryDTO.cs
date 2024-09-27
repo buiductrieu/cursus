@@ -1,17 +1,14 @@
-﻿using System;
+﻿using Cursus.Data.Entities;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cursus.Data.Entities
+namespace Cursus.Data.DTO.Category
 {
-    public class Category
+    public class CategoryDTO
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
@@ -22,10 +19,10 @@ namespace Cursus.Data.Entities
 
         public bool Status { get; set; } = true;
 
-        public bool IsParent { get; set; } = false;
+        public bool IsParent { get; set; } = true;
 
-        public string? ParentCategory {get; set;} = string.Empty;     
-        
+        public string? ParentCategory { get; set; } = string.Empty;
+
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }
