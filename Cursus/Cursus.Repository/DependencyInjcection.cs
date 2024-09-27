@@ -18,6 +18,7 @@ namespace Cursus.Repository
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
             
 
             services.AddTransient<ICourseRepository, CourseRepository>();
