@@ -11,11 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.Data", "Cursus.Data\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.Service", "Cursus.Service\Cursus.Service.csproj", "{FC6060BF-C332-4907-8565-EF1FCCD2419F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.ServiceContract", "Cursus.ServiceContract\Cursus.ServiceContract.csproj", "{F62417C4-10BC-4E1A-A683-EDB9CEB8B8FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.ServiceContract", "Cursus.ServiceContract\Cursus.ServiceContract.csproj", "{F62417C4-10BC-4E1A-A683-EDB9CEB8B8FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.Repository", "Cursus.Repository\Cursus.Repository.csproj", "{0F7F48D4-9C11-46AF-99CC-FE99DD78A0C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.Repository", "Cursus.Repository\Cursus.Repository.csproj", "{0F7F48D4-9C11-46AF-99CC-FE99DD78A0C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.RepositoryContract", "Cursus.RepositoryContract\Cursus.RepositoryContract.csproj", "{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.RepositoryContract", "Cursus.RepositoryContract\Cursus.RepositoryContract.csproj", "{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.Test", "Cursus.Test\Cursus.Test.csproj", "{6F903D79-C601-4363-ABB4-AEB41DE80AE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
