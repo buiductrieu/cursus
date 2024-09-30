@@ -22,22 +22,44 @@ namespace Cursus.Service.Services
         private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration, IUnitOfWork unitOfWork, IMapper mapper, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _configuration = configuration;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _roleManager = roleManager;
         }
-        public async Task<(bool IsSuccess, string? Token, string? ErrorMessage)> LoginAsync(LoginRequestDTO loginRequestDTO)
+        public async Task<LoginResponseDTO> LoginAsync(LoginRequestDTO loginRequestDTO)
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDTO.Username);
-            if (user == null) return (false, null, "User not found");
-            var result = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
-            if (!result) return (false, null, "Invalid Password");
+            if (user == null)
+            {
+                throw new Exception("Username or password is incorrect!");            
+            }
+
+            var isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
+
+            if (!isValid)
+            {
+                throw new Exception("Username or password is incorrect!");
+            }
+
             var token = await GenerateJwtToken(user);
-            return (true, token, null);
-        
+
+            var userDTO = _mapper.Map<UserDTO>(user);
+
+            var role = await _userManager.GetRolesAsync(user); 
+
+            LoginResponseDTO responseDTO = new()
+            {
+                User = userDTO,
+                Token = token,
+                Role = role
+            };
+            
+            return responseDTO;
         }
         private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
@@ -45,7 +67,7 @@ namespace Cursus.Service.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email), //Thông tin chủ thể của object: tên đăng nhập của user
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),// unique identifier giúp phân biệt các token khác nhau, Sử dụng NewGuid() để tạo ra một giá trị đi nhất
-                new Claim(ClaimTypes.NameIdentifier, user.Id) //Id để xác định người dùng 1 cách duy nhất 
+                new Claim(ClaimTypes.NameIdentifier, user.Id), //Id để xác định người dùng 1 cách duy nhất 
             };
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -69,18 +91,54 @@ namespace Cursus.Service.Services
         }
         public async Task<ApplicationUser> RegisterAsync(UserRegisterDTO dto)
         {
+            var phoneNumberExisted = await _unitOfWork.UserRepository.PhoneNumberExistsAsync(dto.PhoneNumber);
+
+            var userExisted = await _unitOfWork.UserRepository.UsernameExistsAsync(dto.UserName);
+
+            if (userExisted)
+            {
+                throw new Exception("Username is existed");
+            }
+
+            if (phoneNumberExisted)
+            {
+                throw new Exception("Phone number is existed");
+            }
+
             var user = _mapper.Map<ApplicationUser>(dto);   
+            
             var result = await _userManager.CreateAsync(user, dto.Password);
             
             if (result.Succeeded == true)
             {
+
+                if(dto.Role == "Instructor" || dto.Role == "Admin" || dto.Role == "User")
+                {
+                    if (!await _roleManager.RoleExistsAsync(dto.Role))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(dto.Role));
+                    }
+
+                    await _userManager.AddToRoleAsync(user, dto.Role);
+                }
+                else
+                {
+                    var userToDelete = await _userManager.FindByEmailAsync(user.UserName);
+
+                    await _userManager.DeleteAsync(userToDelete);
+
+                    throw new Exception("Role is not valid");
+                }
+
                 await _unitOfWork.SaveChanges();
+
                 var userForReturn = await _userManager.FindByEmailAsync(user.Email);
+
                 return user;
             }
             else
             {
-                throw new Exception("User not created");
+                throw new Exception("User is not created");
             }
         }
 

@@ -51,19 +51,26 @@ namespace Cursus.Common.Helper
             CreateMap<CategoryDTO, Category>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
-			//
-        
-
 
             CreateMap<Course, CourseDTO>();
+            
             CreateMap<Step, StepDTO>();
+            
             CreateMap<ApplicationUser, UserProfileUpdateDTO>();
+            
             CreateMap<UserRegisterDTO, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();
+            
+            CreateMap<ApplicationUser, UserDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
+
         }
 	}
 }

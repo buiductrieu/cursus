@@ -37,18 +37,10 @@ namespace Cursus.API.Controllers
         {
             try
             {
-                var (isSuccess, token, errorMessage) = await _authService.LoginAsync(loginRequestDTO);
-
-                if (!isSuccess)
-                {
-                    _response.IsSuccess = false;
-                    _response.ErrorMessages.Add(errorMessage);
-                    return BadRequest(_response);
-                }
-
+                var responseDTO = await _authService.LoginAsync(loginRequestDTO);
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = token;
+                _response.Result = responseDTO;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -124,7 +116,7 @@ namespace Cursus.API.Controllers
             catch (Exception e)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessages.Add("hello");
+                _response.ErrorMessages.Add(e.Message);
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return BadRequest(_response);
             }
