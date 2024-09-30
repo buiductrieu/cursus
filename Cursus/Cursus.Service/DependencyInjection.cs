@@ -23,7 +23,9 @@ namespace Cursus.Service
             services.AddScoped<APIResponse>();
             services.AddTransient<IAdminService, AdminService>();
             services.AddTransient<IUserService, UserService>();
-                
+            services.AddTransient<IStepContentService, StepContentService>();
+            services.AddTransient<IAzureBlobStorageService, AzureBlobStorageService>();
+
             return services;
         }
     }
