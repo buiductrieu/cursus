@@ -24,6 +24,12 @@
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
+    <Folder Include="Repository\" />
+    <Folder Include="Repository\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cursus.Service\Cursus.Service.csproj" />
   </ItemGroup>
 
 </Project>
