@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.Repository", "Cursus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursus.RepositoryContract", "Cursus.RepositoryContract\Cursus.RepositoryContract.csproj", "{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.Test", "Cursus.Test\Cursus.Test.csproj", "{6F903D79-C601-4363-ABB4-AEB41DE80AE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursus.UnitTests", "Cursus.UnitTests\Cursus.UnitTests.csproj", "{3DFA634F-8EEB-4E87-8E8B-A9DAC05CB482}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,10 @@ Global
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EC3A1F5-1842-4BAB-9AC0-5FBD9132A757}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F903D79-C601-4363-ABB4-AEB41DE80AE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DFA634F-8EEB-4E87-8E8B-A9DAC05CB482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DFA634F-8EEB-4E87-8E8B-A9DAC05CB482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DFA634F-8EEB-4E87-8E8B-A9DAC05CB482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DFA634F-8EEB-4E87-8E8B-A9DAC05CB482}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
