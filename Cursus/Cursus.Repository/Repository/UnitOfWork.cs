@@ -1,6 +1,8 @@
-﻿using Cursus.Data.Models;
+using Cursus.Data.Entities;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +15,15 @@ namespace Cursus.Repository.Repository
     {
         private readonly CursusDbContext _db;
         public ICategoryRepository CategoryRepository { get; }
+
         private IInstructorInfoRepository _instructorInfoRepository;
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
         public IUserRepository UserRepository { get; }
+        public IStepContentRepository StepContentRepository { get; }
+        public UserManager<ApplicationUser> UserManager { get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IInstructorInfoRepository instructorInfoRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository,IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -26,7 +31,8 @@ namespace Cursus.Repository.Repository
             StepRepository = stepRepository;
             UserRepository = userRepository;
             _instructorInfoRepository = instructorInfoRepository;
-
+            UserManager = userManager;
+            StepContentRepository = stepContentRepository;
         }
 
         public IInstructorInfoRepository InstructorInfoRepository
