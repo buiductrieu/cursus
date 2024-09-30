@@ -23,6 +23,7 @@ namespace Cursus.Repository
             services.AddTransient<IUserRepository, UserRepository>();
             
 
+            services.AddTransient<IStepContentRepository, StepContentRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
 			services.AddTransient<IStepRepository, StepRepository>();
 			// DI UnitOfWork

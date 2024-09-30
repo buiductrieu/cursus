@@ -51,6 +51,24 @@ namespace Cursus.Common.Helper
             CreateMap<CategoryDTO, Category>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
+            //
+
+            // StepContent Mapping
+            CreateMap<StepContentDTO, StepContent>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore the Id field for creation
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // StepId mapping
+                .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
+                .ForMember(dest => dest.ContentURL, opt => opt.MapFrom(src => src.ContentURL))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated != default(DateTime) ? src.DateCreated : DateTime.UtcNow)) // Set DateCreated or default to UTC now
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
+            CreateMap<StepContent, StepContentDTO>()
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // Mapping StepId back
+                .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
+                .ForMember(dest => dest.ContentURL, opt => opt.MapFrom(src => src.ContentURL))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated)); // Map DateCreated back to DTO
+
 
             CreateMap<Course, CourseDTO>();
             
