@@ -18,6 +18,7 @@ namespace Cursus.RepositoryContract.Interfaces
         ICourseRepository CourseRepository { get; }
 
         IStepRepository StepRepository { get; }
+        IStepContentRepository StepContentRepository { get; }
         Task SaveChanges();
     }
 }
