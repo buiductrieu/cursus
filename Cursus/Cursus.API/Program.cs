@@ -9,6 +9,7 @@ using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Cursus.Common.Middleware;
 
 namespace Cursus.API
 {
@@ -18,6 +19,11 @@ namespace Cursus.API
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRepository().AddService();
+
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            builder.Services.AddProblemDetails();
+
             builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
@@ -59,6 +65,8 @@ namespace Cursus.API
                     c.RoutePrefix = string.Empty;
                 });
             }
+            
+            app.UseExceptionHandler(_ => { });
 
             app.UseHttpsRedirection();
 
