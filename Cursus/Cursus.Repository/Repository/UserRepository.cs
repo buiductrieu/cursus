@@ -26,6 +26,13 @@ namespace Cursus.Repository.Repository
             return await GetAsync(filter: b => b.Id.Equals(id));
         }
 
+        public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
+        {
+            var user = await _db.ApplicationUsers.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+
+            return user == null ? false : true;
+        }
+
         public async Task<ApplicationUser> UpdProfile(ApplicationUser usr)
         {
             return await UpdateAsync(usr);
