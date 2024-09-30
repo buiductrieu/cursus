@@ -30,7 +30,7 @@ namespace Cursus.API.Controllers
         }
 
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)

@@ -18,7 +18,7 @@ namespace Cursus.API.Controllers
         }
 
         // POST api/admin/toggleuserstatus?userId=someUserId
-        [HttpPost("toggleuserstatus")]
+        [HttpPost("toggle-user-status")]
         public async Task<IActionResult> ToggleUserStatus(string userId)
         {
             var apiResponse = new APIResponse();
@@ -50,7 +50,7 @@ namespace Cursus.API.Controllers
         }
 
         // GET api/admin/manageusers
-        [HttpGet("manageusers")]
+        [HttpGet("manage-users")]
         public async Task<IActionResult> ManageUsers()
         {
             var apiResponse = new APIResponse();
