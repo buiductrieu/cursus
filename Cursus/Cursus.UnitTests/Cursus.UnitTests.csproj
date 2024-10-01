@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="Repository\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cursus.ServiceContract\Cursus.ServiceContract.csproj" />
     <ProjectReference Include="..\Cursus.Service\Cursus.Service.csproj" />
   </ItemGroup>
 
