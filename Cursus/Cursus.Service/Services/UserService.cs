@@ -4,6 +4,7 @@ using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -31,13 +32,13 @@ namespace Cursus.Service.Services
             var O_user = await _unitOfWork.UserRepository.ExiProfile(id);
             if (O_user == null)
             {
-                throw new Exception("User not found");
+                throw new KeyNotFoundException("User not found");
             }
 
             // Update the properties of the existing user
             if (O_user.UserName != usr.UserName && await _unitOfWork.UserRepository.UsernameExistsAsync(usr.UserName))
             {
-                throw new Exception("Username already exists");
+                throw new BadHttpRequestException("Username already exists");
             }
             O_user.UserName = usr.UserName;
             O_user.Address = usr.Address;

@@ -1,11 +1,4 @@
-﻿using Cursus.Common.Helper;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Cursus.Common.Middleware
 {
@@ -14,7 +7,10 @@ namespace Cursus.Common.Middleware
         public static IServiceCollection AddExceptionHandler(this IServiceCollection services)
         {
             services.AddExceptionHandler<UnauthorizedExceptionHandler>();
-            services.AddExceptionHandler<GlobalExceptionHandler>();          
+            services.AddExceptionHandler<GlobalExceptionHandler>(); 
+            services.AddExceptionHandler<KeyNotFoundExceptionHandler>();
+            services.AddExceptionHandler<NotImplementExceptionHandler>();
+            services.AddExceptionHandler<BadRequestExceptionHandler>();
             return services;
         }
     }

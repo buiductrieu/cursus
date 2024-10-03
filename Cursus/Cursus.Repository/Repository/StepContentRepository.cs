@@ -21,7 +21,7 @@ namespace Cursus.Repository.Repository
         {
             // Sử dụng phương thức FindAsync để tìm StepContent theo Id
             return await _db.StepContents
-                                   .FirstOrDefaultAsync(sc => sc.Id == id);
+                                   .FirstOrDefaultAsync(sc => sc.Id == id) ?? throw new KeyNotFoundException("Step content is not found");
         }
     }
 }

@@ -23,31 +23,24 @@ namespace Cursus.API.Controllers
         {
             var apiResponse = new APIResponse();
 
-            try
+            var result = await _adminService.ToggleUserStatusAsync(userId);
+            if (result)
             {
-                var result = await _adminService.ToggleUserStatusAsync(userId);
-                if (result)
-                {
-                    apiResponse.StatusCode = HttpStatusCode.OK;
-                    apiResponse.IsSuccess = true;
-                    apiResponse.Result = "User status has been updated";
-                }
-                else
-                {
-                    apiResponse.StatusCode = HttpStatusCode.BadRequest;
-                    apiResponse.IsSuccess = false;
-                    apiResponse.ErrorMessages.Add("Failed to update user status");
-                }
+                apiResponse.StatusCode = HttpStatusCode.OK;
+                apiResponse.IsSuccess = true;
+                apiResponse.Result = "User status has been updated";
             }
-            catch (Exception ex)
+            else
             {
-                apiResponse.StatusCode = HttpStatusCode.InternalServerError;
+                apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 apiResponse.IsSuccess = false;
-                apiResponse.ErrorMessages.Add(ex.Message);
+                apiResponse.ErrorMessages.Add("Failed to update user status");
             }
-
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
         }
+
+
+
 
         // GET api/admin/manageusers
         [HttpGet("manage-users")]
@@ -83,3 +76,4 @@ namespace Cursus.API.Controllers
         }
     }
 }
+

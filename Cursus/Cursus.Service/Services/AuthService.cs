@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -36,14 +37,14 @@ namespace Cursus.Service.Services
             var user = await _userManager.FindByEmailAsync(loginRequestDTO.Username);
             if (user == null)
             {
-                throw new Exception("Username or password is incorrect!");            
+                throw new BadHttpRequestException("Username or password is incorrect!");            
             }
 
             var isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
             if (!isValid)
             {
-                throw new Exception("Username or password is incorrect!");
+                throw new BadHttpRequestException("Username or password is incorrect!");
             }
 
             var token = await GenerateJwtToken(user);
@@ -97,12 +98,12 @@ namespace Cursus.Service.Services
 
             if (userExisted)
             {
-                throw new Exception("Username is existed");
+                throw new BadHttpRequestException("Username is existed");
             }
 
             if (phoneNumberExisted)
             {
-                throw new Exception("Phone number is existed");
+                throw new BadHttpRequestException("Phone number is existed");
             }
 
             var user = _mapper.Map<ApplicationUser>(dto);   
@@ -127,7 +128,7 @@ namespace Cursus.Service.Services
 
                     await _userManager.DeleteAsync(userToDelete);
 
-                    throw new Exception("Role is not valid");
+                    throw new BadHttpRequestException("Role is not valid");
                 }
 
                 await _unitOfWork.SaveChanges();
@@ -144,7 +145,7 @@ namespace Cursus.Service.Services
 
         public async Task<bool> ConfirmEmail(string username, string token)
         {
-            var user = await _userManager.FindByEmailAsync(username) ?? throw (new Exception("User not found"));
+            var user = await _userManager.FindByEmailAsync(username) ?? throw (new BadHttpRequestException("User not found"));
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
         }
