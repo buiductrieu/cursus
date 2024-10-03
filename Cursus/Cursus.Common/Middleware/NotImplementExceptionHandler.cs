@@ -5,37 +5,33 @@ using System.Text.Json;
 
 namespace Cursus.Common.Middleware
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    public class NotImplementExceptionHandler : IExceptionHandler
     {
-        public GlobalExceptionHandler()
-        {
-        }
-
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            if (exception is not UnauthorizedAccessException && exception is not KeyNotFoundException && exception is not NotImplementedException && exception is not BadHttpRequestException)
+            if (exception is NotImplementedException)
             {
                 var details = new ProblemDetails()
                 {
                     Detail = $"An error occurred: {exception.Message}",
                     Instance = "API",
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Internal Server Error",
-                    Type = "https://httpstatuses.com/500"
+                    Status = StatusCodes.Status501NotImplemented,
+                    Title = "Not Implement",
+                    Type = "https://httpstatuses.com/501"
                 };
 
                 var response = JsonSerializer.Serialize(details);
 
                 httpContext.Response.ContentType = "application/json";
 
-                httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                httpContext.Response.StatusCode = StatusCodes.Status501NotImplemented;
 
                 await httpContext.Response.WriteAsync(response, cancellationToken);
 
                 return true;
             }
-            return false;
 
+            return false;
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<CourseProgress> CourseProgresses { get; set; } = null!;
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
         public virtual DbSet<InstructorInfo> InstructorInfos { get; set; } = null!;
+        public virtual DbSet<CourseComment> CourseComments { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

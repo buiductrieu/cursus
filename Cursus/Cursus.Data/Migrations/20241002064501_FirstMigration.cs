@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigration : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -211,7 +211,8 @@ namespace Cursus.Data.Migrations
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Discount = table.Column<int>(type: "int", nullable: false),
-                    StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,6 +221,36 @@ namespace Cursus.Data.Migrations
                         name: "FK_Courses_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsFlagged = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseComments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseComments_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -390,6 +421,16 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourseComments_CourseId",
+                table: "CourseComments",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseComments_UserId",
+                table: "CourseComments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourseProgresses_CourseId",
                 table: "CourseProgresses",
                 column: "CourseId");
@@ -452,6 +493,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CourseComments");
 
             migrationBuilder.DropTable(
                 name: "CourseProgresses");
