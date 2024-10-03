@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Service.Services
@@ -181,10 +182,10 @@ namespace Cursus.Service.Services
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name);
 
             if (courseExists)
-                throw new Exception("Course name must be unique.");
+                throw new BadHttpRequestException("Course name must be unique.");
 
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new Exception("Steps cannot be empty.");
+                throw new BadHttpRequestException("Steps cannot be empty.");
 
             var course = _mapper.Map<Course>(courseDTO);
 
@@ -206,15 +207,15 @@ namespace Cursus.Service.Services
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
 
             if (existingCourse == null)
-                throw new Exception("Course not found.");
+                throw new KeyNotFoundException("Course not found.");
 
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name && c.Id != courseDTO.Id);
 
             if (courseExists)
-                throw new Exception("Course name must be unique.");
+                throw new BadHttpRequestException("Course name must be unique.");
 
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new Exception("Steps cannot be empty.");
+                throw new BadHttpRequestException("Steps cannot be empty.");
 
             _mapper.Map(courseDTO, existingCourse);
 
@@ -229,7 +230,7 @@ namespace Cursus.Service.Services
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
 
             if (existingCourse == null)
-                throw new Exception("Course not found.");
+                throw new KeyNotFoundException("Course not found.");
 
 
           
