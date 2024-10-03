@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20240930014135_firstMigration")]
-    partial class firstMigration
+    [Migration("20241002064501_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,6 +157,9 @@ namespace Cursus.Data.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("StartedDate")
                         .HasColumnType("datetime2");
 
@@ -168,6 +171,43 @@ namespace Cursus.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsFlagged")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CourseComments");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseProgress", b =>
@@ -504,6 +544,25 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseProgress", b =>

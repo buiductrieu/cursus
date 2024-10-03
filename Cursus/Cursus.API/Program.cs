@@ -20,7 +20,7 @@ namespace Cursus.API
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRepository().AddService();
 
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddExceptionHandler();
 
             builder.Services.AddProblemDetails();
 
