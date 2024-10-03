@@ -4,6 +4,7 @@ using Cursus.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    partial class CursusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002064501_FirstMigration")]
+    partial class FirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,6 +198,7 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -545,14 +549,16 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Course", "Course")
-                        .WithMany("CourseComments")
+                        .WithMany()
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 
@@ -702,8 +708,6 @@ namespace Cursus.Data.Migrations
 
             modelBuilder.Entity("Cursus.Data.Entities.Course", b =>
                 {
-                    b.Navigation("CourseComments");
-
                     b.Navigation("CourseVersions");
 
                     b.Navigation("Steps");

@@ -29,10 +29,13 @@ namespace Cursus.Data.Entities
         public int Discount { get; set; }
         
         public DateTime StartedDate { get; set; }
+
+        public double Rating { get; set; } = 0;
         
         public ICollection<CourseVersion> CourseVersions { get; set; } = new List<CourseVersion>();
-       
 
-		public ICollection<Step> Steps { get; set; }
+        public ICollection<Step> Steps { get; set; } = new List<Step>();
+
+        public ICollection<CourseComment> CourseComments { get; set; } = new List<CourseComment>();
 	}
 }

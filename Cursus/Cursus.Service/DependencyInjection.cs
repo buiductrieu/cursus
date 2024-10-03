@@ -11,7 +11,7 @@ namespace Cursus.Service
     {
         public static IServiceCollection AddService(this IServiceCollection services)
         {
-            // DI Service
+            // DI Services
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ICourseService, CourseService>();
@@ -25,6 +25,7 @@ namespace Cursus.Service
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IStepContentService, StepContentService>();
             services.AddTransient<IAzureBlobStorageService, AzureBlobStorageService>();
+            services.AddTransient<ICourseCommentService, CourseCommentService>();   
 
             return services;
         }

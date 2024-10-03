@@ -53,7 +53,7 @@ namespace Cursus.Service.Services
 
             if (stepContent == null)
             {
-                return null;
+                throw new KeyNotFoundException("Step Content not found.");
             }
 
             var stepContentDTO = _mapper.Map<StepContentDTO>(stepContent);

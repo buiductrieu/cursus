@@ -89,6 +89,19 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
+            //CourseComment Mapping
+            CreateMap<CourseComment, CourseCommentCreateDTO>()
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.CourseId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+                .ReverseMap();
+
+            CreateMap<CourseComment, CourseCommentDTO>()
+               .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+               .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Course.Name))
+               .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateCreated))
+               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
         }
 	}
 }

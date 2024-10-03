@@ -26,7 +26,7 @@ namespace Cursus.Repository.Repository
             var user = await userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return false;
+                throw new KeyNotFoundException("User not found");
             }
 
             user.Status = !user.Status;

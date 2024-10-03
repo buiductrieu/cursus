@@ -38,7 +38,7 @@ namespace Cursus.Repository.Repository
 
         public async Task<InstructorInfo> GetByIDAsync(int id)
         {
-           return await _dbContext.InstructorInfos.Include(i => i.User).FirstOrDefaultAsync(i => i.Id == id);
+           return await _dbContext.InstructorInfos.Include(i => i.User).FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Instructor not found");
         }
 
         public async Task<IEnumerable<InstructorInfo>> GettAllAsync()
