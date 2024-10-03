@@ -35,9 +35,20 @@ namespace Cursus.Service.Services
 
             if(userResult.Succeeded)
             {
+
+                // Thêm vai trò "Instructor" cho người dùng
+                var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
+
+                // Kiểm tra xem việc gán role có thành công không
+                if (!roleResult.Succeeded)
+                {
+                    return IdentityResult.Failed(roleResult.Errors.ToArray());
+                }
+
                 var userId = user.Id;
                 var instructorInfo = new InstructorInfo
                 {
+
                     UserId = userId,
                     CardName = registerInstructorDTO.CardName,
                     CardProvider = registerInstructorDTO.CardProvider,
