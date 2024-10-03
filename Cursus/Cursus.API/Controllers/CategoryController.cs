@@ -22,7 +22,16 @@ namespace Cursus.API.Controllers
             _response = response;
             _unitOfWork = unitOfWork;
         }
-        //Get paging category list
+
+        /// <summary>
+        /// Get all categories with pagination
+        /// </summary>
+        /// <param name="searchTerm"></param>
+        /// <param name="sortColumn"></param>
+        /// <param name="sortOrder"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -45,7 +54,12 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages.Add("No categories found");
             return BadRequest(_response);
         }
-        //Get category by id
+
+        /// <summary>
+        /// Get category by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,7 +91,12 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
-        //Create category
+
+        /// <summary>
+        /// Create category
+        /// </summary>
+        /// <param name="createCategoryDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -109,7 +128,13 @@ namespace Cursus.API.Controllers
             }
         }
 
-        //update category
+
+        /// <summary>
+        /// Update category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateCategoryDto"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -132,7 +157,12 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
-        //delete category
+
+        /// <summary>
+        /// Delete category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

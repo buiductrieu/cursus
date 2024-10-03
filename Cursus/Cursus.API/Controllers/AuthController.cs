@@ -29,6 +29,11 @@ namespace Cursus.API.Controllers
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Login for user
+        /// </summary>
+        /// <param name="LoginRequestDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,6 +59,11 @@ namespace Cursus.API.Controllers
 
         }
 
+        /// <summary>
+        /// Register for user
+        /// </summary>
+        /// <param name="UserRegisterDTO"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,6 +106,12 @@ namespace Cursus.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Confirm email
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [HttpGet("confirm-email")]
         public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token,[FromQuery]string username)
         {

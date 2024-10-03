@@ -24,6 +24,13 @@ namespace Cursus.API.Controllers
             _response = aPIResponse;
         }
 
+
+        /// <summary>
+        /// Upload file
+        /// </summary>
+        /// <param name="stepContentDTO"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
         [HttpPost("upload")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,6 +70,12 @@ namespace Cursus.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
         }
+
+        /// <summary>
+        /// Get step content by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStepContentById(int id)
