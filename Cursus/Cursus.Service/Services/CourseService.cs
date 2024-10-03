@@ -26,16 +26,17 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<PageListResponse<CourseResponseDTO>> GetCoursesAsync(string? searchTerm, string? sortColumn, string? sortOrder, int page = 1, int pageSize = 20)
+        public async Task<PageListResponse<CourseDTO>> GetCoursesAsync(string? searchTerm, string? sortColumn, string? sortOrder, int page = 1, int pageSize = 20)
         {
 
-            IEnumerable<Course> coursesRepo = await _repository.GetAllAsync();
+            IEnumerable<Course> coursesRepo = await _unitOfWork.CourseRepository.GetAllAsync(c => c.Status == true, includeProperties: "Category");
             var courses = coursesRepo.ToList();
+
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 courses = courses.Where(p =>
-                    p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (p.Category != null && p.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                    p.Name.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    (p.Category != null && p.Category.Name.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0))
                     .ToList();
             }
 
@@ -59,36 +60,30 @@ namespace Cursus.Service.Services
                 .ToList();
 
 
-            return new PageListResponse<CourseResponseDTO>
+            return new PageListResponse<CourseDTO>
             {
                 Items = MapCoursesToDTOs(paginatedCourses),
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = totalCount,
                 HasNextPage = (page * pageSize) < totalCount,
-                HasPreviousPage = pageSize > 1
+                HasPreviousPage = page > 1
             };
         }
-        private List<CourseResponseDTO> MapCoursesToDTOs(List<Course> courses)
+
+
+        private List<CourseDTO> MapCoursesToDTOs(List<Course> courses)
         {
-            List<CourseResponseDTO> courseDTOs = new List<CourseResponseDTO>();
+            if (courses == null || !courses.Any())
+            {
+                return new List<CourseDTO>();
+            }
+
+            List<CourseDTO> courseDTOs = new List<CourseDTO>();
 
             foreach (var course in courses)
             {
-                var courseDTO = new CourseResponseDTO()
-                {
-                    Id = course.Id,
-                    Name = course.Name,
-                    Description = course.Description,
-                    CategoryId = course.CategoryId,
-                    DateCreated = course.DateCreated,
-                    Status = course.Status,
-                    Price = course.Price,
-                    Discount = course.Discount,
-                    StartedDate = course.StartedDate
-                };
-
-                courseDTOs.Add(courseDTO);
+                courseDTOs.Add(_mapper.Map<CourseDTO>(course));
             }
 
             return courseDTOs;
@@ -112,21 +107,13 @@ namespace Cursus.Service.Services
             };
         }
 
-        public async Task<PageListResponse<CourseResponseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20)
+        public async Task<PageListResponse<CourseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20)
         {
 
             var userExists = await _userService.CheckUserExistsAsync(userId);
             if (!userExists)
             {
-                return new PageListResponse<CourseResponseDTO>
-                {
-                    Items = new List<CourseResponseDTO>(),
-                    Page = page,
-                    PageSize = pageSize,
-                    TotalCount = 0,
-                    HasNextPage = false,
-                    HasPreviousPage = false
-                };
+                throw new Exception($"User with ID {userId} not found.");
             }
 
 
@@ -135,9 +122,9 @@ namespace Cursus.Service.Services
 
             if (!courseIds.Any())
             {
-                return new PageListResponse<CourseResponseDTO>
+                return new PageListResponse<CourseDTO>
                 {
-                    Items = new List<CourseResponseDTO>(),
+                    Items = new List<CourseDTO>(),
                     Page = page,
                     PageSize = pageSize,
                     TotalCount = 0,
@@ -150,7 +137,7 @@ namespace Cursus.Service.Services
             var courseIdsSet = new HashSet<int>(courseIds);
 
 
-            var courseList = await _repository.GetAllAsync();
+            var courseList = await _unitOfWork.CourseRepository.GetAllAsync(p => p.Status);
 
 
             var filteredCourses = courseList.Where(c => courseIdsSet.Contains(c.Id));
@@ -164,7 +151,7 @@ namespace Cursus.Service.Services
                 .ToList();
 
 
-            return new PageListResponse<CourseResponseDTO>
+            return new PageListResponse<CourseDTO>
             {
                 Items = MapCoursesToDTOs(paginatedCourses),
                 Page = page,
