@@ -21,6 +21,11 @@ namespace Cursus.API.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Send email
+        /// </summary>
+        /// <param name="requestDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

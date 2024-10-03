@@ -16,7 +16,11 @@ namespace Cursus.API.Controllers
         {
             _adminService = adminService;
         }
-
+        /// <summary>
+        /// Modify user's status
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         // POST api/admin/toggleuserstatus?userId=someUserId
         [HttpPost("toggle-user-status")]
         public async Task<IActionResult> ToggleUserStatus(string userId)
@@ -39,9 +43,10 @@ namespace Cursus.API.Controllers
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
         }
 
-
-
-
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns></returns>
         // GET api/admin/manageusers
         [HttpGet("manage-users")]
         public async Task<IActionResult> ManageUsers()
