@@ -9,35 +9,31 @@ namespace Cursus.Common.Helper
     {
         public MappingProfile()
         {
-            CreateMap<CourseDTO, Course>()
-               .ForMember(dest => dest.Id, opt => opt.Ignore())
-               .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			//User mapper
+			CreateMap<ApplicationUser, UserProfileUpdateDTO>();
 
-			//Course mapper
-			CreateMap<CourseDTO, Course>()
-			   .ForMember(dest => dest.Id, opt => opt.Ignore())
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			CreateMap<UserRegisterDTO, ApplicationUser>()
+				.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
+				.ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+				.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+				.ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();
 
-            CreateMap<StepDTO, Step>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			CreateMap<UserProfileUpdateDTO, ApplicationUser>()
+			  .ForMember(dest => dest.Id, opt => opt.Ignore())
+			  .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+			  .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+			  .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+			  .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
-            CreateMap<UserProfileUpdateDTO, ApplicationUser>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+            CreateMap<ApplicationUser, UserDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
-			CreateMap<Course, CourseDTO>();
-			CreateMap<Step, StepDTO>();
-
-			//User mapper
-			CreateMap<ApplicationUser, UserProfileUpdateDTO>();
-		
 			//Category mapper
-            CreateMap<CreateCategoryDTO, Category>()
+			CreateMap<CreateCategoryDTO, Category>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id for new records
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date)); 
 
@@ -51,10 +47,25 @@ namespace Cursus.Common.Helper
             CreateMap<CategoryDTO, Category>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
-            //
 
-            // StepContent Mapping
-            CreateMap<StepContentDTO, StepContent>()
+			//Course mapper
+			CreateMap<CourseDTO, Course>()
+			   .ForMember(dest => dest.Id, opt => opt.Ignore())
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+
+			CreateMap<Course, CourseDTO>()
+			.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+
+			//Step mapper
+			CreateMap<StepDTO, Step>()
+			   .ForMember(dest => dest.Id, opt => opt.Ignore())
+			   .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+
+			CreateMap<Step, StepDTO>();
+
+			// StepContent Mapping
+			CreateMap<StepContentDTO, StepContent>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore the Id field for creation
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // StepId mapping
                 .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
@@ -68,26 +79,6 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.ContentURL, opt => opt.MapFrom(src => src.ContentURL))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated)); // Map DateCreated back to DTO
-
-
-            CreateMap<Course, CourseDTO>();
-            
-            CreateMap<Step, StepDTO>();
-            
-            CreateMap<ApplicationUser, UserProfileUpdateDTO>();
-            
-            CreateMap<UserRegisterDTO, ApplicationUser>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()).ReverseMap();
-            
-            CreateMap<ApplicationUser, UserDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
             //CourseComment Mapping
             CreateMap<CourseComment, CourseCommentCreateDTO>()

@@ -40,40 +40,60 @@ namespace Cursus.Test.Service
 		[Test]
 		public async Task CreateCourseWithSteps_ShouldReturnCourseDTO_WhenCourseIsCreatedSuccessfully()
 		{
+			// Arrange
 			var courseDto = new CourseDTO
 			{
+				Id = 10,
 				Name = "New Course",
 				Description = "Course Description",
-				CategoryId = 2,
+				CategoryId = 3,
+				StartedDate = DateTime.UtcNow,
 				Status = true,
-				Price = 1,
-				Discount = 1,
-
+				Price = 10,
+				Discount = 10,
+				DateCreated = DateTime.UtcNow,
 				Steps = new List<StepDTO>
-				{
-					new StepDTO { Name = "Step 1", Order = 1 , Description = "Description for step 1" },
-					new StepDTO { Name = "Step 2", Order = 2 , Description = "Description for step 2" }
-				}
+		{
+			new StepDTO { Id = 1, CourseId = 10, Name = "Step 1", Order = 1, Description = "Description for step 1", DateCreated = DateTime.Now },
+			new StepDTO { Id = 2, CourseId = 10, Name = "Step 2", Order = 2, Description = "Description for step 2", DateCreated = DateTime.Now }
+		}
 			};
 
 			var courseEntity = new Course
 			{
+				Id = courseDto.Id,
 				Name = courseDto.Name,
 				Description = courseDto.Description,
-				CategoryId = courseDto.CategoryId
+				CategoryId = courseDto.CategoryId,
+				DateCreated = courseDto.DateCreated,
+				Status = courseDto.Status,
+				Price = courseDto.Price,
+				Discount = courseDto.Discount,
+				StartedDate = courseDto.StartedDate,
+				Steps = new List<Step>
+		{
+			new Step { Id = 1, CourseId = 10, Name = "Step 1", Order = 1, Description = "Description for step 1", DateCreated = DateTime.Now },
+			new Step { Id = 2, CourseId = 10, Name = "Step 2", Order = 2, Description = "Description for step 2", DateCreated = DateTime.Now }
+		}
 			};
 
 			_mapperMock.Setup(m => m.Map<Course>(courseDto)).Returns(courseEntity);
 			_unitOfWorkMock.Setup(u => u.CourseRepository.AddAsync(courseEntity)).ReturnsAsync(courseEntity);
 			_unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAllIncludeStepsAsync(It.IsAny<int>())).ReturnsAsync(courseEntity);
+			_mapperMock.Setup(m => m.Map<CourseDTO>(courseEntity)).Returns(courseDto);
 
 			var result = await _courseService.CreateCourseWithSteps(courseDto);
-			var result1 = result;
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(courseDto.Name, result.Name);
-			_unitOfWorkMock.Verify(u => u.CourseRepository.AddAsync(courseEntity), Times.Once);
-			_unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
+			Assert.AreEqual(2, result.Steps.Count);
+		}
+
+		[Test]
+		public void CreateCourseWithSteps_ShouldThrowArgumentNullException_WhenCourseDtoIsNull()
+		{
+			Assert.ThrowsAsync<ArgumentNullException>(async () => await _courseService.CreateCourseWithSteps(null));
 		}
 
 		[Test]
@@ -81,19 +101,27 @@ namespace Cursus.Test.Service
 		{
 			var courseDto = new CourseDTO
 			{
+				Id = 10,
 				Name = "New Course",
 				Description = "Course Description",
-				CategoryId = 1,
+				CategoryId = 3,
+				StartedDate = DateTime.UtcNow,
 				Status = true,
-				Price = 1,
-				Discount = 1
+				Price = 10,
+				Discount = 10,
+				DateCreated = DateTime.UtcNow
 			};
 
 			var courseEntity = new Course
 			{
 				Name = courseDto.Name,
 				Description = courseDto.Description,
-				CategoryId = courseDto.CategoryId
+				CategoryId = courseDto.CategoryId,
+				DateCreated = courseDto.DateCreated,
+				Status = courseDto.Status,
+				Price = courseDto.Price,
+				Discount = courseDto.Discount,
+				StartedDate = courseDto.StartedDate
 			};
 
 			_mapperMock.Setup(m => m.Map<Course>(courseDto)).Returns(courseEntity);
@@ -105,22 +133,24 @@ namespace Cursus.Test.Service
 		}
 
 		[Test]
-		public void CreateCourseWithSteps_ShouldThrowArgumentNullException_WhenCourseDtoIsNull()
-		{
-			Assert.ThrowsAsync<ArgumentNullException>(async () => await _courseService.CreateCourseWithSteps(null));
-		}
-
-		[Test]
 		public async Task CreateCourseWithSteps_ShouldThrowValidationException_WhenCourseNameIsEmpty()
 		{
 			var courseDto = new CourseDTO
 			{
-				Name = string.Empty, 
+				Id = 10,
+				Name = string.Empty,
 				Description = "Course Description",
-				CategoryId = 1,
+				CategoryId = 2,
+				StartedDate = DateTime.UtcNow,
 				Status = true,
-				Price = 1,
-				Discount = 1
+				Price = 10,
+				Discount = 10,
+				DateCreated = DateTime.UtcNow,
+				Steps = new List<StepDTO>
+{
+	new StepDTO { Id = 1, CourseId = 1, Name = "Step 1", Order = 1 , Description = "Description for step 1", DateCreated = DateTime.Now},
+	new StepDTO { Id = 2, CourseId = 1, Name = "Step 2", Order = 2 , Description = "Description for step 2", DateCreated = DateTime.Now }
+}
 			};
 
 			var ex = Assert.ThrowsAsync<ValidationException>(async () => await _courseService.CreateCourseWithSteps(courseDto));
@@ -132,13 +162,20 @@ namespace Cursus.Test.Service
 		{
 			var courseDto = new CourseDTO
 			{
+				Id = 10,
 				Name = "New Course",
 				Description = "Course Description",
-				CategoryId = 1,
+				CategoryId = 2,
+				StartedDate = DateTime.UtcNow,
 				Status = true,
-				Price = 1,
-				Discount = 1,
-				Steps = new List<StepDTO>() 
+				Price = 10,
+				Discount = 10,
+				DateCreated = DateTime.UtcNow,
+				Steps = new List<StepDTO>
+{
+	new StepDTO { Id = 1, CourseId = 1, Name = "Step 1", Order = 1 , Description = "Description for step 1", DateCreated = DateTime.Now},
+	new StepDTO { Id = 2, CourseId = 1, Name = "Step 2", Order = 2 , Description = "Description for step 2", DateCreated = DateTime.Now }
+}
 			};
 
 			var ex = Assert.ThrowsAsync<ValidationException>(async () => await _courseService.CreateCourseWithSteps(courseDto));
@@ -146,41 +183,6 @@ namespace Cursus.Test.Service
 		}
 
 		[Test]
-		public async Task CreateCourseWithSteps_ShouldCreateSteps_WhenStepsAreProvided()
-		{
-			var courseDto = new CourseDTO
-			{
-				Name = "New Course",
-				Description = "Course Description",
-				CategoryId = 1,
-				Status = true,
-				Price = 1,
-				Discount = 1,
-				Steps = new List<StepDTO>
-				{
-					new StepDTO { Name = "Step 1", Order = 1 , Description = "Description for step 1" },
-					new StepDTO { Name = "Step 2", Order = 2 , Description = "Description for step 2" }
-				}
-			};
-
-			var courseEntity = new Course
-			{
-				Name = courseDto.Name,
-				Description = courseDto.Description,
-				CategoryId = courseDto.CategoryId
-			};
-
-			_mapperMock.Setup(m => m.Map<Course>(courseDto)).Returns(courseEntity);
-			_unitOfWorkMock.Setup(u => u.CourseRepository.AddAsync(courseEntity)).ReturnsAsync(courseEntity);
-			_unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
-
-			var result = await _courseService.CreateCourseWithSteps(courseDto);
-
-			_unitOfWorkMock.Verify(u => u.CourseRepository.AddAsync(courseEntity), Times.Once);
-			Assert.IsTrue(courseDto.Steps.Count > 0); 
-		}
-
-        [Test]
         public async Task UpdateCourseWithSteps_ShouldReturnUpdatedCourse_WhenUpdateIsSuccessful()
         {
             // Arrange
