@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
@@ -35,20 +35,26 @@ namespace Cursus.Service.Services
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 courses = courses.Where(p =>
-                    p.Name.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    (p.Category != null && p.Category.Name.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0))
+                    p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||  // Tìm kiếm theo tên khóa học
+                    (p.Category != null && p.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) // Tìm kiếm theo tên danh mục
                     .ToList();
             }
 
 
+
             if (sortOrder?.ToLower() == "desc")
             {
-                courses = courses.OrderByDescending(GetSortProperty(sortColumn)).ToList();
+                courses = courses.OrderByDescending(course => GetSortProperty(sortColumn)(course)?.Length)
+                                 .ThenByDescending(course => GetSortProperty(sortColumn)(course))
+                                 .ToList();
             }
             else
             {
-                courses = courses.OrderBy(GetSortProperty(sortColumn)).ToList();
+                courses = courses.OrderBy(course => GetSortProperty(sortColumn)(course)?.Length)
+                                 .ThenBy(course => GetSortProperty(sortColumn)(course))
+                                 .ToList();
             }
+
 
 
             var totalCount = courses.Count;
@@ -92,20 +98,19 @@ namespace Cursus.Service.Services
 
 
 
-        private static Func<Course, object> GetSortProperty(string SortColumn)
+        private static Func<Course, string> GetSortProperty(string SortColumn)
         {
             return SortColumn?.ToLower() switch
             {
                 "name" => course => course.Name,
                 "description" => course => course.Description,
-                "price" => course => course.Price,
-                "categoryId" => course => course.CategoryId,
-                "discount" => course => course.Discount,
-                "dateCreated" => course => course.DateCreated,
-                _ => course => course.Id
-
+                "categoryid" => course => course.CategoryId.ToString(), // Chuyển CategoryId thành chuỗi
+                "datecreated" => course => course.DateCreated.ToString(), // Chuyển DateCreated thành chuỗi
+                _ => course => course.Id.ToString() // Mặc định chuyển Id thành chuỗi
             };
         }
+
+
 
         public async Task<PageListResponse<CourseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20)
         {
