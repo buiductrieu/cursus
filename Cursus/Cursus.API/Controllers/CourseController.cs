@@ -25,16 +25,16 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Create course
         /// </summary>
-        /// <param name="courseDto"></param>
+        /// <param name="courseDTO"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCourse([FromBody] CourseDTO courseDto)
+        public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
         {
             try
             {
-                var createdCourse = await _courseService.CreateCourseWithSteps(courseDto);
+                var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
 
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
