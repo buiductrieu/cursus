@@ -1,8 +1,9 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Service.Services
@@ -25,28 +26,35 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<PageListResponse<CourseResponseDTO>> GetCoursesAsync(string? searchTerm, string? sortColumn, string? sortOrder, int page = 1, int pageSize = 20)
+        public async Task<PageListResponse<CourseDTO>> GetCoursesAsync(string? searchTerm, string? sortColumn, string? sortOrder, int page = 1, int pageSize = 20)
         {
 
-            IEnumerable<Course> coursesRepo = await _repository.GetAllAsync();
+            IEnumerable<Course> coursesRepo = await _unitOfWork.CourseRepository.GetAllAsync(c => c.Status == true, includeProperties: "Category");
             var courses = coursesRepo.ToList();
+
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 courses = courses.Where(p =>
-                    p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    (p.Category != null && p.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                    p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||  // Tìm kiếm theo tên khóa học
+                    (p.Category != null && p.Category.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))) // Tìm kiếm theo tên danh mục
                     .ToList();
             }
 
 
+
             if (sortOrder?.ToLower() == "desc")
             {
-                courses = courses.OrderByDescending(GetSortProperty(sortColumn)).ToList();
+                courses = courses.OrderByDescending(course => GetSortProperty(sortColumn)(course)?.Length)
+                                 .ThenByDescending(course => GetSortProperty(sortColumn)(course))
+                                 .ToList();
             }
             else
             {
-                courses = courses.OrderBy(GetSortProperty(sortColumn)).ToList();
+                courses = courses.OrderBy(course => GetSortProperty(sortColumn)(course)?.Length)
+                                 .ThenBy(course => GetSortProperty(sortColumn)(course))
+                                 .ToList();
             }
+
 
 
             var totalCount = courses.Count;
@@ -58,36 +66,30 @@ namespace Cursus.Service.Services
                 .ToList();
 
 
-            return new PageListResponse<CourseResponseDTO>
+            return new PageListResponse<CourseDTO>
             {
                 Items = MapCoursesToDTOs(paginatedCourses),
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = totalCount,
                 HasNextPage = (page * pageSize) < totalCount,
-                HasPreviousPage = pageSize > 1
+                HasPreviousPage = page > 1
             };
         }
-        private List<CourseResponseDTO> MapCoursesToDTOs(List<Course> courses)
+
+
+        private List<CourseDTO> MapCoursesToDTOs(List<Course> courses)
         {
-            List<CourseResponseDTO> courseDTOs = new List<CourseResponseDTO>();
+            if (courses == null || !courses.Any())
+            {
+                return new List<CourseDTO>();
+            }
+
+            List<CourseDTO> courseDTOs = new List<CourseDTO>();
 
             foreach (var course in courses)
             {
-                var courseDTO = new CourseResponseDTO()
-                {
-                    Id = course.Id,
-                    Name = course.Name,
-                    Description = course.Description,
-                    CategoryId = course.CategoryId,
-                    DateCreated = course.DateCreated,
-                    Status = course.Status,
-                    Price = course.Price,
-                    Discount = course.Discount,
-                    StartedDate = course.StartedDate
-                };
-
-                courseDTOs.Add(courseDTO);
+                courseDTOs.Add(_mapper.Map<CourseDTO>(course));
             }
 
             return courseDTOs;
@@ -96,36 +98,27 @@ namespace Cursus.Service.Services
 
 
 
-        private static Func<Course, object> GetSortProperty(string SortColumn)
+        private static Func<Course, string> GetSortProperty(string SortColumn)
         {
             return SortColumn?.ToLower() switch
             {
                 "name" => course => course.Name,
                 "description" => course => course.Description,
-                "price" => course => course.Price,
-                "categoryId" => course => course.CategoryId,
-                "discount" => course => course.Discount,
-                "dateCreated" => course => course.DateCreated,
-                _ => course => course.Id
-
+                "categoryid" => course => course.CategoryId.ToString(), // Chuyển CategoryId thành chuỗi
+                "datecreated" => course => course.DateCreated.ToString(), // Chuyển DateCreated thành chuỗi
+                _ => course => course.Id.ToString() // Mặc định chuyển Id thành chuỗi
             };
         }
 
-        public async Task<PageListResponse<CourseResponseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20)
+
+
+        public async Task<PageListResponse<CourseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20)
         {
 
             var userExists = await _userService.CheckUserExistsAsync(userId);
             if (!userExists)
             {
-                return new PageListResponse<CourseResponseDTO>
-                {
-                    Items = new List<CourseResponseDTO>(),
-                    Page = page,
-                    PageSize = pageSize,
-                    TotalCount = 0,
-                    HasNextPage = false,
-                    HasPreviousPage = false
-                };
+                throw new Exception($"User with ID {userId} not found.");
             }
 
 
@@ -134,9 +127,9 @@ namespace Cursus.Service.Services
 
             if (!courseIds.Any())
             {
-                return new PageListResponse<CourseResponseDTO>
+                return new PageListResponse<CourseDTO>
                 {
-                    Items = new List<CourseResponseDTO>(),
+                    Items = new List<CourseDTO>(),
                     Page = page,
                     PageSize = pageSize,
                     TotalCount = 0,
@@ -149,7 +142,7 @@ namespace Cursus.Service.Services
             var courseIdsSet = new HashSet<int>(courseIds);
 
 
-            var courseList = await _repository.GetAllAsync();
+            var courseList = await _unitOfWork.CourseRepository.GetAllAsync(p => p.Status);
 
 
             var filteredCourses = courseList.Where(c => courseIdsSet.Contains(c.Id));
@@ -163,7 +156,7 @@ namespace Cursus.Service.Services
                 .ToList();
 
 
-            return new PageListResponse<CourseResponseDTO>
+            return new PageListResponse<CourseDTO>
             {
                 Items = MapCoursesToDTOs(paginatedCourses),
                 Page = page,
@@ -181,10 +174,10 @@ namespace Cursus.Service.Services
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name);
 
             if (courseExists)
-                throw new Exception("Course name must be unique.");
+                throw new BadHttpRequestException("Course name must be unique.");
 
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new Exception("Steps cannot be empty.");
+                throw new BadHttpRequestException("Steps cannot be empty.");
 
             var course = _mapper.Map<Course>(courseDTO);
 
@@ -206,15 +199,15 @@ namespace Cursus.Service.Services
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
 
             if (existingCourse == null)
-                throw new Exception("Course not found.");
+                throw new KeyNotFoundException("Course not found.");
 
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name && c.Id != courseDTO.Id);
 
             if (courseExists)
-                throw new Exception("Course name must be unique.");
+                throw new BadHttpRequestException("Course name must be unique.");
 
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new Exception("Steps cannot be empty.");
+                throw new BadHttpRequestException("Steps cannot be empty.");
 
             _mapper.Map(courseDTO, existingCourse);
 
@@ -229,11 +222,11 @@ namespace Cursus.Service.Services
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
 
             if (existingCourse == null)
-                throw new Exception("Course not found.");
+                throw new KeyNotFoundException("Course not found.");
 
 
-          
-            await _unitOfWork.CourseRepository.DeleteAsync(existingCourse);
+
+            existingCourse.Status = false;
             await _unitOfWork.SaveChanges();
 
             return true; 

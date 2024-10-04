@@ -21,15 +21,13 @@ namespace Cursus.Repository
             services.AddTransient<IInstructorInfoRepository, InstructorRepository>();
             services.AddTransient<IAdminRepository, AdminRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            
-
             services.AddTransient<IStepContentRepository, StepContentRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
 			services.AddTransient<IStepRepository, StepRepository>();
-			// DI UnitOfWork
-			services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ICourseCommentRepository, CourseCommentRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<IProgressRepository, ProgressRepository>();
+
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

@@ -18,6 +18,12 @@ namespace Cursus.API.Controllers
             _instructorService = instructorService;
             _response = aPIResponse;
         }
+
+        /// <summary>
+        /// Register for instructor
+        /// </summary>
+        /// <param name="registerInstructorDTO"></param>
+        /// <returns></returns>
         [HttpPost("register-instructor")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

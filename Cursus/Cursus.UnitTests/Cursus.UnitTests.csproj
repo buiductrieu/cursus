@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cursus.API\Cursus.API.csproj" />
+    <ProjectReference Include="..\Cursus.ServiceContract\Cursus.ServiceContract.csproj" />
     <ProjectReference Include="..\Cursus.Service\Cursus.Service.csproj" />
   </ItemGroup>
 

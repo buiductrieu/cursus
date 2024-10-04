@@ -23,6 +23,12 @@ namespace Cursus.API.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Update user's profile
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("Update{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

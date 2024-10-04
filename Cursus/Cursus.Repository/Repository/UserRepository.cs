@@ -23,7 +23,7 @@ namespace Cursus.Repository.Repository
         }
         public async Task<ApplicationUser>? ExiProfile(string id)
         {
-            return await GetAsync(filter: b => b.Id.Equals(id));
+            return await GetAsync(filter: b => b.Id.Equals(id)) ?? throw new KeyNotFoundException("User is not found");
         }
 
         public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)

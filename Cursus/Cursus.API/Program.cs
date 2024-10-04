@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Cursus.Common.Middleware;
+using System.Reflection;
 
 namespace Cursus.API
 {
@@ -20,7 +21,7 @@ namespace Cursus.API
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddRepository().AddService();
 
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddExceptionHandler();
 
             builder.Services.AddProblemDetails();
 
@@ -38,11 +39,24 @@ namespace Cursus.API
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "My API - V1",
+                        Version = "v1"
+                    }
+                 );
+
+                c.IncludeXmlComments(Assembly.GetExecutingAssembly());
+               
+            });
 
 
 
-           
+
+
 
             var app = builder.Build();
 

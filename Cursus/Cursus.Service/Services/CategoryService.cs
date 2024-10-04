@@ -5,6 +5,7 @@ using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,13 +14,11 @@ namespace Cursus.Service.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository _categoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CategoryService(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryService( IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -74,18 +73,18 @@ namespace Cursus.Service.Services
         
         public async Task<CategoryDTO> GetCategoryById(int id)
         {
-            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id);
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id) ?? throw new KeyNotFoundException("Category is not found");
             return _mapper.Map<CategoryDTO>(category);
         }
         public async Task<CategoryDTO> CreateCategory(CreateCategoryDTO dto)
         {
-            if (string.IsNullOrEmpty(dto.Name)) throw new Exception("Category Name is required.");
-            if (string.IsNullOrEmpty(dto.Description)) throw new Exception("Category Description is required.");
+            if (string.IsNullOrEmpty(dto.Name)) throw new BadHttpRequestException("Category Name is required.");
+            if (string.IsNullOrEmpty(dto.Description)) throw new BadHttpRequestException("Category Description is required.");
             var existingCategory = await _unitOfWork.CategoryRepository.AnyAsync(x => x.Name.Equals(dto.Name));
 
             if (existingCategory)
             {
-                throw new Exception("A category with this name already exists.");
+                throw new BadHttpRequestException("A category with this name already exists.");
             }
 
             // Map CreateCategoryDTO to Category entity
@@ -113,7 +112,7 @@ namespace Cursus.Service.Services
 
             if (category == null)
             {
-                throw new Exception("Category not found.");
+                throw new KeyNotFoundException("Category not found.");
             }
 
             // Map the updated fields from UpdateCategoryDTO to the existing category
@@ -131,7 +130,7 @@ namespace Cursus.Service.Services
 
             if (Category == null)
             {
-                throw new Exception("Category not found.");
+                throw new KeyNotFoundException("Category not found.");
             }
 
             // Remove the category from the database

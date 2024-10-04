@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cursus.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Cursus.Data.Models
 {
@@ -30,9 +31,31 @@ namespace Cursus.Data.Models
         public virtual DbSet<CourseProgress> CourseProgresses { get; set; } = null!;
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
         public virtual DbSet<InstructorInfo> InstructorInfos { get; set; } = null!;
+        public virtual DbSet<CourseComment> CourseComments { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                 new IdentityRole
+                 {
+                     Id = Guid.NewGuid().ToString(),
+                     Name = "Admin",
+                     NormalizedName = "ADMIN"
+                 },
+                new IdentityRole
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "Instructor",
+                    NormalizedName = "INSTRUCTOR"
+                },
+                new IdentityRole
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "User",
+                    NormalizedName = "USER"
+                }
+            );
         }
     }
 }

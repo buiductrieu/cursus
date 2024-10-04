@@ -17,18 +17,18 @@ namespace Cursus.UnitTest.Services
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private Mock<IInstructorInfoRepository> _instructorInfoRepositoryMock;
 
-        [SetUp]
-        public void Setup()
-        {
-            var store = new Mock<IUserStore<ApplicationUser>>();
-            _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
+        //[SetUp]
+        //public void Setup()
+        //{
+        //    var store = new Mock<IUserStore<ApplicationUser>>();
+        //    _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
 
-            _instructorInfoRepositoryMock = new Mock<IInstructorInfoRepository>();
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _unitOfWorkMock.Setup(u => u.InstructorInfoRepository).Returns(_instructorInfoRepositoryMock.Object);
+        //    _instructorInfoRepositoryMock = new Mock<IInstructorInfoRepository>();
+        //    _unitOfWorkMock = new Mock<IUnitOfWork>();
+        //    _unitOfWorkMock.Setup(u => u.InstructorInfoRepository).Returns(_instructorInfoRepositoryMock.Object);
 
-            _instructorService = new InstructorService(_userManagerMock.Object, _unitOfWorkMock.Object);
-        }
+        //    _instructorService = new InstructorService(_userManagerMock.Object, _unitOfWorkMock.Object);
+        //}
 
         private bool Isvalid(object model, out List<ValidationResult> results)
         {

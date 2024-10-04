@@ -22,14 +22,19 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
+        /// <summary>
+        /// Create course
+        /// </summary>
+        /// <param name="courseDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCourse([FromBody] CourseDTO courseDto)
+        public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
         {
             try
             {
-                var createdCourse = await _courseService.CreateCourseWithSteps(courseDto);
+                var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
 
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
@@ -45,6 +50,12 @@ namespace Cursus.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Update course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="courseDto"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,6 +89,12 @@ namespace Cursus.API.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Detele course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -110,6 +127,16 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+        /// <summary>
+        /// Get all courses with pagination
+        /// </summary>
+        /// <param name="searchTerm"></param>
+        /// <param name="sortColumn"></param>
+        /// <param name="sortOrder"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<APIResponse>> GetAllCourses([FromQuery] string? searchTerm,
         [FromQuery] string? sortColumn,
@@ -153,6 +180,13 @@ namespace Cursus.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Get course by user's ID
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet("courses/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

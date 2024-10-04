@@ -16,39 +16,37 @@ namespace Cursus.API.Controllers
         {
             _adminService = adminService;
         }
-
+        /// <summary>
+        /// Modify user's status
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         // POST api/admin/toggleuserstatus?userId=someUserId
         [HttpPost("toggle-user-status")]
         public async Task<IActionResult> ToggleUserStatus(string userId)
         {
             var apiResponse = new APIResponse();
 
-            try
+            var result = await _adminService.ToggleUserStatusAsync(userId);
+            if (result)
             {
-                var result = await _adminService.ToggleUserStatusAsync(userId);
-                if (result)
-                {
-                    apiResponse.StatusCode = HttpStatusCode.OK;
-                    apiResponse.IsSuccess = true;
-                    apiResponse.Result = "User status has been updated";
-                }
-                else
-                {
-                    apiResponse.StatusCode = HttpStatusCode.BadRequest;
-                    apiResponse.IsSuccess = false;
-                    apiResponse.ErrorMessages.Add("Failed to update user status");
-                }
+                apiResponse.StatusCode = HttpStatusCode.OK;
+                apiResponse.IsSuccess = true;
+                apiResponse.Result = "User status has been updated";
             }
-            catch (Exception ex)
+            else
             {
-                apiResponse.StatusCode = HttpStatusCode.InternalServerError;
+                apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 apiResponse.IsSuccess = false;
-                apiResponse.ErrorMessages.Add(ex.Message);
+                apiResponse.ErrorMessages.Add("Failed to update user status");
             }
-
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
         }
 
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns></returns>
         // GET api/admin/manageusers
         [HttpGet("manage-users")]
         public async Task<IActionResult> ManageUsers()
@@ -83,3 +81,4 @@ namespace Cursus.API.Controllers
         }
     }
 }
+

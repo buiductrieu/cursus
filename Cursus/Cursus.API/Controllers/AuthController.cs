@@ -29,6 +29,11 @@ namespace Cursus.API.Controllers
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Login for user
+        /// </summary>
+        /// <param name="LoginRequestDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -54,6 +59,11 @@ namespace Cursus.API.Controllers
 
         }
 
+        /// <summary>
+        /// Register for user
+        /// </summary>
+        /// <param name="UserRegisterDTO"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,39 +75,32 @@ namespace Cursus.API.Controllers
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.Result = ModelState;
             }
-            try
-            {
-                var result = await _authService.RegisterAsync(dto);
-                if (result != null)
-                {
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(result);
-                    var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { token = token, username = result.UserName }, Request.Scheme);
-                    _emailService.SendEmailConfirmation(result.UserName, confirmationLink);
-                    _response.IsSuccess = true;
-                    _response.StatusCode = HttpStatusCode.OK;
-                    _response.Result = result;
-                    return Ok(_response);
-                }
-                else
-                {
+            var result = await _authService.RegisterAsync(dto);
 
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.ErrorMessages.Add("Can not register user");
-                    return BadRequest(_response);
-                }
-            }
-            catch (Exception e)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add(e.Message);
-                return BadRequest(_response);
-            }
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(result);
+
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { token = token, username = result.UserName }, Request.Scheme);
+
+            _emailService.SendEmailConfirmation(result.UserName, confirmationLink);
+
+            _response.IsSuccess = true;
+
+            _response.StatusCode = HttpStatusCode.OK;
+
+            _response.Result = result;
+
+            return Ok(_response);
+
         }
 
+        /// <summary>
+        /// Confirm email
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
         [HttpGet("confirm-email")]
-        public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token,[FromQuery]string username)
+        public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token, [FromQuery] string username)
         {
             try
             {
