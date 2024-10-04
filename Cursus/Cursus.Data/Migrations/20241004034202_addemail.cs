@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class addemail : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -234,7 +236,7 @@ namespace Cursus.Data.Migrations
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsFlagged = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -245,8 +247,7 @@ namespace Cursus.Data.Migrations
                         name: "FK_CourseComments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CourseComments_Courses_CourseId",
                         column: x => x.CourseId,
@@ -379,6 +380,16 @@ namespace Cursus.Data.Migrations
                         principalTable: "Steps",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "4b8e7d7d-c58d-46e7-84bd-a2e64d1820ca", null, "Admin", "ADMIN" },
+                    { "7e2d838c-79f9-479d-9c70-0c5005c58762", null, "Instructor", "INSTRUCTOR" },
+                    { "b589672a-8887-4ede-81bc-abbae0e83ec6", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
