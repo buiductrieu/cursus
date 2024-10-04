@@ -225,8 +225,8 @@ namespace Cursus.Service.Services
                 throw new KeyNotFoundException("Course not found.");
 
 
-          
-            await _unitOfWork.CourseRepository.DeleteAsync(existingCourse);
+
+            existingCourse.Status = false;
             await _unitOfWork.SaveChanges();
 
             return true; 
