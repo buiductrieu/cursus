@@ -51,7 +51,8 @@ namespace Cursus.Common.Helper
 			//Course mapper
 			CreateMap<CourseDTO, Course>()
 			   .ForMember(dest => dest.Id, opt => opt.Ignore())
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
 			CreateMap<Course, CourseDTO>()
 			.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));

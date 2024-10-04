@@ -26,7 +26,7 @@ namespace Cursus.Repository.Repository
             {
                 throw new KeyNotFoundException("Course not found");
             }
-            return course!;
+            return course;
         }
     }
 }
