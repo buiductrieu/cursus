@@ -12,6 +12,8 @@ namespace Cursus.Data.DTO
 		[Required]
 		public int CategoryId { get; set; }
 		public DateTime DateCreated { get; set; }
+
+		public DateTime DateModified { get; set; }
 		[Required]
 		public bool Status { get; set; }
 		[Required]

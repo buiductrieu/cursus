@@ -22,6 +22,7 @@ namespace Cursus.Data.Entities
         
         public DateTime DateCreated { get; set; }
         
+        public DateTime DateModified { get; set; }
         public bool Status { get; set; }
         
         public double Price { get; set; }
