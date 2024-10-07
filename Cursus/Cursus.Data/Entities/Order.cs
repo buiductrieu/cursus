@@ -16,8 +16,5 @@ namespace Cursus.Data.Entities
         public int CartId { get; set; }
         public Cart? Cart { get; set; }
         public DateTime DateCreated { get; set; }
-        [ForeignKey("Transaction")]
-        public int TransactionId { get; set; }
-        public Transaction? Transaction { get; set; }
     }
 }

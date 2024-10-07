@@ -12,7 +12,6 @@ namespace Cursus.Data.Entities
     {
         [Key]
         public int TransactionId { get; set; }
-        public string? TransactionNumber { get; set; }
         [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
@@ -20,10 +19,16 @@ namespace Cursus.Data.Entities
         public int OrderId { get; set; }
         public Order? Order { get; set; }
 
-        public decimal Amount { get; set; }
+        public double Amount { get; set; }
         public DateTime DateCreated { get; set; }
-        public Enum PaymentMethod { get; set; } 
-        public Enum PaymentStatus { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public PaymentStatus Status { get; set; }
         public string Token { get; set; } = string.Empty;
+    }
+    public enum PaymentStatus
+    {
+        PendingPayment,
+        Paid,
+        Failed
     }
 }

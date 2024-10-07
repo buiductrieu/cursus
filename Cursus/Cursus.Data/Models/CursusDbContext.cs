@@ -34,6 +34,8 @@ namespace Cursus.Data.Models
         public virtual DbSet<CourseComment> CourseComments { get; set; } = null!;
         public virtual DbSet<Cart> Cart { get; set; } = null!;
         public virtual DbSet<CartItems> CartItems { get; set; } = null!;
+        public virtual DbSet<Order> Order { get; set; } = null!;
+        public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
