@@ -176,7 +176,13 @@ namespace Cursus.Service.Services
             if (courseExists)
                 throw new BadHttpRequestException("Course name must be unique.");
 
-            if (courseDTO.Steps == null || !courseDTO.Steps.Any())
+			var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == courseDTO.CategoryId);
+			if (category == null)
+				throw new BadHttpRequestException("Category does not exist.");
+			if (category.IsParent)
+				throw new BadHttpRequestException("Cannot assign a parent category to a course.");
+
+			if (courseDTO.Steps == null || !courseDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
             var course = _mapper.Map<Course>(courseDTO);
