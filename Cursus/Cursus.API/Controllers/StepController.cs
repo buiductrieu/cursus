@@ -1,0 +1,75 @@
+﻿using Azure;
+using Cursus.Common.Helper;
+using Cursus.Data.DTO;
+using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+
+namespace Cursus.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class StepController : ControllerBase
+    {   
+        private readonly IStepService _stepService;
+        private readonly APIResponse _response;
+
+        public StepController(IStepService stepService, APIResponse response)
+        {
+            _stepService = stepService;
+            _response = response;
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> CreateStep([FromBody] CreateStepDTO createStepDTO)
+        {
+            // Validate the DTO 
+            if (!ModelState.IsValid)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(_response);
+            }
+
+            var stepDTO = await _stepService.CreateStep(createStepDTO);
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.Created;
+            _response.Result = stepDTO;
+
+            return CreatedAtAction("GetStepById", new { id = stepDTO.Id }, _response);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetStepById(int id)
+        {
+            var stepDTO = await _stepService.GetStepByIdAsync(id);
+            if (stepDTO == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Step not found.");
+                return NotFound(_response);
+            }
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = stepDTO;
+
+            return Ok(_response);
+        }
+
+
+       
+    }
+}

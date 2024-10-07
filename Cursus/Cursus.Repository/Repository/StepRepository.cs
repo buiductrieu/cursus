@@ -1,6 +1,7 @@
 ﻿using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cursus.Repository.Repository
 {
@@ -8,5 +9,12 @@ namespace Cursus.Repository.Repository
 	{
 		private readonly CursusDbContext _db;
 		public StepRepository(CursusDbContext db) : base(db) => _db = db;
-	}
+
+        public async Task<Step> GetByIdAsync(int id)
+        {
+            // Sử dụng phương thức FindAsync để tìm StepContent theo Id
+            return await _db.Steps
+                                   .FirstOrDefaultAsync(s => s.Id == id) ?? throw new KeyNotFoundException("Step is not found");
+        }
+    }
 }

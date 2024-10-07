@@ -57,16 +57,22 @@ namespace Cursus.Common.Helper
 			CreateMap<Course, CourseDTO>()
 			.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
-			//Step mapper
-			CreateMap<StepDTO, Step>()
-			   .ForMember(dest => dest.Id, opt => opt.Ignore())
-			   .ForMember(dest => dest.CourseId, opt => opt.Ignore())
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+            // Step Mapping
+            CreateMap<StepDTO, Step>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
-			CreateMap<Step, StepDTO>();
+            CreateMap<Step, StepDTO>();
 
-			// StepContent Mapping
-			CreateMap<StepContentDTO, StepContent>()
+            // CreateStepDTO Mapping (newly added)
+            CreateMap<CreateStepDTO, Step>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+            // StepContent Mapping
+            CreateMap<StepContentDTO, StepContent>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore the Id field for creation
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // StepId mapping
                 .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
