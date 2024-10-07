@@ -30,33 +30,23 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
-        {
-            try
-            {
-                var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
+		public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
+		{
+			var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
 
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = createdCourse;
-                return Ok(_response);
-            }
-            catch (Exception e)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add(e.Message);
-                return BadRequest(_response);
-            }
-        }
+			_response.IsSuccess = true;
+			_response.StatusCode = HttpStatusCode.OK;
+			_response.Result = createdCourse;
+			return Ok(_response);
+		}
 
-        /// <summary>
-        /// Update course
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="courseDto"></param>
-        /// <returns></returns>
-        [HttpPut("{id}")]
+		/// <summary>
+		/// Update course
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="courseDto"></param>
+		/// <returns></returns>
+		[HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

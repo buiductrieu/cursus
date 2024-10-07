@@ -8,12 +8,12 @@ namespace Cursus.Data.Entities
     public class Cart
     {
         [Key]
-        public int Id { get; set; }
-        
+        public int CartId { get; set; }
+        public Boolean IsPurchased { get; set; }
+
         [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
         public ApplicationUser? User { get; set; }
-        public DateTime DateCreated { get; set; }
         
         public ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
     }
