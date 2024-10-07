@@ -402,4 +402,6 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/csharp
 arrow
 
-appsettings.Development.json
+appsettings.json
+
+appsettings.Production.json
