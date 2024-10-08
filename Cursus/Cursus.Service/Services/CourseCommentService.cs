@@ -24,9 +24,22 @@ namespace Cursus.Service.Services
             _userManager = userManager;
         }
 
-        public Task<CourseCommentDTO> DeleteComment(int courseId)
+        public async Task<CourseCommentDTO> DeleteComment(int commentId)
         {
-            throw new NotImplementedException();
+            var courseComment = await _unitOfWork.CourseCommentRepository.GetAsync(c => c.Id == commentId, includeProperties: "User,Course");
+
+            if (courseComment == null)
+            {
+                throw new KeyNotFoundException("Comment not found");
+            }
+
+            courseComment.IsFlagged = true;
+
+            await _unitOfWork.CourseCommentRepository.UpdateAsync(courseComment);
+
+            await _unitOfWork.SaveChanges();
+
+            return _mapper.Map<CourseCommentDTO>(courseComment);
         }
 
         public async Task<IEnumerable<CourseCommentDTO>> GetCourseCommentsAsync(int courseId)
