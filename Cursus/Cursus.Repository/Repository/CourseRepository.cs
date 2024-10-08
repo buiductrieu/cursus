@@ -28,5 +28,27 @@ namespace Cursus.Repository.Repository
             }
             return course;
         }
+
+        public async Task UpdateCourseRating(int courseId)
+        {
+            var course = await _db.Courses.FirstOrDefaultAsync(c => c.Id == courseId);
+            if (course == null)
+            {
+                throw new KeyNotFoundException("Course not found");
+            }
+
+            var listRating = await _db.CourseComments.Where(c => c.CourseId == courseId).Select(c => c.Rating).ToListAsync();
+
+            if (listRating.Count == 0)
+            {
+                course.Rating = 0;
+            }
+            else
+            {
+                course.Rating = listRating.Average();
+            }
+
+            _db.Update(course);
+        }
     }
 }

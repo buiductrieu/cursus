@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CartUpdateV3 : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -230,6 +230,7 @@ namespace Cursus.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Discount = table.Column<int>(type: "int", nullable: false),
@@ -484,9 +485,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3112a5d6-b2f4-4910-8af5-73b0548945d3", null, "Instructor", "INSTRUCTOR" },
-                    { "5f28a903-9f58-4b4f-b9ba-1ea8bee29599", null, "Admin", "ADMIN" },
-                    { "728d5852-d47f-449c-a0bb-0128323606b1", null, "User", "USER" }
+                    { "b1571cfe-8e2d-4266-91fc-a4e26994715f", null, "User", "USER" },
+                    { "c70c1b51-87ad-425f-af46-33468c8cdf4c", null, "Instructor", "INSTRUCTOR" },
+                    { "d4293913-18e1-4e58-9698-9acda54c7606", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

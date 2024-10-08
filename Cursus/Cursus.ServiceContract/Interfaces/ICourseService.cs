@@ -17,5 +17,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO);
 
         Task<bool> DeleteCourse(int courseId);
+
+        Task<CourseDTO> GetCourseByIdAsync(int courseId);
     }
 }

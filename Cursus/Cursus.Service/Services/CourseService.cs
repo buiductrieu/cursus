@@ -241,5 +241,18 @@ namespace Cursus.Service.Services
             return true; 
         }
 
+        public async Task<CourseDTO> GetCourseByIdAsync(int courseId)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                throw new KeyNotFoundException("Course not found");
+            }
+
+            var output = _mapper.Map<CourseDTO>(course);
+
+            return output;
+        }
     }
 }
