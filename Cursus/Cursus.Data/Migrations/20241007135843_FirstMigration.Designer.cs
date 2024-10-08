@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241007081928_CartUpdateV3")]
-    partial class CartUpdateV3
+    [Migration("20241007135843_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -191,6 +191,9 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -541,19 +544,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5f28a903-9f58-4b4f-b9ba-1ea8bee29599",
+                            Id = "d4293913-18e1-4e58-9698-9acda54c7606",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3112a5d6-b2f4-4910-8af5-73b0548945d3",
+                            Id = "c70c1b51-87ad-425f-af46-33468c8cdf4c",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "728d5852-d47f-449c-a0bb-0128323606b1",
+                            Id = "b1571cfe-8e2d-4266-91fc-a4e26994715f",
                             Name = "User",
                             NormalizedName = "USER"
                         });

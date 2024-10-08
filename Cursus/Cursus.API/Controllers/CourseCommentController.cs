@@ -20,6 +20,11 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
+        /// <summary>
+        /// Comment on a course
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost("post-comment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> PostComment([FromBody] CourseCommentCreateDTO dto)
@@ -31,6 +36,21 @@ namespace Cursus.API.Controllers
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
 
+        }
+
+        /// <summary>
+        /// Get all comment of a course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("comment-of-course/{id}")]
+        public async Task<ActionResult<APIResponse>> ActionResult(int id)
+        {
+            var comments = await _courseCommentService.GetCourseCommentsAsync(id);
+            _response.Result = comments;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
         }
     }
 }

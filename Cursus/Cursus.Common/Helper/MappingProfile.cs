@@ -95,6 +95,10 @@ namespace Cursus.Common.Helper
                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateCreated))
                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
+            CreateMap<CourseCommentDTO, CourseComment>()
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
             // StepComment Mapping
             CreateMap<StepComment, StepCommentDTO>()
                 .ForMember(dest => dest.CommentId, opt => opt.MapFrom(src => src.Id))

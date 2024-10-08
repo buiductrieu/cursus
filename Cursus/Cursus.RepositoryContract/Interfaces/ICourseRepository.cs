@@ -12,5 +12,6 @@ namespace Cursus.RepositoryContract.Interfaces
     {
 		Task<bool> AnyAsync(Expression<Func<Course, bool>> predicate); 
 		Task<Course> GetAllIncludeStepsAsync(int courseId);
+		Task UpdateCourseRating(int courseId);
 	}
 }
