@@ -37,7 +37,7 @@ namespace Cursus.Repository.Repository
                 throw new KeyNotFoundException("Course not found");
             }
 
-            var listRating = await _db.CourseComments.Where(c => c.CourseId == courseId).Select(c => c.Rating).ToListAsync();
+            var listRating = await _db.CourseComments.Where(c => c.CourseId == courseId && c.IsFlagged == false).Select(c => c.Rating).ToListAsync();
 
             if (listRating.Count == 0)
             {
@@ -45,7 +45,7 @@ namespace Cursus.Repository.Repository
             }
             else
             {
-                course.Rating = listRating.Average();
+                course.Rating = Math.Round(listRating.Average(),2);
             }
 
             _db.Update(course);

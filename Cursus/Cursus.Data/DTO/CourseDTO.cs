@@ -24,6 +24,6 @@ namespace Cursus.Data.DTO
 		public int Discount { get; set; }
 		public DateTime StartedDate { get; set; }
 		public List<StepDTO> Steps { get; set; }
-		public double Rating { get; set; }
+        public double Rating { get; set; }
 	}
 }

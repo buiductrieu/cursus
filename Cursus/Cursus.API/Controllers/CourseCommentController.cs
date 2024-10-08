@@ -25,7 +25,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [HttpPost("post-comment")]
+        [HttpPost("comment-courses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> PostComment([FromBody] CourseCommentCreateDTO dto)
         {
@@ -43,11 +43,26 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("comment-of-course/{id}")]
-        public async Task<ActionResult<APIResponse>> ActionResult(int id)
+        [HttpGet("comment-courses/{id}")]
+        public async Task<ActionResult<APIResponse>> GetCourseComment(int id)
         {
             var comments = await _courseCommentService.GetCourseCommentsAsync(id);
             _response.Result = comments;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Delete comment of a course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost("comment-courses/{id}")]
+        public async Task<ActionResult<APIResponse>> DeleteComment(int id)
+        {
+            var comment = await _courseCommentService.DeleteComment(id);
+            _response.Result = comment;
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
