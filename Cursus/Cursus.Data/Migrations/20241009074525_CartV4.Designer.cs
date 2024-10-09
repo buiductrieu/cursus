@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241007035809_Authentication")]
-    partial class Authentication
+    [Migration("20241009074525_CartV4")]
+    partial class CartV4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,9 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AdminComment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -96,6 +99,53 @@ namespace Cursus.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<bool>("IsPurchased")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Cart");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.CartItems", b =>
+                {
+                    b.Property<int>("CartItemsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemsId"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("CartItemsId");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -141,6 +191,9 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -305,6 +358,33 @@ namespace Cursus.Data.Migrations
                     b.ToTable("InstructorInfos");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("PaidAmount")
+                        .HasColumnType("float");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("CartId");
+
+                    b.ToTable("Order");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -433,6 +513,43 @@ namespace Cursus.Data.Migrations
                     b.ToTable("StepContents");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Transaction", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -462,19 +579,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a8632a4e-493e-4382-9529-b347cdbaf50b",
+                            Id = "c62888ce-31ce-471d-9c2f-ab30d40b66bb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "e4ee148b-18d9-4f4d-a9df-e2689ce204e1",
+                            Id = "0ee20f7e-01e5-448c-bd95-9bea8efd4ae3",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "17649fca-5f67-4c36-b0c7-d769fe54e235",
+                            Id = "47231feb-9488-4524-854a-582a65bb2e58",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -586,6 +703,34 @@ namespace Cursus.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.CartItems", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Course", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Category", "Category")
@@ -653,6 +798,17 @@ namespace Cursus.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Order", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
@@ -703,6 +859,23 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Step");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Transaction", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -759,6 +932,11 @@ namespace Cursus.Data.Migrations
             modelBuilder.Entity("Cursus.Data.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("CourseProgresses");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
+                {
+                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Category", b =>

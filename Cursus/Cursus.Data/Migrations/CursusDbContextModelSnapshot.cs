@@ -355,6 +355,33 @@ namespace Cursus.Data.Migrations
                     b.ToTable("InstructorInfos");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("PaidAmount")
+                        .HasColumnType("float");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("CartId");
+
+                    b.ToTable("Order");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -491,9 +518,6 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -552,19 +576,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a8632a4e-493e-4382-9529-b347cdbaf50b",
+                            Id = "c62888ce-31ce-471d-9c2f-ab30d40b66bb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "e4ee148b-18d9-4f4d-a9df-e2689ce204e1",
+                            Id = "0ee20f7e-01e5-448c-bd95-9bea8efd4ae3",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "17649fca-5f67-4c36-b0c7-d769fe54e235",
+                            Id = "47231feb-9488-4524-854a-582a65bb2e58",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -769,6 +793,17 @@ namespace Cursus.Data.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Order", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class CartV4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -221,6 +221,29 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Expries = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Revoked = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
@@ -255,7 +278,9 @@ namespace Cursus.Data.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    PaidAmount = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -407,7 +432,6 @@ namespace Cursus.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -485,9 +509,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "b1571cfe-8e2d-4266-91fc-a4e26994715f", null, "User", "USER" },
-                    { "c70c1b51-87ad-425f-af46-33468c8cdf4c", null, "Instructor", "INSTRUCTOR" },
-                    { "d4293913-18e1-4e58-9698-9acda54c7606", null, "Admin", "ADMIN" }
+                    { "0ee20f7e-01e5-448c-bd95-9bea8efd4ae3", null, "Instructor", "INSTRUCTOR" },
+                    { "47231feb-9488-4524-854a-582a65bb2e58", null, "User", "USER" },
+                    { "c62888ce-31ce-471d-9c2f-ab30d40b66bb", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -585,6 +609,11 @@ namespace Cursus.Data.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StepComments_StepId",
                 table: "StepComments",
                 column: "StepId");
@@ -647,6 +676,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "InstructorInfos");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "StepComments");

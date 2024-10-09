@@ -26,6 +26,8 @@ namespace Cursus.Repository.Repository
         public IRefreshTokenRepository RefreshTokenRepository { get; }
         public IStepCommentRepository StepCommentRepository { get; }
         public IProgressRepository ProgressRepository { get; }
+        public ICart Cart { get; }
+        public ICartItems CartItems { get; }
 
         public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository)
         {
