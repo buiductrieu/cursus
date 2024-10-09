@@ -11,7 +11,10 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IAuthService
     {
         Task<LoginResponseDTO> LoginAsync(LoginRequestDTO loginRequestDTO);
+        Task LogoutAsync(string refreshToken);
         public Task<ApplicationUser> RegisterAsync(UserRegisterDTO dto);
         Task<bool> ConfirmEmail(string username, string token);
+        Task<RefreshToken> GetRefreshTokenAsync(ApplicationUser user);
+        Task<LoginResponseDTO> RefreshTokenAsync(string token);
     }
 }
