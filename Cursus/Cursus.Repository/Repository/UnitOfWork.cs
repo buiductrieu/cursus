@@ -23,8 +23,9 @@ namespace Cursus.Repository.Repository
         public IStepContentRepository StepContentRepository { get; }
         public UserManager<ApplicationUser> UserManager { get; }
         public ICourseCommentRepository CourseCommentRepository { get; }
+        public IRefreshTokenRepository RefreshTokenRepository { get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -35,6 +36,7 @@ namespace Cursus.Repository.Repository
             UserManager = userManager;
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
+            RefreshTokenRepository  = refreshTokenRepository;
         }
 
         public IInstructorInfoRepository InstructorInfoRepository
