@@ -12,6 +12,7 @@ namespace Cursus.ServiceContract.Interfaces
     {
         public Task<IEnumerable<CourseCommentDTO>> GetCourseCommentsAsync(int courseId);
         public Task<CourseCommentDTO> PostComment (CourseCommentCreateDTO courseComment);
-        public Task<CourseCommentDTO> DeleteComment (int courseId);
+        public Task<CourseCommentDTO> DeleteComment (int commentId);
+        public Task<bool> IsEnrolledCourse(string userId, int courseId);
     }
 }
