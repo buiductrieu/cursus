@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,7 +49,7 @@ namespace Cursus.Service.Services
             }
 
             var token = await GenerateJwtToken(user);
-
+            var refreshToken = await GetRefreshTokenAsync(user);
             var userDTO = _mapper.Map<UserDTO>(user);
 
             var role = await _userManager.GetRolesAsync(user); 
@@ -57,6 +58,7 @@ namespace Cursus.Service.Services
             {
                 User = userDTO,
                 Token = token,
+                RefreshToken = refreshToken.Token,
                 Role = role
             };
             
@@ -148,6 +150,58 @@ namespace Cursus.Service.Services
             var user = await _userManager.FindByEmailAsync(username) ?? throw (new BadHttpRequestException("User not found"));
             var result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded;
+        }
+
+        public async Task<RefreshToken> GetRefreshTokenAsync(ApplicationUser user)
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                UserId = user.Id,
+                Expries = DateTime.UtcNow.AddDays(7),//Refresh hết hạn sau 7 ngày
+                Created = DateTime.UtcNow
+            };
+            _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.SaveChanges();   
+            return refreshToken;
+        }
+
+        public async Task<LoginResponseDTO> RefreshTokenAsync(string token)
+        {
+            var findToken = await _unitOfWork.RefreshTokenRepository.GetRefreshTokenAsync(token);
+            if (findToken == null || !findToken.IsActive)
+                throw new BadHttpRequestException("Invalid or expried refresh token");
+
+            var user = await _userManager.FindByIdAsync(findToken.UserId);
+            if (user == null)
+                throw new KeyNotFoundException("User not found");
+
+            var newAccessToken = await GenerateJwtToken(user);
+
+            var newRefreshToken = await GetRefreshTokenAsync(user);
+            findToken.Revoked = DateTime.UtcNow;
+            _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
+            await _unitOfWork.SaveChanges();
+            return new LoginResponseDTO
+            {
+                User = _mapper.Map<UserDTO>(user),
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken.Token,
+                Role = await _userManager.GetRolesAsync(user),
+            };
+
+        }
+
+        public async Task LogoutAsync(string refreshToken)
+        {
+            var findToken = await _unitOfWork.RefreshTokenRepository.GetRefreshTokenAsync(refreshToken);
+            if (findToken == null || !findToken.IsActive)
+                throw new Exception("Invalid or expired refresh token");
+
+            findToken.Revoked = DateTime.UtcNow;
+
+            _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
+            await _unitOfWork.SaveChanges();
         }
     }
 }

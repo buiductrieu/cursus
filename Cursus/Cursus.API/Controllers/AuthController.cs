@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
+using Cursus.Data.DTO.Category;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
@@ -7,12 +8,14 @@ using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -57,6 +60,48 @@ namespace Cursus.API.Controllers
 
             }
 
+        }
+        /// <summary>
+        /// RefreshToken
+        /// </summary>
+        /// <param name="refreshTokenRequest"></param>
+        /// <returns></returns>
+        [HttpPost("refresh-token")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO refreshTokenRequest)
+        {
+            var responseDTO = await _authService.RefreshTokenAsync(refreshTokenRequest.RefreshToken);
+
+            return Ok(new APIResponse
+            {
+                IsSuccess = true,
+                StatusCode = HttpStatusCode.OK,
+                Result = responseDTO
+            });
+        }
+        /// <summary>
+        /// Logout
+        /// </summary>
+        /// <param name="logoutRequest"></param>
+        /// <returns></returns>
+        [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequestDTO logoutRequest)
+        {
+            // Gọi phương thức LogoutAsync để thu hồi Refresh Token
+            await _authService.LogoutAsync(logoutRequest.RefreshToken);
+
+            // Trả về phản hồi thành công sau khi đã thu hồi Refresh Token
+            return Ok(new APIResponse
+            {
+                IsSuccess = true,
+                StatusCode = HttpStatusCode.OK,
+                Result = "Logged out successfully"
+            });
         }
 
         /// <summary>
@@ -124,6 +169,9 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+
+
+        
     }
 
 }

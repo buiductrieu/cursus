@@ -4,12 +4,14 @@ using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;
