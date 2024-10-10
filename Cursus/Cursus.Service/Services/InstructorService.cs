@@ -92,10 +92,10 @@ namespace Cursus.Service.Services
             return result;
         }
 
-        public async Task<bool> ApproveInstructorAsync (string instructorId)
+        public async Task<bool> ApproveInstructorAsync(string instructorId)
         {
             var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
-            if (instructorInfo == null) return false;
+            if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Approved;
             await _unitOfWork.InstructorInfoRepository.UpdateAsync(instructorInfo);
@@ -113,10 +113,11 @@ namespace Cursus.Service.Services
             return true;
         }
 
+
         public async Task<bool> RejectInstructorAsync(string instructorId)
         {
             var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
-            if (instructorInfo == null) return false;
+            if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Rejected;
             await _unitOfWork.InstructorInfoRepository.UpdateAsync(instructorInfo);
