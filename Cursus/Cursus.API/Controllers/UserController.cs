@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
@@ -10,6 +11,7 @@ namespace Cursus.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class UserController : ControllerBase
 
     {
