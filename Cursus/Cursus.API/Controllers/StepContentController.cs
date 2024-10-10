@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.IO;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class StepContentController : ControllerBase
     {
         private readonly IStepContentService _stepContentService;
