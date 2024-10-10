@@ -9,6 +9,7 @@ namespace Cursus.Data.DTO
     public class StepCommentCreateDTO
     {
         public string? Content { get; set; }
+        public int CourseId { get; set; }
         public int StepId { get; set; }
         public string UserId { get; set; } = string.Empty;
     }

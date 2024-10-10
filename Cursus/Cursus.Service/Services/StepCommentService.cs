@@ -23,7 +23,11 @@ namespace Cursus.Service.Services
             _mapper = mapper;
             _userManager = userManager;
         }
-
+        public async Task<bool> IsEnrolledCourse(string userId, int courseId)
+        {
+            bool isEnrolled = await _unitOfWork.ProgressRepository.GetAsync(u => u.UserId == userId && u.CourseId == courseId) != null;
+            return isEnrolled;
+        }
         public async Task<StepCommentDTO> PostStepComment(StepCommentCreateDTO stepComment)
         {
             var user = await _userManager.FindByIdAsync(stepComment.UserId);
@@ -36,6 +40,12 @@ namespace Cursus.Service.Services
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
                 throw new UnauthorizedAccessException("Your email is not confirmed. Please verify your email before commenting.");
+            }
+
+            // check user enroll course
+            if (!await IsEnrolledCourse(stepComment.UserId, stepComment.CourseId))
+            {
+                throw new UnauthorizedAccessException("You are not enrolled in this course, so you cannot comment on this step.");
             }
 
             var comment = _mapper.Map<StepComment>(stepComment);
