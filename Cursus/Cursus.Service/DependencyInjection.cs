@@ -2,6 +2,7 @@
 using Cursus.Data.Models;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,8 +30,9 @@ namespace Cursus.Service
             services.AddTransient<IStepCommentService, StepCommentService>();
             services.AddTransient<IBookmarkService, BookmarkService>();
             services.AddTransient<IStepService, StepService>();
+			services.AddTransient<ICartService, CartService>();
 
-            return services;
+			return services;
         }
     }
 }

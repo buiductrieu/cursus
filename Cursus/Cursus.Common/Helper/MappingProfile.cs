@@ -132,6 +132,13 @@ namespace Cursus.Common.Helper
 
             CreateMap<Course, CourseDetailDTO>()
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
-        }
+
+			//Cart Mapping
+			CreateMap<CartDTO, Cart>().ReverseMap();
+
+			//CartItems Mapping
+			CreateMap<CartItems, CartItemsDTO>()
+				.ForPath(dest => dest.Name, opt => opt.MapFrom(src => src.Course.Name)).ReverseMap();
+		}
     }
 }

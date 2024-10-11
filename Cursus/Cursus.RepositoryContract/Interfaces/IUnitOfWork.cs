@@ -23,7 +23,8 @@ namespace Cursus.RepositoryContract.Interfaces
         IRefreshTokenRepository RefreshTokenRepository { get; }
         IProgressRepository ProgressRepository { get; }
         IStepCommentRepository StepCommentRepository { get; }
-        Task SaveChanges();
+		ICartRepository CartRepository { get; }
+		Task SaveChanges();
 
 
     }
