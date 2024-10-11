@@ -27,8 +27,10 @@ namespace Cursus.Repository.Repository
         public IStepCommentRepository StepCommentRepository { get; }
         public IProgressRepository ProgressRepository { get; }
 		public ICartRepository CartRepository { get; }
+		public IOrderRepository OrderRepository { get; }
 
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository)
+
+		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -43,6 +45,7 @@ namespace Cursus.Repository.Repository
             StepCommentRepository = stepCommentRepository;
             ProgressRepository = progressRepository;
             CartRepository = cartRepository;
+            OrderRepository = orderRepository;
         }
 
         public IInstructorInfoRepository InstructorInfoRepository
