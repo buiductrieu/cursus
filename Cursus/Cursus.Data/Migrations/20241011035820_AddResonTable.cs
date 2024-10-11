@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addemail : Migration
+    public partial class AddResonTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -309,7 +309,28 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Steps",
+                name: "Reason",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    DateCancel = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reason", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reason_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Step",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -322,9 +343,9 @@ namespace Cursus.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Steps", x => x.Id);
+                    table.PrimaryKey("PK_Step", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Steps_Courses_CourseId",
+                        name: "FK_Step_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -352,9 +373,9 @@ namespace Cursus.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StepComments_Steps_StepId",
+                        name: "FK_StepComments_Step_StepId",
                         column: x => x.StepId,
-                        principalTable: "Steps",
+                        principalTable: "Step",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -375,9 +396,9 @@ namespace Cursus.Data.Migrations
                 {
                     table.PrimaryKey("PK_StepContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StepContents_Steps_StepId",
+                        name: "FK_StepContents_Step_StepId",
                         column: x => x.StepId,
-                        principalTable: "Steps",
+                        principalTable: "Step",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -387,9 +408,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4b8e7d7d-c58d-46e7-84bd-a2e64d1820ca", null, "Admin", "ADMIN" },
-                    { "7e2d838c-79f9-479d-9c70-0c5005c58762", null, "Instructor", "INSTRUCTOR" },
-                    { "b589672a-8887-4ede-81bc-abbae0e83ec6", null, "User", "USER" }
+                    { "38011753-19c6-41b9-872b-be2e8411d7c7", null, "User", "USER" },
+                    { "7769ed0c-9002-40d9-92cc-1275f299c8e1", null, "Instructor", "INSTRUCTOR" },
+                    { "f9e332dd-b6c9-42e9-be3d-7ad4ad8c10e4", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -467,6 +488,16 @@ namespace Cursus.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reason_CourseId",
+                table: "Reason",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Step_CourseId",
+                table: "Step",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StepComments_StepId",
                 table: "StepComments",
                 column: "StepId");
@@ -480,11 +511,6 @@ namespace Cursus.Data.Migrations
                 name: "IX_StepContents_StepId",
                 table: "StepContents",
                 column: "StepId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Steps_CourseId",
-                table: "Steps",
-                column: "CourseId");
         }
 
         /// <inheritdoc />
@@ -518,6 +544,9 @@ namespace Cursus.Data.Migrations
                 name: "InstructorInfos");
 
             migrationBuilder.DropTable(
+                name: "Reason");
+
+            migrationBuilder.DropTable(
                 name: "StepComments");
 
             migrationBuilder.DropTable(
@@ -530,7 +559,7 @@ namespace Cursus.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Steps");
+                name: "Step");
 
             migrationBuilder.DropTable(
                 name: "Courses");

@@ -302,6 +302,31 @@ namespace Cursus.Data.Migrations
                     b.ToTable("InstructorInfos");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCancel")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Reason");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
                 {
                     b.Property<int>("Id")
@@ -331,7 +356,7 @@ namespace Cursus.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Steps");
+                    b.ToTable("Step");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.StepComment", b =>
@@ -427,19 +452,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b8e7d7d-c58d-46e7-84bd-a2e64d1820ca",
+                            Id = "f9e332dd-b6c9-42e9-be3d-7ad4ad8c10e4",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7e2d838c-79f9-479d-9c70-0c5005c58762",
+                            Id = "7769ed0c-9002-40d9-92cc-1275f299c8e1",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "b589672a-8887-4ede-81bc-abbae0e83ec6",
+                            Id = "38011753-19c6-41b9-872b-be2e8411d7c7",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -618,6 +643,17 @@ namespace Cursus.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany("Reasons")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.Course", "Course")
@@ -725,6 +761,8 @@ namespace Cursus.Data.Migrations
                     b.Navigation("CourseComments");
 
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Reasons");
 
                     b.Navigation("Steps");
                 });
