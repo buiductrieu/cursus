@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241011033950_Migrations")]
+    [Migration("20241011074021_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -97,6 +97,31 @@ namespace Cursus.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Bookmarks");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
@@ -579,19 +604,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cbffcf5d-f40d-4252-b641-dd04176d8e22",
+                            Id = "b178610b-616b-4362-b022-67247ef6a9d6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "522a4cf3-ef59-432e-bdf6-07d3c881ae0f",
+                            Id = "a16c7588-b695-4858-8c99-0a1209415e44",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "a0391d08-c897-41cf-a356-9ef62a3051ec",
+                            Id = "92e2a8b0-07c7-40ba-b174-6d117d7fc0cc",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -701,6 +726,17 @@ namespace Cursus.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>

@@ -293,6 +293,27 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bookmarks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookmarks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookmarks_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CartItems",
                 columns: table => new
                 {
@@ -509,9 +530,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "522a4cf3-ef59-432e-bdf6-07d3c881ae0f", null, "Instructor", "INSTRUCTOR" },
-                    { "a0391d08-c897-41cf-a356-9ef62a3051ec", null, "User", "USER" },
-                    { "cbffcf5d-f40d-4252-b641-dd04176d8e22", null, "Admin", "ADMIN" }
+                    { "92e2a8b0-07c7-40ba-b174-6d117d7fc0cc", null, "User", "USER" },
+                    { "a16c7588-b695-4858-8c99-0a1209415e44", null, "Instructor", "INSTRUCTOR" },
+                    { "b178610b-616b-4362-b022-67247ef6a9d6", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -552,6 +573,11 @@ namespace Cursus.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookmarks_CourseId",
+                table: "Bookmarks",
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cart_UserId",
@@ -661,6 +687,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Bookmarks");
 
             migrationBuilder.DropTable(
                 name: "CartItems");

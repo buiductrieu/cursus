@@ -27,12 +27,9 @@ namespace Cursus.Service
             services.AddTransient<IAzureBlobStorageService, AzureBlobStorageService>();
             services.AddTransient<ICourseCommentService, CourseCommentService>();
             services.AddTransient<IStepCommentService, StepCommentService>();
-<<<<<<< HEAD
             services.AddTransient<IBookmarkService, BookmarkService>();
-=======
             services.AddTransient<IStepService, StepService>();
 
->>>>>>> e47e64916e2d6b04951029b592dc154d917b6d4c
             return services;
         }
     }
