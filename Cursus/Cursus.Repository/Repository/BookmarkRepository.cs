@@ -94,7 +94,7 @@ namespace Cursus.Repository.Repository
         public async Task AddAsync(Bookmark bookmark)
         {
             await _db.Bookmarks.AddAsync(bookmark);
-            await _db.SaveChangesAsync();
+          //  await _db.SaveChangesAsync();
         }
     }
 }

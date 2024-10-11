@@ -1,4 +1,5 @@
-﻿using Cursus.Data.DTO;
+﻿using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
@@ -9,20 +10,25 @@ namespace Cursus.Service.Services
 {
     public class BookmarkService : IBookmarkService
     {
-        private readonly IBookmarkRepository _bookmarkRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public BookmarkService(IBookmarkRepository bookmarkRepository)
+        public BookmarkService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _bookmarkRepository = bookmarkRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
+
         public async Task<IEnumerable<BookmarkDTO>> GetFilteredAndSortedBookmarksAsync(string userId, string? courseName, int? courseId, string? sortBy, string sortOrder)
         {
-            return await _bookmarkRepository.GetFilteredAndSortedBookmarksAsync(userId, courseName, courseId, sortBy, sortOrder);
+            var bookmarks = await _unitOfWork.BookmarkRepository.GetFilteredAndSortedBookmarksAsync(userId, courseName, courseId, sortBy, sortOrder);
+            return _mapper.Map<IEnumerable<BookmarkDTO>>(bookmarks);
         }
 
         public async Task<CourseDetailDTO> GetCourseDetailsAsync(int courseId)
         {
-            return await _bookmarkRepository.GetCourseDetailsAsync(courseId);
+            var courseDetails = await _unitOfWork.BookmarkRepository.GetCourseDetailsAsync(courseId);
+            return _mapper.Map<CourseDetailDTO>(courseDetails);
         }
 
         public async Task CreateBookmarkAsync(BookmarkCreateDTO bookmarkCreateDTO)
@@ -33,7 +39,9 @@ namespace Cursus.Service.Services
                 CourseId = bookmarkCreateDTO.CourseId,
                 DateCreated = System.DateTime.UtcNow
             };
-            await _bookmarkRepository.AddAsync(bookmark);
+
+            await _unitOfWork.BookmarkRepository.AddAsync(bookmark);
+            await _unitOfWork.SaveChanges(); // Save changes through UnitOfWork
         }
     }
 }
