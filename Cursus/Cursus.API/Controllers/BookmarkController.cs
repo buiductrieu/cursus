@@ -15,7 +15,13 @@ namespace Cursus.API.Controllers
         {
             _bookmarkService = bookmarkService;
         }
-
+        /// <summary>
+        /// GetBookMarks
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="sortBy"></param>
+        /// <param name="sortOrder"></param>
+        /// <returns></returns>
         // Get bookmarks with sorting functionality
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookmarkDTO>>> GetBookmarks(
@@ -26,7 +32,11 @@ namespace Cursus.API.Controllers
             var bookmarks = await _bookmarkService.GetFilteredAndSortedBookmarksAsync(userId, null, null, sortBy, sortOrder);
             return Ok(bookmarks);
         }
-
+        /// <summary>
+        /// GetCourseDetails
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         [HttpGet("{courseId}/details")]
         public async Task<ActionResult<CourseDetailDTO>> GetCourseDetails(int courseId)
         {
@@ -34,7 +44,11 @@ namespace Cursus.API.Controllers
             if (courseDetails == null) return NotFound();
             return Ok(courseDetails);
         }
-
+        /// <summary>
+        /// CreateBookMark
+        /// </summary>
+        /// <param name="bookmarkCreateDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateBookmark([FromBody] BookmarkCreateDTO bookmarkCreateDTO)
         {
