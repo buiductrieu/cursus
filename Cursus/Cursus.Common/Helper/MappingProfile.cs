@@ -112,7 +112,14 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.StepName, opt => opt.MapFrom(src => src.Step.Name))     
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));   
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
+            // Map form Course to BookmarkDTO
+            CreateMap<Course, BookmarkDTO>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Description));
+
+            CreateMap<Course, CourseDetailDTO>()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
         }
     }
 }
