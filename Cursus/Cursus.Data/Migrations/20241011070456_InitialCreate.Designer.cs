@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241009072132_StatusInstructor123")]
-    partial class StatusInstructor123
+    [Migration("20241011070456_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,38 @@ namespace Cursus.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CommenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommenterId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AdminComments");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -34,9 +66,6 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AdminComment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -97,6 +126,28 @@ namespace Cursus.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Bookmarks");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
@@ -190,6 +241,10 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -202,6 +257,9 @@ namespace Cursus.Data.Migrations
 
                     b.Property<int>("Discount")
                         .HasColumnType("int");
+
+                    b.Property<string>("InstructorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -222,6 +280,8 @@ namespace Cursus.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("InstructorId");
 
                     b.ToTable("Courses");
                 });
@@ -579,19 +639,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8c443767-e974-4e80-987c-c12198790864",
+                            Id = "5799a80a-772c-4dd9-81ee-cf944f07eefb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "323744c1-37f3-4e3f-9e81-6edc633a9f49",
+                            Id = "a6199dcc-7d44-46d3-bfec-a9ed29dc7005",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "8ddd5d04-9609-46b3-b987-57fd967e5666",
+                            Id = "96a18dee-d6de-4652-a610-cc6bf16fe7e5",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -703,6 +763,36 @@ namespace Cursus.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Commenter")
+                        .WithMany()
+                        .HasForeignKey("CommenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Commenter");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
@@ -739,7 +829,13 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId");
+
                     b.Navigation("Category");
+
+                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>

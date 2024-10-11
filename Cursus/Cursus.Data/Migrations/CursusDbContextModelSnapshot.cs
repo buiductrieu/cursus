@@ -22,6 +22,38 @@ namespace Cursus.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CommenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommenterId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AdminComments");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -31,9 +63,6 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AdminComment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -373,6 +402,9 @@ namespace Cursus.Data.Migrations
                     b.Property<string>("CardProvider")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StatusInsructor")
+                        .HasColumnType("int");
+
                     b.Property<string>("SubmitCertificate")
                         .HasColumnType("nvarchar(max)");
 
@@ -604,19 +636,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "76a4986b-d886-4460-a4a7-9d4d9ab7c926",
+                            Id = "5799a80a-772c-4dd9-81ee-cf944f07eefb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f127709f-b209-4f91-b462-75e630775a45",
+                            Id = "a6199dcc-7d44-46d3-bfec-a9ed29dc7005",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "50b4ae9d-fdf9-43ad-997e-b75ed0006e92",
+                            Id = "96a18dee-d6de-4652-a610-cc6bf16fe7e5",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -726,6 +758,25 @@ namespace Cursus.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Commenter")
+                        .WithMany()
+                        .HasForeignKey("CommenterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Commenter");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>

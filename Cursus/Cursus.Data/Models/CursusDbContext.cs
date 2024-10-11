@@ -37,7 +37,9 @@ namespace Cursus.Data.Models
         public virtual DbSet<CartItems> CartItems { get; set; } = null!;
         public virtual DbSet<Order> Order { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
-        public virtual DbSet<Bookmark> Bookmarks { get; set; } = null !;
+        public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
+        public virtual DbSet<AdminComment> AdminComments { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

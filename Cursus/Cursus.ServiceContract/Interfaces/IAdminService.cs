@@ -11,5 +11,6 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<bool> ToggleUserStatusAsync(string userId);
         Task<IEnumerable<ApplicationUser>> GetAllUser();
+        Task<bool> AdminComments(string userId, string comment);
     }
 }

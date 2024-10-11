@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Migrations : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,6 @@ namespace Cursus.Data.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AdminComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -92,6 +91,34 @@ namespace Cursus.Data.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdminComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CommentText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommenterId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminComments_AspNetUsers_CommenterId",
+                        column: x => x.CommenterId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AdminComments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,7 +235,8 @@ namespace Cursus.Data.Migrations
                     CardName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CardProvider = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StatusInsructor = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -535,10 +563,20 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "50b4ae9d-fdf9-43ad-997e-b75ed0006e92", null, "User", "USER" },
-                    { "76a4986b-d886-4460-a4a7-9d4d9ab7c926", null, "Admin", "ADMIN" },
-                    { "f127709f-b209-4f91-b462-75e630775a45", null, "Instructor", "INSTRUCTOR" }
+                    { "5799a80a-772c-4dd9-81ee-cf944f07eefb", null, "Admin", "ADMIN" },
+                    { "96a18dee-d6de-4652-a610-cc6bf16fe7e5", null, "User", "USER" },
+                    { "a6199dcc-7d44-46d3-bfec-a9ed29dc7005", null, "Instructor", "INSTRUCTOR" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminComments_CommenterId",
+                table: "AdminComments",
+                column: "CommenterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminComments_UserId",
+                table: "AdminComments",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -683,6 +721,9 @@ namespace Cursus.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AdminComments");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
