@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
@@ -55,5 +56,18 @@ namespace Cursus.Service.Services
 
 			await _unitOfWork.SaveChanges();
 		}
+
+		public async Task<CartDTO> GetCartByUserIdAsync(string userId)
+		{
+			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
+
+			if (cart == null)
+				return null;
+
+			var cartDTO = _mapper.Map<CartDTO>(cart);
+
+			return cartDTO;
+		}
+
 	}
 }

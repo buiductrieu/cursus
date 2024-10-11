@@ -37,5 +37,25 @@ namespace Cursus.API.Controllers
 			_response.Result = "Course added to cart successfully.";
 			return Ok(_response);
 		}
+
+		/// <summary>
+		/// Get Cart by User ID
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		[HttpGet("my-cart")]
+		public async Task<IActionResult> GetCart(string userId)
+		{
+			if (string.IsNullOrEmpty(userId))
+				return Unauthorized("User must be logged in.");
+
+			var cart = await _cartService.GetCartByUserIdAsync(userId);
+			if (cart == null || cart.CartItems.Count == 0)
+			{
+				return NotFound("Your cart is empty.");
+			}
+
+			return Ok(cart);
+		}
 	}
 }
