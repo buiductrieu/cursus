@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Cursus.Common.Middleware;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
@@ -37,16 +38,15 @@ namespace Cursus.Service.Services
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDTO.Username);
             if (user == null)
-            {
                 throw new BadHttpRequestException("Username or password is incorrect!");            
-            }
 
             var isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
             if (!isValid)
-            {
                 throw new BadHttpRequestException("Username or password is incorrect!");
-            }
+
+            if (!user.EmailConfirmed)
+                throw new EmailNotConfirmedException("Please confirm your email before logging in. ");
 
             var token = await GenerateJwtToken(user);
             var refreshToken = await GetRefreshTokenAsync(user);
