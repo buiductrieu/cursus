@@ -4,6 +4,7 @@ using Cursus.Data.DTO.Category;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -113,16 +114,18 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
         }
 
         [Test]
-        public void CreateCategory_ShouldThrowException_WhenCategoryNameExists()
+        public async Task CreateCategory_ShouldThrowBadHttpRequestException_WhenCategoryNameExists()
         {
             // Arrange
             var createCategoryDTO = new CreateCategoryDTO { Name = "Existing Category", Description = "Existing Description" };
 
+            // Mock the repository to return true, indicating the category name already exists
             _mockUnitOfWork.Setup(u => u.CategoryRepository.AnyAsync(It.IsAny<Expression<Func<Category, bool>>>()))
                 .ReturnsAsync(true);
 
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _categoryService.CreateCategory(createCategoryDTO));
+            // Act & Assert: Check for BadHttpRequestException instead of a generic Exception
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _categoryService.CreateCategory(createCategoryDTO));
+
             Assert.AreEqual("A category with this name already exists.", ex.Message);
         }
         [Test]
@@ -144,14 +147,14 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
         }
 
         [Test]
-        public void DeleteCategory_ShouldThrowException_WhenCategoryNotFound()
+        public async Task DeleteCategory_ShouldThrowKeyNotFoundException_WhenCategoryNotFound()
         {
-            // Arrange
+            // Arrange: Mock the repository to return null, indicating the category was not found
             _mockUnitOfWork.Setup(u => u.CategoryRepository.GetAsync(It.IsAny<Expression<Func<Category, bool>>>(), It.IsAny<string>()))
                .ReturnsAsync((Category)null);
 
-            // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _categoryService.DeleteCategory(1));
+            // Act & Assert: Check for KeyNotFoundException instead of a generic Exception
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _categoryService.DeleteCategory(1));
             Assert.AreEqual("Category not found.", ex.Message);
         }
     }
