@@ -14,5 +14,6 @@ namespace Cursus.Data.Entities
 		public ApplicationUser? User { get; set; }
 
 		public ICollection<CartItems> CartItems { get; set; } = new List<CartItems>();
+
 	}
 }
