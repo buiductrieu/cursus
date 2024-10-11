@@ -30,11 +30,15 @@ namespace Cursus.API.Controllers
 		[HttpPost("add-to-cart")]
 		public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
 		{
+			if (string.IsNullOrEmpty(userId))
+				return Unauthorized("User must be logged in.");
+
 			await _cartService.AddCourseToCartAsync(courseId, userId);
 
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;
 			_response.Result = "Course added to cart successfully.";
+
 			return Ok(_response);
 		}
 
@@ -44,7 +48,7 @@ namespace Cursus.API.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet("my-cart")]
-		public async Task<IActionResult> GetCart(string userId)
+		public async Task<ActionResult<APIResponse>> GetCart(string userId)
 		{
 			if (string.IsNullOrEmpty(userId))
 				return Unauthorized("User must be logged in.");
@@ -55,7 +59,11 @@ namespace Cursus.API.Controllers
 				return NotFound("Your cart is empty.");
 			}
 
-			return Ok(cart);
+			_response.IsSuccess = true;
+			_response.StatusCode = HttpStatusCode.OK;
+			_response.Result = cart;
+
+			return Ok(_response);
 		}
 	}
 }
