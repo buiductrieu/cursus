@@ -4,11 +4,13 @@ using Cursus.Data.Entities;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class EmailController : ControllerBase
     {
         private readonly IEmailService _emailService;
