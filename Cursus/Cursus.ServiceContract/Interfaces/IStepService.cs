@@ -14,6 +14,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<StepDTO> GetStepByIdAsync(int id);
         Task<bool> DeleteStep(int stepId);
         Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId);
+        Task<StepDTO> UpdateStep(StepUpdateDTO updateStepDTO);
 
     }
 }

@@ -70,7 +70,6 @@ namespace Cursus.Service.Services
 
         public async Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId)
         {
-            // Lấy danh sách Step từ repository
             var steps = await _unitOfWork.StepRepository.GetStepsByCoursId(courseId);
 
             if (steps == null || !steps.Any())
@@ -78,13 +77,27 @@ namespace Cursus.Service.Services
                 throw new KeyNotFoundException("No steps found for the specified course.");
             }
 
-            // Ánh xạ danh sách Step sang StepDTO
             var stepsDTO = _mapper.Map<IEnumerable<StepDTO>>(steps);
 
             return stepsDTO;
         }
 
+        public async Task<StepDTO> UpdateStep(StepUpdateDTO updateStepDTO)
+        {
+            var step = await _unitOfWork.StepRepository.GetByIdAsync(updateStepDTO.Id);
 
+            if (step == null)
+            {
+                throw new KeyNotFoundException("Step not found.");
+            }
+
+            _mapper.Map(updateStepDTO, step);
+
+            await _unitOfWork.StepRepository.UpdateAsync(step);
+            await _unitOfWork.SaveChanges();
+
+            return _mapper.Map<StepDTO>(step);
+        }
 
     }
 }

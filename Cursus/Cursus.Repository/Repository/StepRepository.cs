@@ -27,7 +27,7 @@ namespace Cursus.Repository.Repository
         {
             return await _db.Steps
                             .Where(s => s.CourseId == courseId)
-                            .ToListAsync();  // Trả về danh sách Step
+                            .ToListAsync(); 
         }
 
 

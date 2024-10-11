@@ -63,9 +63,11 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.CourseId, opt => opt.Ignore())
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
-            // Ánh xạ từ danh sách Step sang danh sách StepDTO
-           // CreateMap<IEnumerable<Step>, IEnumerable<StepDTO>>();
-            // Ánh xạ từ Step sang StepDTO
+            CreateMap<StepUpdateDTO, Step>()
+            .ForMember(dest => dest.DateCreated, opt => opt.Ignore())  
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+
+            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
             CreateMap<Step, StepDTO>().ReverseMap();
 
 

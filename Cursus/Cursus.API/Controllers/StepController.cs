@@ -98,7 +98,6 @@ namespace Cursus.API.Controllers
         {
             try
             {
-                // Gọi service để lấy danh sách StepDTO
                 var stepsDTO = await _stepService.GetStepsByCoursId(courseId);
 
                 _response.IsSuccess = true;
@@ -115,6 +114,39 @@ namespace Cursus.API.Controllers
 
                 return NotFound(_response);
             }
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> UpdateStep(int id, [FromBody] StepUpdateDTO updateStepDTO)
+        {
+            if (id != updateStepDTO.Id)
+            {
+                return BadRequest("Step ID mismatch.");
+            }
+
+            var step = await _stepService.GetStepByIdAsync(id);
+            if (step == null)
+            {
+                return NotFound(new APIResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.NotFound,
+                    ErrorMessages = new List<string> { "Step not found." }
+                });
+            }
+
+            var updatedStep = await _stepService.UpdateStep(updateStepDTO);
+
+            var response = new APIResponse
+            {
+                IsSuccess = true,
+                StatusCode = HttpStatusCode.OK,
+                Result = updatedStep
+            };
+
+            return Ok(response);
         }
 
 
