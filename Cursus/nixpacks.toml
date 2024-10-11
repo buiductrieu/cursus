@@ -1,0 +1,8 @@
+[phases.setup]
+environment = { "ASPNETCORE_ENVIRONMENT" = "Development" }
+
+[phases.build]
+command = "dotnet build"
+
+[phases.start]
+command = "dotnet run --urls http://0.0.0.0:7256"
