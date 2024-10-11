@@ -601,19 +601,31 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
+<<<<<<< HEAD
                             Id = "01767e72-47cd-4fbe-973f-9890eb6710be",
+=======
+                            Id = "5297f3da-ae8d-4713-901e-fca47bccaaf9",
+>>>>>>> e47e64916e2d6b04951029b592dc154d917b6d4c
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
+<<<<<<< HEAD
                             Id = "f918f6f1-f00f-43f9-a248-545b3c8f9986",
+=======
+                            Id = "ed480cfe-3b5e-4508-9b9d-da13127c2630",
+>>>>>>> e47e64916e2d6b04951029b592dc154d917b6d4c
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
+<<<<<<< HEAD
                             Id = "bd9a8881-a20f-481c-9c1e-dcea5e787f92",
+=======
+                            Id = "a5a25442-4d0b-491f-878d-5df622c2698f",
+>>>>>>> e47e64916e2d6b04951029b592dc154d917b6d4c
                             Name = "User",
                             NormalizedName = "USER"
                         });
