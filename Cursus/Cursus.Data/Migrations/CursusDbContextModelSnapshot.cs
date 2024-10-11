@@ -22,6 +22,38 @@ namespace Cursus.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CommenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommenterId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AdminComments");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -31,9 +63,6 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AdminComment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -601,19 +630,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b178610b-616b-4362-b022-67247ef6a9d6",
+                            Id = "76a4986b-d886-4460-a4a7-9d4d9ab7c926",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a16c7588-b695-4858-8c99-0a1209415e44",
+                            Id = "f127709f-b209-4f91-b462-75e630775a45",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "92e2a8b0-07c7-40ba-b174-6d117d7fc0cc",
+                            Id = "50b4ae9d-fdf9-43ad-997e-b75ed0006e92",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -723,6 +752,25 @@ namespace Cursus.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.AdminComment", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Commenter")
+                        .WithMany()
+                        .HasForeignKey("CommenterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Commenter");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
