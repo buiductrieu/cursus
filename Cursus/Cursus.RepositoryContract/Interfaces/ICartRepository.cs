@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    public interface ICart
+    public interface ICartRepository
     {
-        public void DeleteCart(Cart cart);
-        public Task<Cart> UpdateCart(Cart cart);
+        public Task<bool> DeleteCart(Cart cart);
         public Task<IEnumerable<Cart>> GetCart();
         public Task<Cart> GetCartByID(int cartId);
     }

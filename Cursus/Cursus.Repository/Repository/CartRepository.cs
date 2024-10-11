@@ -10,33 +10,28 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    public class CartRepository : Repository<Cart>, ICart
+    public class CartRepository : Repository<Cart>, ICartRepository
     {
         private readonly CursusDbContext _db;
         public CartRepository(CursusDbContext db) : base(db)
         {
             _db = db;
         }
-        public async void DeleteCart(Cart cart)
+        public async Task<bool> DeleteCart(Cart cart)
         {
             cart.IsPurchased = true;
-            await UpdateAsync(cart);
+            return await UpdateAsync(cart) != null; 
 
         }
 
         public async Task<IEnumerable<Cart>> GetCart()
         {
-           return await GetAllAsync();
+           return await GetAllAsync(includeProperties: "CartItems");
         }
 
         public async Task<Cart> GetCartByID(int cartId)
         {
-            return await GetAsync(filter: b => b.CartId == cartId);
-        }
-
-        public async Task<Cart> UpdateCart(Cart cart)
-        {
-            return await UpdateAsync(cart);
+            return await GetAsync(filter: b => b.CartId == cartId, includeProperties: "CartItems");
         }
     }
 }
