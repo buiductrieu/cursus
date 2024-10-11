@@ -25,7 +25,6 @@ namespace Cursus.Data.Models
         public virtual DbSet<Course> Courses { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Step> Steps { get; set; } = null!;
-        public virtual DbSet<Step> Reasons { get; set; } = null!;
         public virtual DbSet<StepComment> StepComments { get; set; } = null!;
         public virtual DbSet<StepContent> StepContents { get; set; } = null!;
         public virtual DbSet<CourseVersion> CourseVersions { get; set; } = null!;
