@@ -70,6 +70,12 @@ namespace Cursus.Common.Helper
             CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
             CreateMap<Step, StepDTO>().ReverseMap();
 
+            // CreateStepDTO Mapping (newly added)
+            CreateMap<CreateStepDTO, Step>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
 
             // StepContent Mapping
             CreateMap<StepContentDTO, StepContent>()

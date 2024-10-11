@@ -21,7 +21,11 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
-
+        /// <summary>
+        /// Create Step
+        /// </summary>
+        /// <param name="createStepDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,6 +51,11 @@ namespace Cursus.API.Controllers
             return CreatedAtAction("GetStepById", new { id = stepDTO.Id }, _response);
         }
 
+        /// <summary>
+        /// Get step by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,7 +76,11 @@ namespace Cursus.API.Controllers
 
             return Ok(_response);
         }
-
+        /// <summary>
+        /// Delete step
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -90,7 +103,11 @@ namespace Cursus.API.Controllers
 
         }
 
-
+        /// <summary>
+        /// Get step by course Id
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         [HttpGet("{courseId}/steps")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -115,7 +132,13 @@ namespace Cursus.API.Controllers
                 return NotFound(_response);
             }
         }
-
+        
+        /// <summary>
+        /// Update step
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updateStepDTO"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
