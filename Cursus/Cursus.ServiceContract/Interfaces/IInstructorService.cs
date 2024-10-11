@@ -11,5 +11,7 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IInstructorService
     {
         Task<IdentityResult> InstructorAsync(RegisterInstructorDTO registerInstructorDTO);
+        Task<bool> ApproveInstructorAsync(string instructorId);
+        Task<bool> RejectInstructorAsync(string instructorId);
     }
 }

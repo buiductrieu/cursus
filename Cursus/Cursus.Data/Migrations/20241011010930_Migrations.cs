@@ -8,11 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.cs
-    public partial class CartV4 : Migration
-========
-    public partial class RfToken : Migration
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.cs
+    public partial class Migrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -255,6 +251,7 @@ namespace Cursus.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -262,11 +259,17 @@ namespace Cursus.Data.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     Discount = table.Column<int>(type: "int", nullable: false),
                     StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false)
+                    Rating = table.Column<double>(type: "float", nullable: false),
+                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_AspNetUsers_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Courses_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -282,9 +285,7 @@ namespace Cursus.Data.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    PaidAmount = table.Column<double>(type: "float", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -294,6 +295,26 @@ namespace Cursus.Data.Migrations
                         column: x => x.CartId,
                         principalTable: "Cart",
                         principalColumn: "CartId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookmarks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookmarks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookmarks_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -436,6 +457,7 @@ namespace Cursus.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrderId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -513,15 +535,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.cs
-                    { "0ee20f7e-01e5-448c-bd95-9bea8efd4ae3", null, "Instructor", "INSTRUCTOR" },
-                    { "47231feb-9488-4524-854a-582a65bb2e58", null, "User", "USER" },
-                    { "c62888ce-31ce-471d-9c2f-ab30d40b66bb", null, "Admin", "ADMIN" }
-========
-                    { "cb62845b-6ccb-4e19-8508-7f4086116aca", null, "User", "USER" },
-                    { "f487bcf2-9707-44b6-97cc-618fe2cb171f", null, "Admin", "ADMIN" },
-                    { "f9620a00-a100-42aa-b6a2-bdaba28883c0", null, "Instructor", "INSTRUCTOR" }
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.cs
+                    { "50b4ae9d-fdf9-43ad-997e-b75ed0006e92", null, "User", "USER" },
+                    { "76a4986b-d886-4460-a4a7-9d4d9ab7c926", null, "Admin", "ADMIN" },
+                    { "f127709f-b209-4f91-b462-75e630775a45", null, "Instructor", "INSTRUCTOR" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -564,6 +580,11 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookmarks_CourseId",
+                table: "Bookmarks",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cart_UserId",
                 table: "Cart",
                 column: "UserId");
@@ -602,6 +623,11 @@ namespace Cursus.Data.Migrations
                 name: "IX_Courses_CategoryId",
                 table: "Courses",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_InstructorId",
+                table: "Courses",
+                column: "InstructorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseVersions_CourseId",
@@ -671,6 +697,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Bookmarks");
 
             migrationBuilder.DropTable(
                 name: "CartItems");

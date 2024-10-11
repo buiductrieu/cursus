@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.Designer.cs
-    [Migration("20241009074525_CartV4")]
-    partial class CartV4
-========
-    [Migration("20241009035325_RfToken")]
-    partial class RfToken
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.Designer.cs
+    [Migration("20241009072132_StatusInstructor123")]
+    partial class StatusInstructor123
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -350,6 +345,9 @@ namespace Cursus.Data.Migrations
                     b.Property<string>("CardProvider")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StatusInsructor")
+                        .HasColumnType("int");
+
                     b.Property<string>("SubmitCertificate")
                         .HasColumnType("nvarchar(max)");
 
@@ -371,17 +369,11 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<double>("PaidAmount")
-                        .HasColumnType("float");
 
                     b.HasKey("OrderId");
 
@@ -526,6 +518,9 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -584,31 +579,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.Designer.cs
-                            Id = "c62888ce-31ce-471d-9c2f-ab30d40b66bb",
-========
-                            Id = "f487bcf2-9707-44b6-97cc-618fe2cb171f",
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.Designer.cs
+                            Id = "8c443767-e974-4e80-987c-c12198790864",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.Designer.cs
-                            Id = "0ee20f7e-01e5-448c-bd95-9bea8efd4ae3",
-========
-                            Id = "f9620a00-a100-42aa-b6a2-bdaba28883c0",
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.Designer.cs
+                            Id = "323744c1-37f3-4e3f-9e81-6edc633a9f49",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-<<<<<<<< HEAD:Cursus/Cursus.Data/Migrations/20241009074525_CartV4.Designer.cs
-                            Id = "47231feb-9488-4524-854a-582a65bb2e58",
-========
-                            Id = "cb62845b-6ccb-4e19-8508-7f4086116aca",
->>>>>>>> main:Cursus/Cursus.Data/Migrations/20241009035325_RfToken.Designer.cs
+                            Id = "8ddd5d04-9609-46b3-b987-57fd967e5666",
                             Name = "User",
                             NormalizedName = "USER"
                         });

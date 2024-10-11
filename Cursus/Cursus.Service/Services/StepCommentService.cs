@@ -24,36 +24,50 @@ namespace Cursus.Service.Services
             _userManager = userManager;
         }
 
+        // Check if the user is enrolled in a course
+        public async Task<bool> IsEnrolledCourse(string userId, int courseId)
+        {
+            return await _unitOfWork.ProgressRepository.GetAsync(u => u.UserId == userId && u.CourseId == courseId) != null;
+        }
+
+        // Post a new step comment
         public async Task<StepCommentDTO> PostStepComment(StepCommentCreateDTO stepComment)
         {
             var user = await _userManager.FindByIdAsync(stepComment.UserId);
-
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException("User not found");
-            }
+            if (user == null) throw new UnauthorizedAccessException("User not found");
 
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
                 throw new UnauthorizedAccessException("Your email is not confirmed. Please verify your email before commenting.");
             }
 
+            // Check if user is enrolled in the course
+            if (!await IsEnrolledCourse(stepComment.UserId, stepComment.CourseId))
+            {
+                throw new UnauthorizedAccessException("You are not enrolled in this course, so you cannot comment on this step.");
+            }
+
+            // Map StepCommentCreateDTO to StepComment
             var comment = _mapper.Map<StepComment>(stepComment);
             comment.User = user;
             comment.DateCreated = DateTime.Now;
 
+            // Add the comment to the repository
             await _unitOfWork.StepCommentRepository.AddAsync(comment);
             await _unitOfWork.SaveChanges();
 
             return _mapper.Map<StepCommentDTO>(comment);
         }
 
+        // Get all comments for a step
         public async Task<IEnumerable<StepCommentDTO>> GetStepCommentsAsync(int stepId)
         {
-            var comments = await _unitOfWork.StepCommentRepository.GetAllAsync(c => c.StepId == stepId);
+            var comments = await _unitOfWork.StepCommentRepository.GetAllAsync(c => c.StepId == stepId, includeProperties: "User,Step");
+
             return _mapper.Map<IEnumerable<StepCommentDTO>>(comments);
         }
 
+        // Delete a step comment
         public async Task<bool> DeleteStepComment(int commentId)
         {
             var comment = await _unitOfWork.StepCommentRepository.GetAsync(c => c.Id == commentId);
@@ -65,18 +79,15 @@ namespace Cursus.Service.Services
             return true;
         }
 
+        // Admin-only delete operation for step comment
         public async Task<bool> DeleteStepCommentIfAdmin(int commentId, string adminId)
         {
-            //if (string.IsNullOrEmpty(adminId))
-            //{
-            //    throw new UnauthorizedAccessException("You do not have permission to delete comments.");
-            //}
+            if (string.IsNullOrEmpty(adminId))
+                throw new UnauthorizedAccessException("You do not have permission to delete comments.");
 
-            //var admin = await _userManager.FindByIdAsync(adminId);
-            //if (admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
-            //{
-            //    throw new UnauthorizedAccessException("You do not have permission to delete comments.");
-            //}
+            var admin = await _userManager.FindByIdAsync(adminId);
+            if (admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
+                throw new UnauthorizedAccessException("You do not have permission to delete comments.");
 
             var comment = await _unitOfWork.StepCommentRepository.GetAsync(c => c.Id == commentId);
             if (comment == null) return false;
@@ -86,6 +97,5 @@ namespace Cursus.Service.Services
 
             return true;
         }
-
     }
 }

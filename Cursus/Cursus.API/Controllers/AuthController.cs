@@ -8,12 +8,14 @@ using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -41,22 +43,13 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
-            try
-            {
-                var responseDTO = await _authService.LoginAsync(loginRequestDTO);
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = responseDTO;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ErrorMessages.Add(ex.Message);
-                return StatusCode(500, _response);
+            var responseDTO = await _authService.LoginAsync(loginRequestDTO);
 
-            }
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = responseDTO;
+
+            return Ok(_response);
 
         }
         /// <summary>

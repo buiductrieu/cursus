@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cursus.Data.DTO
 {
-    public class StepCommentCreateDTO
+    public class BookmarkCreateDTO
     {
-        public string? Content { get; set; }
+        public string UserId { get; set; }
         public int CourseId { get; set; }
-        public int StepId { get; set; }
-        public string UserId { get; set; } = string.Empty;
     }
 }
+

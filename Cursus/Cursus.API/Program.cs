@@ -1,16 +1,17 @@
 ﻿using Cursus.Common.Helper;
+using Cursus.Common.Middleware;
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
 using Cursus.Service;
-using Cursus.ServiceContract;
-using Cursus.Service.Services;
-using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Cursus.Common.Middleware;
 using System.Reflection;
+using System.Threading.RateLimiting;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+
 
 namespace Cursus.API
 {
@@ -33,7 +34,26 @@ namespace Cursus.API
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<CursusDbContext>()
                 .AddDefaultTokenProviders();
-            
+
+            // Add Rate Limit
+            builder.Services.AddRateLimiter(option =>
+            {
+
+                option.AddFixedWindowLimiter("default", c =>
+                {
+                    c.Window = TimeSpan.FromHours(1);
+                    c.PermitLimit = 1000;
+                    c.QueueLimit = 1000;
+                    c.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                });
+
+                option.OnRejected = async (context, cancellationToken) =>
+                {
+                    context.HttpContext.Response.StatusCode = 429;
+                    await context.HttpContext.Response.WriteAsync("Rate limit exceeded. Please try again later.", cancellationToken);
+                };
+            });
+
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -74,7 +94,7 @@ namespace Cursus.API
                     });
 
                 opt.IncludeXmlComments(Assembly.GetExecutingAssembly());
-               
+
             });
 
 
@@ -91,7 +111,7 @@ namespace Cursus.API
 
             if (app.Environment.IsDevelopment())
             {
-               
+
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
@@ -100,7 +120,9 @@ namespace Cursus.API
                     c.RoutePrefix = string.Empty;
                 });
             }
-            
+
+            app.UseRateLimiter();
+
             app.UseExceptionHandler(_ => { });
 
             app.UseHttpsRedirection();

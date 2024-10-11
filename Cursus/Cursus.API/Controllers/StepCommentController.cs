@@ -2,6 +2,7 @@
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class StepCommentController : ControllerBase
     {
         private readonly IStepCommentService _stepCommentService;
@@ -48,10 +50,9 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="commentId"></param>
         /// <returns></returns>
-        [HttpDelete("{commentId}")]
-        public async Task<ActionResult> DeleteComment(int commentId)
+        [HttpDelete("delete-comment")]
+        public async Task<ActionResult> DeleteComment(int commentId, string adminId)
         {
-            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isDeleted = await _stepCommentService.DeleteStepCommentIfAdmin(commentId, adminId);
     //        return Ok("Comment deleted successfully.");
             return NoContent();
