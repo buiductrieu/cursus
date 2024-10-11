@@ -21,7 +21,7 @@ namespace Cursus.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<bool> DeleteCart(int id)
+        public async Task<bool> DeleteCartItem(int id)
         {
             var OldCartItem= await _unitOfWork.CartItemsRepository.GetItemByID(id);
             if (OldCartItem == null)

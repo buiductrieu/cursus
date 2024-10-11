@@ -9,7 +9,7 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface ICartItemsService
     {
-        Task<bool> DeleteCart(int id);
+        Task<bool> DeleteCartItem(int id);
         Task<IEnumerable<CartItems>> GetAllCartItems();
         Task<CartItems> UpdateCartItems(CartItems cartItems, int id);
     }
