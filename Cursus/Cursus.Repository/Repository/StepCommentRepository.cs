@@ -21,8 +21,12 @@ namespace Cursus.Repository.Repository
         public async Task<IEnumerable<StepComment>> GetCommentsByStepId(int stepId)
         {
             return await _db.StepComments
-                            .Where(sc => sc.StepId == stepId)
-                            .ToListAsync();
+                .Include(sc => sc.User) 
+                .Include(sc => sc.Step)  
+                .Where(sc => sc.StepId == stepId)
+                .ToListAsync();
         }
+
+
     }
 }

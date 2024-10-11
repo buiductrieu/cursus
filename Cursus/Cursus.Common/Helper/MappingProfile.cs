@@ -99,19 +99,20 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
-            // StepComment Mapping
-            CreateMap<StepComment, StepCommentDTO>()
-                .ForMember(dest => dest.CommentId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
-                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-                .ForMember(dest => dest.StepName, opt => opt.MapFrom(src => src.Step.Name))
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
-
+            // Map from StepCommentCreateDTO to StepComment (for creating new comments)
             CreateMap<StepCommentCreateDTO, StepComment>()
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore()); // DateCreated should be set manually
+
+            // Map from StepComment to StepCommentDTO (for displaying comment details)
+            CreateMap<StepComment, StepCommentDTO>()
+                .ForMember(dest => dest.CommentId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.StepName, opt => opt.MapFrom(src => src.Step.Name))     
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));   
         }
-	}
+    }
 }
