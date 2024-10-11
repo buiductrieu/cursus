@@ -25,6 +25,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IStepCommentRepository StepCommentRepository { get; }
 		ICartRepository CartRepository { get; }
 		IOrderRepository OrderRepository { get; }
+        ICourseProgressRepository CourseProgressRepository { get; }
 
 		Task SaveChanges();
 

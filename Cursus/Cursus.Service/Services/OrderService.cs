@@ -48,5 +48,33 @@ namespace Cursus.Service.Services
 			var OrderDTO = _mapper.Map<OrderDTO>(order);
 			return OrderDTO;
 		}
+
+		public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
+		{
+			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems");
+
+			if (order == null)
+				throw new KeyNotFoundException("Order not found or payment not completed.");
+
+			var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
+			if (user == null)
+				throw new KeyNotFoundException("User not found.");
+
+			foreach (var cartItem in order.Cart.CartItems)
+			{
+				var newProgress = new CourseProgress
+				{
+					CourseId = cartItem.CourseId,
+					UserId = userId,
+					Type = "Purchased",
+					Date = DateTime.Now,
+					IsCompleted = false
+				};
+
+				await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
+			}
+
+			await _unitOfWork.SaveChanges();
+		}
 	}
 }

@@ -3,6 +3,7 @@ namespace Cursus.ServiceContract.Interfaces
 {
 	public interface IOrderService
 	{
-		public Task<OrderDTO> CreateOrderAsync(string userId);
+		Task<OrderDTO> CreateOrderAsync(string userId);
+		Task UpdateUserCourseAccessAsync(int orderId, string userId);
 	}
 }
