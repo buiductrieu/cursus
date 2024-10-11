@@ -57,28 +57,16 @@ namespace Cursus.Common.Helper
 			CreateMap<Course, CourseDTO>()
 			.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
-            // Step Mapping
-            CreateMap<StepDTO, Step>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			//Step mapper
+			CreateMap<StepDTO, Step>()
+			   .ForMember(dest => dest.Id, opt => opt.Ignore())
+			   .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
-            CreateMap<StepUpdateDTO, Step>()
-            .ForMember(dest => dest.DateCreated, opt => opt.Ignore())  
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+			CreateMap<Step, StepDTO>();
 
-            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
-            CreateMap<Step, StepDTO>().ReverseMap();
-
-
-            // CreateStepDTO Mapping (newly added)
-            CreateMap<CreateStepDTO, Step>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
-
-
-            // StepContent Mapping
-            CreateMap<StepContentDTO, StepContent>()
+			// StepContent Mapping
+			CreateMap<StepContentDTO, StepContent>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore the Id field for creation
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // StepId mapping
                 .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
@@ -107,7 +95,24 @@ namespace Cursus.Common.Helper
                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateCreated))
                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
-            
+            CreateMap<CourseCommentDTO, CourseComment>()
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+            // Map from StepCommentCreateDTO to StepComment (for creating new comments)
+            CreateMap<StepCommentCreateDTO, StepComment>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore()); // DateCreated should be set manually
+
+            // Map from StepComment to StepCommentDTO (for displaying comment details)
+            CreateMap<StepComment, StepCommentDTO>()
+                .ForMember(dest => dest.CommentId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.StepName, opt => opt.MapFrom(src => src.Step.Name))     
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));   
         }
-	}
+    }
 }

@@ -12,8 +12,6 @@ namespace Cursus.Data.DTO.Category
 
         public string Description { get; set; } = string.Empty;
 
-        public bool Status { get; set; } = true;
-
         public string? ParentCategory { get; set; } = string.Empty;
     }
 }
