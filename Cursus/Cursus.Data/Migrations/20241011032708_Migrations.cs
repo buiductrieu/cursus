@@ -208,7 +208,8 @@ namespace Cursus.Data.Migrations
                     CardName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CardProvider = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StatusInsructor = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -535,9 +536,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "50b4ae9d-fdf9-43ad-997e-b75ed0006e92", null, "User", "USER" },
-                    { "76a4986b-d886-4460-a4a7-9d4d9ab7c926", null, "Admin", "ADMIN" },
-                    { "f127709f-b209-4f91-b462-75e630775a45", null, "Instructor", "INSTRUCTOR" }
+                    { "09685c8a-931b-4046-9a79-813facb1cd84", null, "Admin", "ADMIN" },
+                    { "0dc2f190-0412-4b6e-b74f-f152da50005c", null, "Instructor", "INSTRUCTOR" },
+                    { "a1d213f1-87e6-4024-ac5c-40a8fdcb72d7", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

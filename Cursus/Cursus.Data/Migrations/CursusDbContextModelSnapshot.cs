@@ -373,6 +373,9 @@ namespace Cursus.Data.Migrations
                     b.Property<string>("CardProvider")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StatusInsructor")
+                        .HasColumnType("int");
+
                     b.Property<string>("SubmitCertificate")
                         .HasColumnType("nvarchar(max)");
 
@@ -604,19 +607,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "76a4986b-d886-4460-a4a7-9d4d9ab7c926",
+                            Id = "09685c8a-931b-4046-9a79-813facb1cd84",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f127709f-b209-4f91-b462-75e630775a45",
+                            Id = "0dc2f190-0412-4b6e-b74f-f152da50005c",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "50b4ae9d-fdf9-43ad-997e-b75ed0006e92",
+                            Id = "a1d213f1-87e6-4024-ac5c-40a8fdcb72d7",
                             Name = "User",
                             NormalizedName = "USER"
                         });
