@@ -55,18 +55,30 @@ namespace Cursus.Common.Helper
                .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
 			CreateMap<Course, CourseDTO>()
-			.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+			    .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
-			//Step mapper
-			CreateMap<StepDTO, Step>()
-			   .ForMember(dest => dest.Id, opt => opt.Ignore())
-			   .ForMember(dest => dest.CourseId, opt => opt.Ignore())
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+            // Step Mapping
+            CreateMap<StepDTO, Step>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
-			CreateMap<Step, StepDTO>();
+            CreateMap<StepUpdateDTO, Step>()
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
 
-			// StepContent Mapping
-			CreateMap<StepContentDTO, StepContent>()
+            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
+            CreateMap<Step, StepDTO>().ReverseMap();
+
+            // CreateStepDTO Mapping (newly added)
+            CreateMap<CreateStepDTO, Step>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+
+
+            // StepContent Mapping
+            CreateMap<StepContentDTO, StepContent>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore the Id field for creation
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId)) // StepId mapping
                 .ForMember(dest => dest.ContentType, opt => opt.MapFrom(src => src.ContentType))
@@ -112,7 +124,14 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.StepName, opt => opt.MapFrom(src => src.Step.Name))     
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));   
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
+            // Map form Course to BookmarkDTO
+            CreateMap<Course, BookmarkDTO>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Description));
+
+            CreateMap<Course, CourseDetailDTO>()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
         }
     }
 }

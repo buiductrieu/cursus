@@ -136,6 +136,9 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -238,10 +241,6 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -254,9 +253,6 @@ namespace Cursus.Data.Migrations
 
                     b.Property<int>("Discount")
                         .HasColumnType("int");
-
-                    b.Property<string>("InstructorId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -277,8 +273,6 @@ namespace Cursus.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("InstructorId");
 
                     b.ToTable("Courses");
                 });
@@ -636,19 +630,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5799a80a-772c-4dd9-81ee-cf944f07eefb",
+                            Id = "76a4986b-d886-4460-a4a7-9d4d9ab7c926",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a6199dcc-7d44-46d3-bfec-a9ed29dc7005",
+                            Id = "f127709f-b209-4f91-b462-75e630775a45",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "96a18dee-d6de-4652-a610-cc6bf16fe7e5",
+                            Id = "50b4ae9d-fdf9-43ad-997e-b75ed0006e92",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -826,13 +820,7 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Instructor")
-                        .WithMany()
-                        .HasForeignKey("InstructorId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>
