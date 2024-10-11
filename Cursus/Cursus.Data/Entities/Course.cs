@@ -14,9 +14,7 @@ namespace Cursus.Data.Entities
         public string Name { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
-
-        public string Content { get; set; } = string.Empty; // Thêm thuộc tính này nếu chưa có
-
+    
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
 
@@ -35,8 +33,6 @@ namespace Cursus.Data.Entities
         public DateTime StartedDate { get; set; }
 
         public double Rating { get; set; } = 0;
-        public ApplicationUser? Instructor { get; set; } // Hoặc kiểu phù hợp với giảng viên
-
 
         public ICollection<CourseVersion> CourseVersions { get; set; } = new List<CourseVersion>();
 

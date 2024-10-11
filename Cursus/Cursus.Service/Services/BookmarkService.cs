@@ -1,12 +1,11 @@
 ﻿using Cursus.Data.DTO;
-using Cursus.Data.DTO.Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cursus.Service
+namespace Cursus.Service.Services
 {
     public class BookmarkService : IBookmarkService
     {
@@ -16,10 +15,14 @@ namespace Cursus.Service
         {
             _bookmarkRepository = bookmarkRepository;
         }
-
-        public async Task<IEnumerable<BookmarkDTO>> GetBookmarksByUserIdAsync(string userId)
+        public async Task<IEnumerable<BookmarkDTO>> GetFilteredAndSortedBookmarksAsync(string userId, string? courseName, int? courseId, string? sortBy, string sortOrder)
         {
-            return await _bookmarkRepository.GetBookmarksByUserIdAsync(userId);
+            return await _bookmarkRepository.GetFilteredAndSortedBookmarksAsync(userId, courseName, courseId, sortBy, sortOrder);
+        }
+
+        public async Task<CourseDetailDTO> GetCourseDetailsAsync(int courseId)
+        {
+            return await _bookmarkRepository.GetCourseDetailsAsync(courseId);
         }
 
         public async Task CreateBookmarkAsync(BookmarkCreateDTO bookmarkCreateDTO)
@@ -27,19 +30,10 @@ namespace Cursus.Service
             var bookmark = new Bookmark
             {
                 UserId = bookmarkCreateDTO.UserId,
-                CourseId = bookmarkCreateDTO.CourseId
+                CourseId = bookmarkCreateDTO.CourseId,
+                DateCreated = System.DateTime.UtcNow
             };
             await _bookmarkRepository.AddAsync(bookmark);
-        }
-
-        public async Task<IEnumerable<BookmarkDTO>> FilterBookmarksAsync(string courseName, int? courseId)
-        {
-            return await _bookmarkRepository.FilterBookmarksAsync(courseName, courseId);
-        }
-
-        public async Task<CourseDetailDTO> GetCourseDetailsAsync(string userId, int courseId)
-        {
-            return await _bookmarkRepository.GetCourseDetailsAsync(userId, courseId);
         }
     }
 }

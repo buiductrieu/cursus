@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace Cursus.Data.DTO
 {
-    namespace Cursus.Data.DTO
+    public class BookmarkDTO
     {
-        public class BookmarkDTO
-        {
-            public int Id { get; set; }
-            public string CourseName { get; set; }
-            public string Summary { get; set; }
-            public double Price { get; set; }
-            public double Rating { get; set; }
-        }
+        public int Id { get; set; }
+        public string CourseName { get; set; }
+        public string Summary { get; set; }
+        public double Price { get; set; }
+        public double Rating { get; set; }
     }
-
-
 }

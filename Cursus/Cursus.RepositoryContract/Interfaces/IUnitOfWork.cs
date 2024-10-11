@@ -26,5 +26,7 @@ namespace Cursus.RepositoryContract.Interfaces
         ICartRepository CartRepository { get; }
         ICartItemsRepository CartItemsRepository { get; }
         Task SaveChanges();
+
+
     }
 }

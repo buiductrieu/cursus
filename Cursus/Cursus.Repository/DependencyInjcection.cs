@@ -29,7 +29,9 @@ namespace Cursus.Repository
             services.AddTransient<IProgressRepository, ProgressRepository>();
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<IStepCommentRepository, StepCommentRepository>();
+<<<<<<< HEAD
             services.AddTransient<IBookmarkRepository, BookmarkRepository>();
+            services.AddTransient<IStepRepository, StepRepository>();
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<ICartItemsRepository, CartItemsRepository>();// DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();

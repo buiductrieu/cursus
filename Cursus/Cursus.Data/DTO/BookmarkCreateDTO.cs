@@ -12,4 +12,3 @@ namespace Cursus.Data.DTO
         public int CourseId { get; set; }
     }
 }
-
