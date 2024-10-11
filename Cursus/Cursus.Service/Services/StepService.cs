@@ -57,5 +57,34 @@ namespace Cursus.Service.Services
             return stepDTO;
         }
 
+        public async Task<bool> DeleteStep(int stepId)
+        {
+            var existingStep = await _unitOfWork.StepRepository.GetAsync(s => s.Id == stepId);
+            if (existingStep == null)
+                throw new KeyNotFoundException("Step not found.");
+
+            await _unitOfWork.StepRepository.DeleteAsync(existingStep);
+            await _unitOfWork.SaveChanges();
+            return true;
+        }
+
+        public async Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId)
+        {
+            // Lấy danh sách Step từ repository
+            var steps = await _unitOfWork.StepRepository.GetStepsByCoursId(courseId);
+
+            if (steps == null || !steps.Any())
+            {
+                throw new KeyNotFoundException("No steps found for the specified course.");
+            }
+
+            // Ánh xạ danh sách Step sang StepDTO
+            var stepsDTO = _mapper.Map<IEnumerable<StepDTO>>(steps);
+
+            return stepsDTO;
+        }
+
+
+
     }
 }

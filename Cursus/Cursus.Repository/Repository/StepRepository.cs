@@ -16,5 +16,20 @@ namespace Cursus.Repository.Repository
             return await _db.Steps
                                    .FirstOrDefaultAsync(s => s.Id == id) ?? throw new KeyNotFoundException("Step is not found");
         }
+
+        public async Task<Step> GetByCoursId(int id)
+        {
+            return await _db.Steps
+                .FirstOrDefaultAsync(s=> s.CourseId == id) ?? throw new KeyNotFoundException("Step is not found");
+        }
+
+        public async Task<IEnumerable<Step>> GetStepsByCoursId(int courseId)
+        {
+            return await _db.Steps
+                            .Where(s => s.CourseId == courseId)
+                            .ToListAsync();  // Trả về danh sách Step
+        }
+
+
     }
 }

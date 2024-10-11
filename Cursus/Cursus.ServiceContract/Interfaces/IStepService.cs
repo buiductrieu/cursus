@@ -1,4 +1,5 @@
 ﻿using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,8 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<StepDTO> CreateStep(CreateStepDTO dto);
         Task<StepDTO> GetStepByIdAsync(int id);
+        Task<bool> DeleteStep(int stepId);
+        Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId);
+
     }
 }

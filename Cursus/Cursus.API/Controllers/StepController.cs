@@ -27,7 +27,6 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> CreateStep([FromBody] CreateStepDTO createStepDTO)
         {
-            // Validate the DTO 
             if (!ModelState.IsValid)
             {
                 _response.IsSuccess = false;
@@ -69,7 +68,55 @@ namespace Cursus.API.Controllers
             return Ok(_response);
         }
 
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> DeleteStep(int id)
+        {
+            if (id <= 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid step ID.");
+                return BadRequest(_response);
+            }
 
-       
+            var result = await _stepService.DeleteStep(id);
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = result;
+            return Ok(_response);
+
+        }
+
+
+        [HttpGet("{courseId}/steps")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetStepsByCoursId(int courseId)
+        {
+            try
+            {
+                // Gọi service để lấy danh sách StepDTO
+                var stepsDTO = await _stepService.GetStepsByCoursId(courseId);
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = stepsDTO;
+
+                return Ok(_response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add(ex.Message);
+
+                return NotFound(_response);
+            }
+        }
+
+
     }
 }
