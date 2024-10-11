@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Threading.RateLimiting;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 namespace Cursus.API
