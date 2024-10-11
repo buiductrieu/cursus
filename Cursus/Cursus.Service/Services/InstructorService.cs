@@ -1,7 +1,6 @@
 ﻿using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
-using Cursus.Data.Migrations;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;

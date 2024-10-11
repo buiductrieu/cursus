@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241011032708_Migrations")]
+    [Migration("20241011033950_Migrations")]
     partial class Migrations
     {
         /// <inheritdoc />
@@ -97,28 +97,6 @@ namespace Cursus.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Bookmarks");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
@@ -212,10 +190,6 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -228,9 +202,6 @@ namespace Cursus.Data.Migrations
 
                     b.Property<int>("Discount")
                         .HasColumnType("int");
-
-                    b.Property<string>("InstructorId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -251,8 +222,6 @@ namespace Cursus.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("InstructorId");
 
                     b.ToTable("Courses");
                 });
@@ -610,19 +579,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "09685c8a-931b-4046-9a79-813facb1cd84",
+                            Id = "cbffcf5d-f40d-4252-b641-dd04176d8e22",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0dc2f190-0412-4b6e-b74f-f152da50005c",
+                            Id = "522a4cf3-ef59-432e-bdf6-07d3c881ae0f",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "a1d213f1-87e6-4024-ac5c-40a8fdcb72d7",
+                            Id = "a0391d08-c897-41cf-a356-9ef62a3051ec",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -734,17 +703,6 @@ namespace Cursus.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>
-                {
-                    b.HasOne("Cursus.Data.Entities.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
@@ -781,13 +739,7 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "Instructor")
-                        .WithMany()
-                        .HasForeignKey("InstructorId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>

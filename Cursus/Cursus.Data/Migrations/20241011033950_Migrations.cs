@@ -252,7 +252,6 @@ namespace Cursus.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -260,17 +259,11 @@ namespace Cursus.Data.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     Discount = table.Column<int>(type: "int", nullable: false),
                     StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false),
-                    InstructorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Rating = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Courses_AspNetUsers_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Courses_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -296,26 +289,6 @@ namespace Cursus.Data.Migrations
                         column: x => x.CartId,
                         principalTable: "Cart",
                         principalColumn: "CartId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Bookmarks",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bookmarks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bookmarks_Courses_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "Courses",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -536,9 +509,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "09685c8a-931b-4046-9a79-813facb1cd84", null, "Admin", "ADMIN" },
-                    { "0dc2f190-0412-4b6e-b74f-f152da50005c", null, "Instructor", "INSTRUCTOR" },
-                    { "a1d213f1-87e6-4024-ac5c-40a8fdcb72d7", null, "User", "USER" }
+                    { "522a4cf3-ef59-432e-bdf6-07d3c881ae0f", null, "Instructor", "INSTRUCTOR" },
+                    { "a0391d08-c897-41cf-a356-9ef62a3051ec", null, "User", "USER" },
+                    { "cbffcf5d-f40d-4252-b641-dd04176d8e22", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -581,11 +554,6 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookmarks_CourseId",
-                table: "Bookmarks",
-                column: "CourseId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cart_UserId",
                 table: "Cart",
                 column: "UserId");
@@ -624,11 +592,6 @@ namespace Cursus.Data.Migrations
                 name: "IX_Courses_CategoryId",
                 table: "Courses",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Courses_InstructorId",
-                table: "Courses",
-                column: "InstructorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseVersions_CourseId",
@@ -698,9 +661,6 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "Bookmarks");
 
             migrationBuilder.DropTable(
                 name: "CartItems");
