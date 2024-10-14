@@ -4,16 +4,19 @@ using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;
         private readonly APIResponse _response;
+
 
         public CourseController(ICourseService courseService, APIResponse response)
 
@@ -22,35 +25,35 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
-        /// <summary>
-        /// Create course
-        /// </summary>
-        /// <param name="courseDTO"></param>
-        /// <returns></returns>
-        [HttpPost]
+		/// <summary>
+		/// Create course
+		/// </summary>
+		/// <param name="courseCreateDTO"></param>
+		/// <returns></returns>
+		[HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
-		{
-			var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
+        public async Task<ActionResult<APIResponse>> CreateCourse(CourseCreateDTO courseCreateDTO)
+        {
+            var createdCourse = await _courseService.CreateCourseWithSteps(courseCreateDTO);
 
-			_response.IsSuccess = true;
-			_response.StatusCode = HttpStatusCode.OK;
-			_response.Result = createdCourse;
-			return Ok(_response);
-		}
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = createdCourse;
+            return Ok(_response);
+        }
 
-		/// <summary>
-		/// Update course
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="courseDto"></param>
-		/// <returns></returns>
-		[HttpPut("{id}")]
+        /// <summary>
+        /// Update course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="courseDto"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateCourse(int id, [FromBody] CourseDTO courseDto)
+        public async Task<ActionResult<APIResponse>> UpdateCourse(int id, [FromBody] CourseUpdateDTO courseDto)
         {
             if (id != courseDto.Id)
             {
@@ -208,6 +211,21 @@ namespace Cursus.API.Controllers
                 _response.ErrorMessages.Add($"An error occurred: {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
+        }
+
+        /// <summary>
+        /// Get course by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<APIResponse>> GetCourseById(int id)
+        {
+            var course = await _courseService.GetCourseByIdAsync(id);
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = course;
+            return Ok(_response);
         }
 
     }

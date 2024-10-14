@@ -5,6 +5,11 @@ using Cursus.Data.Enums;
 using Cursus.Data.Entities;
 using Cursus.ServiceContract.Interfaces;
 using PayPalCheckoutSdk.Orders;
+using Microsoft.AspNetCore.Http;
+using Cursus.Data.DTO;
+using AutoMapper;
+using Microsoft.Extensions.Configuration;
+
 
 namespace Demo_PayPal.Service
 {
@@ -12,67 +17,39 @@ namespace Demo_PayPal.Service
     {
         private readonly PayPalClient _payPalClient;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<PaymentService> _logger; 
-        public PaymentService(PayPalClient payPalClient, ILogger<PaymentService> logger, IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
+        public PaymentService(PayPalClient payPalClient, IUnitOfWork unitOfWork,IMapper mapper, IConfiguration configuration)
         {
             _payPalClient = payPalClient;
             _unitOfWork = unitOfWork;
-            _logger = logger;
+            _configuration = configuration;
+            _mapper = mapper;
         }
 
-        private async Task<(Cursus.Data.Entities.Order order, Cart cart, string userId, List<int> courseIds)> PreparePaymentData(int orderId)
+        public async Task<string> CreatePayment(int orderId)
         {
-           
+            string returnUrl = _configuration["PayPalSettings:ReturnUrl"];
+            string cancelUrl = _configuration["PayPalSettings:CancelUrl"];
+
+
             var order = await _unitOfWork.OrderRepository.GetOrderWithCartAndItemsAsync(orderId);
             if (order == null)
             {
                 throw new KeyNotFoundException("The order does not exist.");
             }
 
-            
-            var cart = order.Cart;
-            if (cart == null)
+            if (order.Cart.IsPurchased)
             {
-                throw new InvalidOperationException("The cart does not exist for this order.");
-            }
-
-            
-            var userId = cart.UserId;
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new InvalidOperationException("The UserId associated with the cart is invalid.");
-            }
-
-            
-            var cartItems = cart.CartItems;
-            if (cartItems == null || !cartItems.Any())
-            {
-                throw new InvalidOperationException("There are no items in the cart.");
+                throw new BadHttpRequestException("The cart has already been purchased. You cannot proceed with the payment.");
             }
 
            
-            var courseIds = cartItems.Select(ci => ci.CourseId).ToList();
-
-           
-            return (order, cart, userId, courseIds);
-        }
-
-
-
-
-        public async Task<string> CreatePayment(int orderId, string returnUrl = "https://your-default-return-url.com", string cancelUrl = "https://your-default-cancel-url.com")
-        {
-           
-
-           
-            var (order, cart, userId, courseIds) = await PreparePaymentData(orderId);
-
-            var isCompleted = await _unitOfWork.TransactionRepository.IsOrderCompleted(orderId);
-            if (isCompleted)
+            if (order.Status != OrderStatus.PendingPayment)
             {
-                throw new InvalidOperationException("The order has already been completed.");
+                throw new BadHttpRequestException("Order is not in a pending payment state.");
             }
-            
+
             var amount = order.PaidAmount;
             if (amount <= 0)
             {
@@ -81,11 +58,11 @@ namespace Demo_PayPal.Service
             }
 
           
-            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(userId, orderId);
+            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(orderId);
             if (pendingTransaction != null)
             {
                
-                throw new InvalidOperationException("A pending transaction already exists for this order.");
+                throw new BadHttpRequestException("A pending transaction already exists for this order.");
             }
 
            
@@ -120,26 +97,30 @@ namespace Demo_PayPal.Service
           
             if (result == null || result.Links == null || !result.Links.Any())
             {
-                _logger.LogError("Invalid response from PayPal for OrderId {OrderId}. No approval link found.", orderId);
+               
                 throw new InvalidOperationException("Invalid response from PayPal. No approval link found.");
             }
 
             var approvalUrl = result.Links.FirstOrDefault(link => link.Rel == "approve")?.Href;
             if (string.IsNullOrEmpty(approvalUrl))
             {
-                _logger.LogError("Unable to generate PayPal payment link for OrderId {OrderId}.", orderId);
+               
                 throw new InvalidOperationException("Unable to generate PayPal payment link.");
             }
 
             var token = result.Id;
 
+
            
+
+
+
             var transactionEntry = new Transaction
             {
-                UserId = userId,
+                UserId = order.Cart.UserId,
                 OrderId = orderId,
                 PaymentMethod = "PayPal",
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.Now,
                 Status = TransactionStatus.Pending,
                 Token = token
             };
@@ -147,63 +128,102 @@ namespace Demo_PayPal.Service
             await _unitOfWork.TransactionRepository.AddAsync(transactionEntry);
             await _unitOfWork.SaveChanges();
 
-
-            return approvalUrl;
+            string paymentUrl = $"{approvalUrl}";
+            return paymentUrl;
         }
 
 
-
-
-
-
-
-
-
-
-        public async Task<Transaction> CapturePayment(string token, string userId, int orderId)
+        public async Task<TransactionDTO> CapturePayment(string token, string payerId, int orderId)
         {
-            if (string.IsNullOrEmpty(token))
-                throw new ArgumentException("Invalid token.");
-
-            // Retrieve pending transaction
-            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(userId, orderId);
+            
+            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(orderId);
             if (pendingTransaction == null)
                 throw new KeyNotFoundException("Pending transaction not found.");
 
+          
             if (pendingTransaction.Token != token)
                 throw new ArgumentException("Token does not match the transaction.");
+            if (pendingTransaction.OrderId != orderId)
+                throw new ArgumentException("OrderId does not match the transaction.");
 
-            // Check for transaction expiration
-            if (pendingTransaction.DateCreated <= DateTime.UtcNow.AddMinutes(-10))
+          
+            if (IsTransactionExpired(pendingTransaction))
             {
-                await _unitOfWork.TransactionRepository.UpdateTransactionStatus(pendingTransaction.TransactionId, TransactionStatus.Failed);
-                await _unitOfWork.SaveChanges();
-                throw new InvalidOperationException("Transaction has expired and was canceled.");
-            }
-
-            // Send capture request to PayPal
-            var request = new OrdersCaptureRequest(token);
-            request.RequestBody(new OrderActionRequest());
-            var response = await _payPalClient.Client().Execute(request);
-            var result = response.Result<PayPalCheckoutSdk.Orders.Order>();
-
-            // Check payment status
-            if (result.Status == "COMPLETED")
-            {
-                await _unitOfWork.TransactionRepository.UpdateTransactionStatus(pendingTransaction.TransactionId, TransactionStatus.Completed);
-            }
-            else
-            {
-                await _unitOfWork.TransactionRepository.UpdateTransactionStatus(pendingTransaction.TransactionId, TransactionStatus.Failed);
-                throw new InvalidOperationException("Payment was not successful.");
+                await UpdateFailedTransaction(pendingTransaction);
+                throw new BadHttpRequestException("Transaction has expired.");
             }
 
           
-            await _unitOfWork.SaveChanges();
+            if (string.IsNullOrEmpty(payerId))
+            {
+                await UpdateFailedTransaction(pendingTransaction);
+                throw new BadHttpRequestException("Payment was cancelled by the user.");
+            }
 
-            return pendingTransaction;
+            try
+            {
+                
+                var result = await CapturePayPalPayment(token);
+
+               
+                await HandleTransactionResult(pendingTransaction, result, payerId);
+
+                
+                var transactionDTO = _mapper.Map<TransactionDTO>(pendingTransaction);
+                return transactionDTO;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"An error occurred: {ex.Message}");
+            }
         }
 
 
+
+
+        
+
+        
+        private bool IsTransactionExpired(Transaction transaction)
+        {
+            return transaction.DateCreated <= DateTime.Now.AddMinutes(-10); 
+        }
+
+       
+        private async Task UpdateFailedTransaction(Transaction transaction)
+        {
+            await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Failed);
+            await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, OrderStatus.Failed);
+            await _unitOfWork.SaveChanges();
+          
+        }
+
+       
+        private async Task<PayPalCheckoutSdk.Orders.Order> CapturePayPalPayment(string token)
+        {
+            var request = new OrdersCaptureRequest(token);
+            request.RequestBody(new OrderActionRequest());
+            var response = await _payPalClient.Client().Execute(request);
+            return response.Result<PayPalCheckoutSdk.Orders.Order>();
+        }
+
+       
+        private async Task HandleTransactionResult(Transaction transaction, PayPalCheckoutSdk.Orders.Order result, string payerId)
+        {
+            if (result.Status == "COMPLETED")
+            {
+                await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Completed);
+                await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, OrderStatus.Paid);
+                await _unitOfWork.CartRepository.UpdateIsPurchased(transaction.Order.CartId, true);
+            }
+            else
+            {
+                await UpdateFailedTransaction(transaction);
+            }
+
+            await _unitOfWork.SaveChanges();
+        }
+
+        
     }
 }

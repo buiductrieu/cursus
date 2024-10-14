@@ -2,6 +2,7 @@
 using Cursus.Data.Models;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Demo_PayPal.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +29,14 @@ namespace Cursus.Service
             services.AddTransient<IAzureBlobStorageService, AzureBlobStorageService>();
            
             services.AddTransient<IStepCommentService, StepCommentService>();
+            services.AddTransient<IBookmarkService, BookmarkService>();
+            services.AddTransient<IStepService, StepService>();
+			services.AddTransient<ICartService, CartService>();
+			services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ICartItemsService, CartItemsService>();
 
             services.AddTransient<ICourseCommentService, CourseCommentService>();   
+          
             services.AddTransient<IPaymentService,PaymentService>();
             return services;
         }

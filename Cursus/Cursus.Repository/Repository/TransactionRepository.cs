@@ -25,38 +25,23 @@ namespace Cursus.Repository.Repository
             if (transaction != null)
             {
                 transaction.Status = status;
-                await _db.SaveChangesAsync();
+               
             }
         }
 
-
-        public async Task<bool> IsOrderCompleted(int orderId)
-        {
-            
-            return await _db.Transactions
-                .AnyAsync(t => t.OrderId == orderId && t.Status == TransactionStatus.Completed);
-        }
-
        
-
-        // Lấy tất cả giao dịch đang chờ xử lý (Pending) và đã quá hạn 10 phút
         public async Task<IEnumerable<Transaction>> GetPendingTransactions()
         {
             return await _db.Transactions
-                .Where(t => t.Status == TransactionStatus.Pending && t.DateCreated <= DateTime.UtcNow.AddMinutes(-10))
+                .Where(t => t.Status == TransactionStatus.Pending)
                 .ToListAsync();
         }
 
-        // Lấy giao dịch đang chờ xử lý (Pending) dựa trên UserId và OrderId
-        public async Task<Transaction?> GetPendingTransaction(string userId, int orderId)
+
+        public async Task<Transaction?> GetPendingTransaction(int orderId)
         {
             return await _db.Transactions
-                .Include(t => t.Order)
-                .ThenInclude(o => o.Cart)
-                .FirstOrDefaultAsync(t =>
-                    t.UserId == userId &&
-                    t.OrderId == orderId &&
-                    t.Status == TransactionStatus.Pending);
+                .FirstOrDefaultAsync(t => t.OrderId == orderId && t.Status == TransactionStatus.Pending);
         }
     }
 }

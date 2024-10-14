@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace Cursus.Data.DTO
         public string? Address { get; set; }
         [Required(ErrorMessage = "Tax number is required")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Tax number must be exactly 10 digits")]
-        public string? TaxNumber { get; set; }
+        public string? TaxNumber { get; set; }  
         [Required(ErrorMessage = "Card name is required")]
         [StringLength(50, ErrorMessage = "Card name cannot exceed 50 characters")]
         public string? CardName { get; set; }

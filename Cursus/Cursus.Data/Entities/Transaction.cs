@@ -7,14 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Cursus.Data.Enums;
+
+
+
+
 namespace Cursus.Data.Entities
 {
     public class Transaction
     {
         [Key]
         public int TransactionId { get; set; }
+
         [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
+
         public ApplicationUser? User { get; set; }
         [ForeignKey("Order")]
         public int OrderId { get; set; }

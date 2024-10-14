@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    internal class OrderRepository : Repository<Order>, IOrderRepository
+
+    public class OrderRepository : Repository<Order>, IOrderRepository
     {
         private readonly CursusDbContext _db;
+
         public OrderRepository(CursusDbContext db) : base(db)
         {
             _db = db;
@@ -26,7 +28,22 @@ namespace Cursus.Repository.Repository
                     .ThenInclude(c => c.CartItems)
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
             }
+
         
 
-    }
+
+
+        public async Task UpdateOrderStatus(int orderId, OrderStatus newStatus)
+        {
+           
+            var order = await _db.Order.FindAsync(orderId);
+            if (order != null)
+            {
+                order.Status = newStatus;
+            }
+        }
+
+
+	}
+
 }

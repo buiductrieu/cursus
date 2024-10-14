@@ -10,15 +10,15 @@ namespace Cursus.Service.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly ICourseRepository _repository;
+       
         private readonly IUserService _userService;
         private readonly ICourseProgressService _progressService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CourseService(ICourseRepository courseRepository, ICourseProgressService progressService, IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
+        public CourseService( ICourseProgressService progressService, IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = courseRepository;
+            
             _progressService = progressService;
             _userService = userService;
             _unitOfWork = unitOfWork;
@@ -168,24 +168,24 @@ namespace Cursus.Service.Services
 
         }
 
-        public async Task<CourseDTO> CreateCourseWithSteps(CourseDTO courseDTO)
+        public async Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseCreateDTO)
         {
             // Check unique name
-            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name);
+            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseCreateDTO.Name);
 
             if (courseExists)
                 throw new BadHttpRequestException("Course name must be unique.");
 
-			var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == courseDTO.CategoryId);
+			var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == courseCreateDTO.CategoryId);
 			if (category == null)
 				throw new BadHttpRequestException("Category does not exist.");
 			if (category.IsParent)
 				throw new BadHttpRequestException("Cannot assign a parent category to a course.");
 
-			if (courseDTO.Steps == null || !courseDTO.Steps.Any())
+			if (courseCreateDTO.Steps == null || !courseCreateDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
-            var course = _mapper.Map<Course>(courseDTO);
+            var course = _mapper.Map<Course>(courseCreateDTO);
 
             // Save course in db
             await _unitOfWork.CourseRepository.AddAsync(course);
@@ -200,7 +200,7 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<CourseDTO> UpdateCourseWithSteps(CourseDTO courseDTO)
+        public async Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO)
         {
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
 
@@ -215,13 +215,16 @@ namespace Cursus.Service.Services
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
-            _mapper.Map(courseDTO, existingCourse);
+            existingCourse.DateModified = DateTime.UtcNow;
 
+            _mapper.Map(courseDTO, existingCourse);
+            
             await _unitOfWork.SaveChanges();
 
             var updatedCourseDTO = _mapper.Map<CourseDTO>(existingCourse);
             return updatedCourseDTO;
         }
+
 
         public async Task<bool> DeleteCourse(int courseId)
         {
@@ -238,5 +241,18 @@ namespace Cursus.Service.Services
             return true; 
         }
 
+        public async Task<CourseDTO> GetCourseByIdAsync(int courseId)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                throw new KeyNotFoundException("Course not found");
+            }
+
+            var output = _mapper.Map<CourseDTO>(course);
+
+            return output;
+        }
     }
 }

@@ -4,19 +4,16 @@ using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly CursusDbContext _db;
-        public ICategoryRepository CategoryRepository { get; }
 
-        private IInstructorInfoRepository _instructorInfoRepository;
+        public ICategoryRepository CategoryRepository { get; }
+        public IInstructorInfoRepository InstructorInfoRepository { get; private set; }
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
         public IUserRepository UserRepository { get; }
@@ -25,60 +22,87 @@ namespace Cursus.Repository.Repository
         public ICourseCommentRepository CourseCommentRepository { get; }
         public ITransactionRepository TransactionRepository { get; }
         public IOrderRepository OrderRepository { get; }
-
         public IStepCommentRepository StepCommentRepository { get; }
-    
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository,IStepCommentRepository stepCommentRepository,IOrderRepository orderRepository)
+        public IRefreshTokenRepository RefreshTokenRepository { get; }
+        public IProgressRepository ProgressRepository { get; }
+        public ICartRepository CartRepository { get; }
+        public ICourseProgressRepository CourseProgressRepository { get; }
+        public ICartItemsRepository CartItemsRepository { get; }
+        public IBookmarkRepository BookmarkRepository { get; }
+
+        public UnitOfWork(
+            CursusDbContext db,
+            ICategoryRepository categoryRepository,
+            IStepCommentRepository stepCommentRepository,
+            ICourseRepository courseRepository,
+            IStepRepository stepRepository,
+            IUserRepository userRepository,
+            IStepContentRepository stepContentRepository,
+            IInstructorInfoRepository instructorInfoRepository,
+            UserManager<ApplicationUser> userManager,
+            ICourseCommentRepository courseCommentRepository,
+            ITransactionRepository transactionRepository,
+            IOrderRepository orderRepository,
+            ICartRepository cartRepository,
+            IRefreshTokenRepository refreshTokenRepository,
+            IProgressRepository progressRepository,
+            ICourseProgressRepository courseProgressRepository,
+            ICartItemsRepository cartItemsRepository,
+            IBookmarkRepository bookmarkRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
             CourseRepository = courseRepository;
             StepRepository = stepRepository;
             UserRepository = userRepository;
-            _instructorInfoRepository = instructorInfoRepository;
+            InstructorInfoRepository = instructorInfoRepository;
             UserManager = userManager;
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
             StepCommentRepository = stepCommentRepository;
-            OrderRepository = orderRepository;
+            RefreshTokenRepository = refreshTokenRepository;
+            ProgressRepository = progressRepository;
             TransactionRepository = transactionRepository;
-        }   
-
-        public IInstructorInfoRepository InstructorInfoRepository
-        {
-            get
-            {
-                if( _instructorInfoRepository == null)
-                {
-                    _instructorInfoRepository = new InstructorRepository(_db);
-                }
-                return _instructorInfoRepository;
-            }
+            OrderRepository = orderRepository;
+            CartRepository = cartRepository;
+            CourseProgressRepository = courseProgressRepository;
+            CartItemsRepository = cartItemsRepository;
+            BookmarkRepository = bookmarkRepository;
         }
 
-        private bool disposed = false;
+        // Lazy loading of InstructorInfoRepository
+        public IInstructorInfoRepository GetInstructorInfoRepository()
+        {
+            if (InstructorInfoRepository == null)
+            {
+                InstructorInfoRepository = new InstructorRepository(_db);
+            }
+            return InstructorInfoRepository;
+        }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-					_db.Dispose();
-				}
-			}
-			this.disposed = true;
-		}
+        private bool _disposed = false;
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _db.Dispose();
+                }
+            }
+            _disposed = true;
+        }
 
-		public async Task SaveChanges()
-		{
-			await _db.SaveChangesAsync();
-		}
-	}
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public async Task SaveChanges()
+        {
+            await _db.SaveChangesAsync();
+        }
+    }
 }
