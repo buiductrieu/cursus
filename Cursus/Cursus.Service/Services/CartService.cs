@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
+using Cursus.Data.Enums;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

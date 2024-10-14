@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Cursus.Data.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cursus.Data.Entities

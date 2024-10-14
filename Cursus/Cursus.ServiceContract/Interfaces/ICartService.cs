@@ -1,4 +1,5 @@
-﻿using Cursus.Data.Entities;
+﻿using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

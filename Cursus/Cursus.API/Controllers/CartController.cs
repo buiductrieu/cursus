@@ -10,26 +10,26 @@ using System.Net;
 
 namespace Cursus.API.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	[EnableRateLimiting("default")]
-	public class CartController : ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    [EnableRateLimiting("default")]
+    public class CartController : ControllerBase
 
-	{
-		private readonly ICartService _cartService;
+    {
+        private readonly ICartService _cartService;
         private readonly IUnitOfWork _unitOfWork;
-		private readonly APIResponse _response;
+        private readonly APIResponse _response;
         public CartController(ICartService cartService, APIResponse response, IUnitOfWork unitOfWork)
-		{
-			_cartService = cartService;
-			_response = response;
+        {
+            _cartService = cartService;
+            _response = response;
             _unitOfWork = unitOfWork;
-		}
+        }
         [HttpDelete("DeleteCart{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> DeleteCart(int id)
-		{
+        {
             if (!ModelState.IsValid)
             {
                 _response.IsSuccess = false;
@@ -59,11 +59,11 @@ namespace Cursus.API.Controllers
             var result = await _cartService.GetAllCart();
             if (result != null)
             {
-			_response.IsSuccess = true;
-			_response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = result;
-			return Ok(_response);
-		}
+                return Ok(_response);
+            }
             _response.IsSuccess = false;
             _response.StatusCode = HttpStatusCode.BadRequest;
             return BadRequest(_response);
@@ -72,54 +72,51 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> GetCartById(int id)
-		{
+        {
             var result = await _cartService.GetCartByID(id);
             if (result != null)
-			{
-				return NotFound("Your cart is empty.");
-			}
+            {
+                return NotFound("Your cart is empty.");
+            }
 
-			_response.IsSuccess = true;
-			_response.StatusCode = HttpStatusCode.OK;
-                _response.Result = result;
-			return Ok(_response);
-		}
-            _response.IsSuccess = false;
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_response);
-    }
-    [HttpPost("add-to-cart")]
-    public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
-    {
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User must be logged in.");
-
-        await _cartService.AddCourseToCartAsync(courseId, userId);
-
-        _response.IsSuccess = true;
-        _response.StatusCode = HttpStatusCode.OK;
-        _response.Result = "Course added to cart successfully.";
-
-        return Ok(_response);
-    }
-    [HttpGet("my-cart")]
-    public async Task<ActionResult<APIResponse>> GetCart(string userId)
-    {
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized("User must be logged in.");
-
-        var cart = await _cartService.GetCartByUserIdAsync(userId);
-        if (cart == null || cart.CartItems.Count == 0)
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = result;
+            return Ok(_response);
+        }
+        [HttpPost("add-to-cart")]
+        public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
         {
-            return NotFound("Your cart is empty.");
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User must be logged in.");
+
+            await _cartService.AddCourseToCartAsync(courseId, userId);
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = "Course added to cart successfully.";
+
+            return Ok(_response);
+        }
+        [HttpGet("my-cart")]
+        public async Task<ActionResult<APIResponse>> GetCart(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User must be logged in.");
+
+            var cart = await _cartService.GetCartByUserIdAsync(userId);
+            if (cart == null || cart.CartItems.Count == 0)
+            {
+                return NotFound("Your cart is empty.");
+            }
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = cart;
+
+            return Ok(_response);
         }
 
-        _response.IsSuccess = true;
-        _response.StatusCode = HttpStatusCode.OK;
-        _response.Result = cart;
-
-        return Ok(_response);
     }
+}
 
-}
-}
