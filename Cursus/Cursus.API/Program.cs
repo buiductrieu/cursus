@@ -11,6 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Cursus.Common.Middleware;
 using System.Reflection;
+using Cursus.Repository.Repository;
+using Cursus.RepositoryContract.Interfaces;
+using Demo_PayPal.Service;
 
 namespace Cursus.API
 {
@@ -29,6 +32,13 @@ namespace Cursus.API
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+            var paypalSettings = builder.Configuration.GetSection("PayPal");
+            builder.Services.Configure<PayPalSetting>(paypalSettings);
+
+            // Đăng ký các dịch vụ
+            builder.Services.AddScoped<PayPalClient>().AddHostedService<TransactionMonitoringService>();
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<CursusDbContext>()

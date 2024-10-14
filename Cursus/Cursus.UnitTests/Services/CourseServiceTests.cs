@@ -30,7 +30,7 @@ namespace Cursus.Test.Service
 			_repository = new Mock<ICourseRepository>();
 
 			_courseService = new CourseService(
-				_repository.Object,
+				
 				_courseProgressServiceMock.Object,
 				_userServiceMock.Object,
 				_unitOfWorkMock.Object,
