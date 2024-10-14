@@ -10,7 +10,7 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IStepService
     {
-        Task<StepDTO> CreateStep(CreateStepDTO dto);
+        Task<StepDTO> CreateStep(StepCreateDTO dto);
         Task<StepDTO> GetStepByIdAsync(int id);
         Task<bool> DeleteStep(int stepId);
         Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId);
