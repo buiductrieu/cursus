@@ -22,6 +22,9 @@ namespace Cursus.RepositoryContract.Interfaces
         ICourseCommentRepository CourseCommentRepository { get; }
 
         IStepCommentRepository StepCommentRepository { get; }
+
+        ITransactionRepository TransactionRepository { get; }   
+        IOrderRepository OrderRepository { get; }
         Task SaveChanges();
     }
 }

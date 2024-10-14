@@ -28,6 +28,8 @@ namespace Cursus.Repository
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<IProgressRepository, ProgressRepository>();
             services.AddTransient<IStepCommentRepository, StepCommentRepository>();
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
