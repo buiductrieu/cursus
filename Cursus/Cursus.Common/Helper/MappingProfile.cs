@@ -134,6 +134,22 @@ namespace Cursus.Common.Helper
 			CreateMap<CartItems, CartItemsDTO>()
 				.ForPath(dest => dest.Name, opt => opt.MapFrom(src => src.Course.Name)).ReverseMap();
 
+            CreateMap<StepCommentCreateDTO, StepComment>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            // Mapping từ Transaction sang TransactionDTO
+            CreateMap<Transaction, TransactionDTO>()
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+        }
+	}
 			//Oder Mapping
 			CreateMap<Order, OrderDTO>()
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))

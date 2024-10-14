@@ -19,11 +19,18 @@ namespace Cursus.Repository.Repository
             _db = db;
         }
         public async Task<bool> DeleteCart(Cart cart)
+
+        public async Task UpdateIsPurchased(int cartId, bool isPurchased)
         {
             cart.IsPurchased = true;
             return await UpdateAsync(cart) != null; 
 
         }
+            var cart = await _db.Cart.FindAsync(cartId);
+            if (cart != null)
+            {
+                cart.IsPurchased = isPurchased;
+                _db.Cart.Update(cart);
 
         public async Task<IEnumerable<Cart>> GetCart()
         {

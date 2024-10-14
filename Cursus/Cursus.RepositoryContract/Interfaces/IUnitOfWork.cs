@@ -30,6 +30,11 @@ namespace Cursus.RepositoryContract.Interfaces
         ICourseProgressRepository CourseProgressRepository { get; }
 
 
+        IStepCommentRepository StepCommentRepository { get; }
+
+        ITransactionRepository TransactionRepository { get; }   
+        IOrderRepository OrderRepository { get; }
+        ICartRepository CartRepository { get; } 
         Task SaveChanges();
 
 

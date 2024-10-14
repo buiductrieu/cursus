@@ -10,15 +10,15 @@ namespace Cursus.Service.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly ICourseRepository _repository;
+       
         private readonly IUserService _userService;
         private readonly ICourseProgressService _progressService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CourseService(ICourseRepository courseRepository, ICourseProgressService progressService, IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
+        public CourseService( ICourseProgressService progressService, IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = courseRepository;
+            
             _progressService = progressService;
             _userService = userService;
             _unitOfWork = unitOfWork;

@@ -31,8 +31,15 @@ namespace Cursus.Repository.Repository
         public ICourseProgressRepository CourseProgressRepository { get; }
         public ICartItemsRepository CartItemsRepository { get; }
 
+        public ITransactionRepository TransactionRepository { get; }
         public IBookmarkRepository BookmarkRepository { get; }
 		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository,ICartItemsRepository cartItemsRepository)
+        public IStepCommentRepository StepCommentRepository { get; }
+        public IOrderRepository OrderRepository { get; }
+
+        public ICartRepository CartRepository { get; }
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository,
+         IStepCommentRepository stepCommentRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository, IOrderRepository orderRepository, ICartRepository cartRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -46,6 +53,7 @@ namespace Cursus.Repository.Repository
             RefreshTokenRepository  = refreshTokenRepository;
             StepCommentRepository = stepCommentRepository;
             ProgressRepository = progressRepository;
+            TransactionRepository = transactionRepository;
             CartRepository = cartRepository;
             OrderRepository = orderRepository;
             CourseProgressRepository = courseProgressRepository;
@@ -54,6 +62,9 @@ namespace Cursus.Repository.Repository
         }
 
         public IInstructorInfoRepository InstructorInfoRepository
+            OrderRepository = orderRepository;
+            CartRepository = cartRepository;
+        }   
         {
             get
             {
@@ -64,6 +75,8 @@ namespace Cursus.Repository.Repository
                 return _instructorInfoRepository;
             }
         }
+
+        
 
         private bool disposed = false;
 
