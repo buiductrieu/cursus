@@ -11,5 +11,6 @@ namespace Cursus.RepositoryContract.Interfaces
     {
         Task<bool> ToggleUserStatusAsync(string userId);
         
+        Task<bool> AdminComments(string userId, string comment);
     }
 }

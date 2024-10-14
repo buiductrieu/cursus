@@ -17,6 +17,12 @@ namespace Cursus.Service.Services
         {
             _adminRepository = adminRepository;
         }
+
+        public async Task<bool> AdminComments(string userId, string comment)
+        {
+            return await _adminRepository.AdminComments(userId, comment);
+        }
+
         public async Task<IEnumerable<ApplicationUser>> GetAllUser()
         {
             return  await _adminRepository.GetAllAsync();

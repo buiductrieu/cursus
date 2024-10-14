@@ -68,7 +68,7 @@ namespace Cursus.Repository.Repository
                 query = query.Where(filter);
             }
 
-            return await query.FirstAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<T> UpdateAsync(T entity)
