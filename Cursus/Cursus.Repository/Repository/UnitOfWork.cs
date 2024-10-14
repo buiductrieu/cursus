@@ -25,8 +25,11 @@ namespace Cursus.Repository.Repository
         public ICourseCommentRepository CourseCommentRepository { get; }
         public ITransactionRepository TransactionRepository { get; }
         public IStepCommentRepository StepCommentRepository { get; }
+        public IOrderRepository OrderRepository { get; }
+
+        public ICartRepository CartRepository { get; }
         public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository,
-        public IStepCommentRepository stepCommentRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository)
+         IStepCommentRepository stepCommentRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository, IOrderRepository orderRepository, ICartRepository cartRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -38,7 +41,9 @@ namespace Cursus.Repository.Repository
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
             TransactionRepository = transactionRepository;
-            StepCommentRepository = stepCommentRepository
+            StepCommentRepository = stepCommentRepository;
+            OrderRepository = orderRepository;
+            CartRepository = cartRepository;
         }   
 
         public IInstructorInfoRepository InstructorInfoRepository
@@ -52,6 +57,8 @@ namespace Cursus.Repository.Repository
                 return _instructorInfoRepository;
             }
         }
+
+        
 
         private bool disposed = false;
 

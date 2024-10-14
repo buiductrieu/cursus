@@ -10,7 +10,7 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IPaymentService
     {
-        Task<string> CreatePayment(int orderId, string returnUrl = "https://your-default-return-url.com", string cancelUrl = "https://your-default-cancel-url.com");
+        Task<string> CreatePayment(int orderId);
         Task<TransactionDTO> CapturePayment(string token, string payerId, int orderId);
     }
 }

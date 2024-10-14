@@ -33,9 +33,7 @@
         {
             // Create payment and retrieve approval URL
             var approvalUrl = await _paymentService.CreatePayment(
-                request.OrderId,
-                request.ReturnUrl,
-                request.CancelUrl);
+                request.OrderId);
 
             // Build successful response
             _response.IsSuccess = true;

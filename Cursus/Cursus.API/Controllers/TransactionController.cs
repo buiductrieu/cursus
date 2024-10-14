@@ -30,7 +30,7 @@ namespace Cursus.API.Controllers
             return Ok(_response);
         }
 
-        // API để lấy giao dịch của người dùng cụ thể với phân trang
+       
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetTransactionsByUserId(string userId, int page = 1, int pageSize = 20)
         {

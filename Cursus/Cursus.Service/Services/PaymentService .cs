@@ -8,6 +8,7 @@ using PayPalCheckoutSdk.Orders;
 using Microsoft.AspNetCore.Http;
 using Cursus.Data.DTO;
 using AutoMapper;
+using Microsoft.Extensions.Configuration;
 
 
 namespace Demo_PayPal.Service
@@ -16,19 +17,20 @@ namespace Demo_PayPal.Service
     {
         private readonly PayPalClient _payPalClient;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<PaymentService> _logger;
         private readonly IMapper _mapper;
-        public PaymentService(PayPalClient payPalClient, ILogger<PaymentService> logger, IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly IConfiguration _configuration;
+        public PaymentService(PayPalClient payPalClient, IUnitOfWork unitOfWork,IMapper mapper, IConfiguration configuration)
         {
             _payPalClient = payPalClient;
             _unitOfWork = unitOfWork;
-            _logger = logger;
+            _configuration = configuration;
             _mapper = mapper;
         }
 
-        public async Task<string> CreatePayment(int orderId, string returnUrl = "https://your-default-return-url.com", string cancelUrl = "https://your-default-cancel-url.com")
+        public async Task<string> CreatePayment(int orderId)
         {
-
+            string returnUrl = _configuration["PayPalSettings:ReturnUrl"];
+            string cancelUrl = _configuration["PayPalSettings:CancelUrl"];
 
 
             var order = await _unitOfWork.OrderRepository.GetOrderWithCartAndItemsAsync(orderId);
@@ -133,25 +135,25 @@ namespace Demo_PayPal.Service
 
         public async Task<TransactionDTO> CapturePayment(string token, string payerId, int orderId)
         {
-            // Tìm giao dịch đang chờ xử lý
+            
             var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(orderId);
             if (pendingTransaction == null)
                 throw new KeyNotFoundException("Pending transaction not found.");
 
-            // Kiểm tra tính hợp lệ của giao dịch
+          
             if (pendingTransaction.Token != token)
                 throw new ArgumentException("Token does not match the transaction.");
             if (pendingTransaction.OrderId != orderId)
                 throw new ArgumentException("OrderId does not match the transaction.");
 
-            // Kiểm tra giao dịch có hết hạn không
+          
             if (IsTransactionExpired(pendingTransaction))
             {
                 await UpdateFailedTransaction(pendingTransaction);
                 throw new BadHttpRequestException("Transaction has expired.");
             }
 
-            // Nếu payerId rỗng, nghĩa là người dùng đã hủy giao dịch
+          
             if (string.IsNullOrEmpty(payerId))
             {
                 await UpdateFailedTransaction(pendingTransaction);
@@ -160,19 +162,18 @@ namespace Demo_PayPal.Service
 
             try
             {
-                // Gửi yêu cầu bắt giao dịch đến PayPal
+                
                 var result = await CapturePayPalPayment(token);
 
-                // Xử lý kết quả trả về từ PayPal
+               
                 await HandleTransactionResult(pendingTransaction, result, payerId);
 
-                // Ánh xạ từ Transaction sang TransactionDTO trước khi trả về
+                
                 var transactionDTO = _mapper.Map<TransactionDTO>(pendingTransaction);
                 return transactionDTO;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while capturing payment for TransactionId: {TransactionId}", pendingTransaction.TransactionId);
                 throw new InvalidOperationException($"An error occurred: {ex.Message}");
             }
         }

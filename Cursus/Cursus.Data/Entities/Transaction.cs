@@ -31,13 +31,8 @@ namespace Cursus.Data.Entities
         public double Amount { get; set; }
         public DateTime DateCreated { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
-        public PaymentStatus Status { get; set; }
+        public TransactionStatus Status { get; set; }
         public string Token { get; set; } = string.Empty;
     }
-    public enum PaymentStatus
-    {
-        PendingPayment,
-        Paid,
-        Failed
-    }
+   
 }
