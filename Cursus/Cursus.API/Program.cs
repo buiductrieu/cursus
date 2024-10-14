@@ -11,7 +11,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Threading.RateLimiting;
 
-
 namespace Cursus.API
 {
     public class Program
@@ -96,8 +95,6 @@ namespace Cursus.API
 
             });
 
-
-
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -108,17 +105,12 @@ namespace Cursus.API
 
             // Configure the HTTP request pipeline.
 
-            if (app.Environment.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-
-
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
-                    c.RoutePrefix = string.Empty;
-                });
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseRateLimiter();
 
