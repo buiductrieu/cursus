@@ -1,9 +1,11 @@
 ﻿using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,16 @@ namespace Cursus.Service.Services
         public readonly UserManager<ApplicationUser> _userManager;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
+        private readonly CursusDbContext _context;
 
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService)
+
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, CursusDbContext context)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _context = context;
+
         }
         public async Task<IdentityResult> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
@@ -132,6 +138,16 @@ namespace Cursus.Service.Services
             _emailService.SendEmail(emailRequest);
 
             return true;
+        }
+
+        public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        {
+            var instructors = await _context.InstructorInfos
+                                                       .Include(i => i.User) 
+                                                       .ToListAsync();
+
+
+            return instructors;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<IdentityResult> InstructorAsync(RegisterInstructorDTO registerInstructorDTO);
         Task<bool> ApproveInstructorAsync(string instructorId);
         Task<bool> RejectInstructorAsync(string instructorId);
+        Task<IEnumerable<InstructorInfo>> GetAllInstructors();
+
     }
 }
