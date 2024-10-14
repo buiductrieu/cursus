@@ -29,9 +29,10 @@ namespace Cursus.Repository.Repository
 		public ICartRepository CartRepository { get; }
 		public IOrderRepository OrderRepository { get; }
         public ICourseProgressRepository CourseProgressRepository { get; }
+        public ICartItemsRepository CartItemsRepository { get; }
 
         public IBookmarkRepository BookmarkRepository { get; }
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository)
+		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository,ICartItemsRepository cartItemsRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -49,6 +50,7 @@ namespace Cursus.Repository.Repository
             OrderRepository = orderRepository;
             CourseProgressRepository = courseProgressRepository;
             BookmarkRepository = bookmarkRepository;
+            CartItemsRepository = cartItemsRepository;
         }
 
         public IInstructorInfoRepository InstructorInfoRepository

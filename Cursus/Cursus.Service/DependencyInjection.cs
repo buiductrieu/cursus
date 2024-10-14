@@ -32,8 +32,8 @@ namespace Cursus.Service
             services.AddTransient<IStepService, StepService>();
 			services.AddTransient<ICartService, CartService>();
 			services.AddTransient<IOrderService, OrderService>();
-
-			return services;
+            services.AddTransient<ICartItemsService, CartItemsService>();
+            return services;
         }
     }
 }
