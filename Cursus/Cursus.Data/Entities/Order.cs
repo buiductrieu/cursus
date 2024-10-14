@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Cursus.Data.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Data.Entities
 {
@@ -16,5 +12,8 @@ namespace Cursus.Data.Entities
         public int CartId { get; set; }
         public Cart? Cart { get; set; }
         public DateTime DateCreated { get; set; }
+        public double Amount { get; set; }
+        public double PaidAmount { get; set; }
+        public OrderStatus Status { get; set; }
     }
 }
