@@ -93,7 +93,7 @@ namespace Cursus.Service.Services
 
         public async Task<bool> ApproveInstructorAsync(string instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Approved;
@@ -115,7 +115,7 @@ namespace Cursus.Service.Services
 
         public async Task<bool> RejectInstructorAsync(string instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Rejected;
