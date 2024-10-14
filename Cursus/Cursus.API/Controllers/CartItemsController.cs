@@ -22,7 +22,7 @@ namespace Cursus.API.Controllers
             _response = response;
             _unitOfWork = unitOfWork;
         }
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> DeleteCartItems(int id)
@@ -48,12 +48,12 @@ namespace Cursus.API.Controllers
             return BadRequest(_response);
         }
 
-        [HttpGet]
+        [HttpPut("GetAll{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> GetAllCartItems()
+        public async Task<ActionResult<APIResponse>> GetAllCartItems(int id)
         {
-            var result = await _cartItemsService.GetAllCartItems();
+            var result = await _cartItemsService.GetAllCartItems(id);
             if (result != null)
             {
                 _response.IsSuccess = true;

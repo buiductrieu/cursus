@@ -10,6 +10,6 @@ namespace Cursus.ServiceContract.Interfaces
     public interface ICartItemsService
     {
         Task<bool> DeleteCartItem(int id);
-        Task<IEnumerable<CartItems>> GetAllCartItems();
+        Task<IEnumerable<CartItems>> GetAllCartItems(int id);
     }
 }

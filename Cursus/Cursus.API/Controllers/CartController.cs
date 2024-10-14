@@ -74,7 +74,7 @@ namespace Cursus.API.Controllers
         public async Task<ActionResult<APIResponse>> GetCartById(int id)
         {
             var result = await _cartService.GetCartByID(id);
-            if (result != null)
+            if (result == null)
             {
                 return NotFound("Your cart is empty.");
             }

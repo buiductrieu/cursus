@@ -28,12 +28,14 @@ namespace Cursus.Service.Services
             {
                 return false;
             }
-            return await _unitOfWork.CartItemsRepository.DeleteCartItems(OldCartItem);
+            await _unitOfWork.CartItemsRepository.DeleteCartItems(OldCartItem);
+            await _unitOfWork.SaveChanges();
+            return true;
         }
 
-        public async Task<IEnumerable<CartItems>> GetAllCartItems()
+        public async Task<IEnumerable<CartItems>> GetAllCartItems(int id)
         {
-            return await _unitOfWork.CartItemsRepository.GetAllItems();
+            return await _unitOfWork.CartItemsRepository.GetAllItems(id);
         }
     }
 }

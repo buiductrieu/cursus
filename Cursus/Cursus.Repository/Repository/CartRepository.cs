@@ -27,12 +27,12 @@ namespace Cursus.Repository.Repository
 
         public async Task<IEnumerable<Cart>> GetCart()
         {
-           return await GetAllAsync(includeProperties: "CartItems");
+           return await GetAllAsync(includeProperties: "CartItems,User");
         }
 
         public async Task<Cart> GetCartByID(int cartId)
         {
-            return await GetAsync(filter: b => b.CartId == cartId, includeProperties: "CartItems");
+            return await GetAsync(filter: b => b.CartId == cartId, includeProperties: "CartItems,User");
         }
 	}
 }

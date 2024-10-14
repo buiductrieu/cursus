@@ -21,13 +21,13 @@ namespace Cursus.Repository.Repository
             return await DeleteAsync(cartItems) != null;
         }
 
-        public async Task<IEnumerable<CartItems>> GetAllItems()
+        public async Task<IEnumerable<CartItems>> GetAllItems(int id)
         {
-            return await GetAllAsync();
+            return await GetAllAsync(filter:b=>b.CartId == id,includeProperties: "Course");
         }
         public async Task<CartItems> GetItemByID(int cartItemsId)
         {
-            return await GetAsync(filter: b => b.CartItemsId == cartItemsId);
+            return await GetAsync(filter: b => b.CartItemsId == cartItemsId, includeProperties: "Cart,Course");
         }
     }
 }
