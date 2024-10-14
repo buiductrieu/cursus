@@ -34,9 +34,9 @@ namespace Cursus.Repository
 			services.AddTransient<ICartRepository, CartRepository>();
 			services.AddTransient<IOrderRepository, OrderRepository>();
 			services.AddTransient<ICourseProgressRepository, CourseProgressRepository>();
-
-			// DI UnitOfWork
-			services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<ICartItemsRepository, CartItemsRepository>();
+            // DI UnitOfWork
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
