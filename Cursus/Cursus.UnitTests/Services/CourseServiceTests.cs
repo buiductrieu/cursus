@@ -36,13 +36,13 @@
 //				_unitOfWorkMock.Object,
 //				_mapperMock.Object);
 //		}
-			_courseService = new CourseService(
+		//	_courseService = new CourseService(
 				
-				_courseProgressServiceMock.Object,
-				_userServiceMock.Object,
-				_unitOfWorkMock.Object,
-				_mapperMock.Object);
-		}
+		//		_courseProgressServiceMock.Object,
+		//		_userServiceMock.Object,
+		//		_unitOfWorkMock.Object,
+		//		_mapperMock.Object);
+		//}
 
 //		[Test]
 //		public async Task CreateCourseWithSteps_ShouldReturnCourseDTO_WhenCourseIsCreatedSuccessfully()

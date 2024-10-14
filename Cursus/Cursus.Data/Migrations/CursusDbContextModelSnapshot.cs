@@ -43,13 +43,11 @@ namespace Cursus.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CommenterId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AdminComments");
                 });
@@ -581,6 +579,9 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -639,19 +640,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "92610361-7e11-4bac-9af2-13a5251073f8",
+                            Id = "b62443d9-f34a-440b-8621-d64941fbfc08",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "03f96fad-8757-4bbd-a2e7-9ad6d5d69e76",
+                            Id = "83119f7d-f3cb-4b4c-b769-dc645ef67dbc",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "b5daa504-ca31-4d46-863d-d121ef7252d3",
+                            Id = "289e3385-f85f-4b35-8092-a0cf32be0f2e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -771,15 +772,7 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Commenter");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>

@@ -154,9 +154,7 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-        }
-	}
-			//Oder Mapping
+	        //Oder Mapping
 			CreateMap<Order, OrderDTO>()
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
 				.ReverseMap();

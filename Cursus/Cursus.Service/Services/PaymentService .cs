@@ -45,7 +45,7 @@ namespace Demo_PayPal.Service
             }
 
            
-            if (order.Status != OrderStatus.PendingPayment)
+            if (order.Status != Cursus.Data.Entities.OrderStatus.PendingPayment)
             {
                 throw new BadHttpRequestException("Order is not in a pending payment state.");
             }
@@ -193,7 +193,7 @@ namespace Demo_PayPal.Service
         private async Task UpdateFailedTransaction(Transaction transaction)
         {
             await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Failed);
-            await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, OrderStatus.Failed);
+            await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Cursus.Data.Entities.OrderStatus.Failed);
             await _unitOfWork.SaveChanges();
           
         }
@@ -213,7 +213,7 @@ namespace Demo_PayPal.Service
             if (result.Status == "COMPLETED")
             {
                 await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Completed);
-                await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, OrderStatus.Paid);
+                await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Cursus.Data.Entities.OrderStatus.Paid);
                 await _unitOfWork.CartRepository.UpdateIsPurchased(transaction.Order.CartId, true);
             }
             else

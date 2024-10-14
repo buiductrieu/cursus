@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CartV5 : Migration
+    public partial class meme : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -301,9 +301,9 @@ namespace Cursus.Data.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     PaidAmount = table.Column<double>(type: "float", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -477,6 +477,7 @@ namespace Cursus.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     OrderId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -554,9 +555,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "15bcca43-d3df-435e-bba7-f43909b01721", null, "User", "USER" },
-                    { "675206a8-93a3-4e15-bb41-08c5949fa82e", null, "Instructor", "INSTRUCTOR" },
-                    { "e4f99486-55b7-4429-b134-af9e96fa7860", null, "Admin", "ADMIN" }
+                    { "289e3385-f85f-4b35-8092-a0cf32be0f2e", null, "User", "USER" },
+                    { "83119f7d-f3cb-4b4c-b769-dc645ef67dbc", null, "Instructor", "INSTRUCTOR" },
+                    { "b62443d9-f34a-440b-8621-d64941fbfc08", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

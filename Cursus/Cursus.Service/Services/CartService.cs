@@ -50,7 +50,7 @@ namespace Cursus.Service.Services
             if (course == null)
                 throw new KeyNotFoundException("Course not found.");
 
-            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.Cart.UserId == userId && o.Status == OrderStatus.Paid);
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.Cart.UserId == userId && o.Status == Data.Entities.OrderStatus.Paid);
             if (order != null)
                 throw new BadHttpRequestException("You have already purchased a course!");
 

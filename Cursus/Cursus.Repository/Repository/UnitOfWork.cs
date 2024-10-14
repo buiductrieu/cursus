@@ -33,13 +33,9 @@ namespace Cursus.Repository.Repository
 
         public ITransactionRepository TransactionRepository { get; }
         public IBookmarkRepository BookmarkRepository { get; }
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository,ICartItemsRepository cartItemsRepository)
-        public IStepCommentRepository StepCommentRepository { get; }
-        public IOrderRepository OrderRepository { get; }
+        public IInstructorInfoRepository InstructorInfoRepository { get; }
 
-        public ICartRepository CartRepository { get; }
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository,
-         IStepCommentRepository stepCommentRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository, IOrderRepository orderRepository, ICartRepository cartRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -50,7 +46,7 @@ namespace Cursus.Repository.Repository
             UserManager = userManager;
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
-            RefreshTokenRepository  = refreshTokenRepository;
+            RefreshTokenRepository = refreshTokenRepository;
             StepCommentRepository = stepCommentRepository;
             ProgressRepository = progressRepository;
             TransactionRepository = transactionRepository;
@@ -59,22 +55,9 @@ namespace Cursus.Repository.Repository
             CourseProgressRepository = courseProgressRepository;
             BookmarkRepository = bookmarkRepository;
             CartItemsRepository = cartItemsRepository;
+            TransactionRepository = transactionRepository;
         }
 
-        public IInstructorInfoRepository InstructorInfoRepository
-            OrderRepository = orderRepository;
-            CartRepository = cartRepository;
-        }   
-        {
-            get
-            {
-                if( _instructorInfoRepository == null)
-                {
-                    _instructorInfoRepository = new InstructorRepository(_db);
-                }
-                return _instructorInfoRepository;
-            }
-        }
 
         
 
