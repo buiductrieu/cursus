@@ -29,6 +29,7 @@ namespace Cursus.Service
             services.AddTransient<IStepCommentService, StepCommentService>();
             services.AddTransient<IBookmarkService, BookmarkService>();
             services.AddTransient<IStepService, StepService>();
+            services.AddTransient<IReasonService, ReasonService>();
 
             return services;
         }

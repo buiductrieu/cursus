@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241011074021_Migrations")]
-    partial class Migrations
+    [Migration("20241011075204_ReasonTable")]
+    partial class ReasonTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,7 +121,7 @@ namespace Cursus.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("Bookmark");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
@@ -407,6 +407,31 @@ namespace Cursus.Data.Migrations
                     b.ToTable("Order");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCancel")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Reason");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -604,19 +629,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b178610b-616b-4362-b022-67247ef6a9d6",
+                            Id = "979fab24-e51b-4770-ad98-6e4de0d57e4f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a16c7588-b695-4858-8c99-0a1209415e44",
+                            Id = "c0e5776d-e320-4bfe-acd3-1088d4fb3c55",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "92e2a8b0-07c7-40ba-b174-6d117d7fc0cc",
+                            Id = "f0929a7b-f33c-421c-b5e4-f9bb87c64baa",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -845,6 +870,17 @@ namespace Cursus.Data.Migrations
                     b.Navigation("Cart");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany("Reasons")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
@@ -985,6 +1021,8 @@ namespace Cursus.Data.Migrations
                     b.Navigation("CourseComments");
 
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Reasons");
 
                     b.Navigation("Steps");
                 });

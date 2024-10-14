@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Migrations : Migration
+    public partial class ReasonTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -293,7 +293,7 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookmarks",
+                name: "Bookmark",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -304,9 +304,9 @@ namespace Cursus.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookmarks", x => x.Id);
+                    table.PrimaryKey("PK_Bookmark", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookmarks_Courses_CourseId",
+                        name: "FK_Bookmark_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -422,6 +422,27 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reason",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    DateCancel = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reason", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reason_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Steps",
                 columns: table => new
                 {
@@ -530,9 +551,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "92e2a8b0-07c7-40ba-b174-6d117d7fc0cc", null, "User", "USER" },
-                    { "a16c7588-b695-4858-8c99-0a1209415e44", null, "Instructor", "INSTRUCTOR" },
-                    { "b178610b-616b-4362-b022-67247ef6a9d6", null, "Admin", "ADMIN" }
+                    { "979fab24-e51b-4770-ad98-6e4de0d57e4f", null, "Admin", "ADMIN" },
+                    { "c0e5776d-e320-4bfe-acd3-1088d4fb3c55", null, "Instructor", "INSTRUCTOR" },
+                    { "f0929a7b-f33c-421c-b5e4-f9bb87c64baa", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -575,8 +596,8 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookmarks_CourseId",
-                table: "Bookmarks",
+                name: "IX_Bookmark_CourseId",
+                table: "Bookmark",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
@@ -635,6 +656,11 @@ namespace Cursus.Data.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reason_CourseId",
+                table: "Reason",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId");
@@ -689,7 +715,7 @@ namespace Cursus.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Bookmarks");
+                name: "Bookmark");
 
             migrationBuilder.DropTable(
                 name: "CartItems");
@@ -705,6 +731,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "InstructorInfos");
+
+            migrationBuilder.DropTable(
+                name: "Reason");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
