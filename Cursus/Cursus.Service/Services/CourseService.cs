@@ -168,24 +168,24 @@ namespace Cursus.Service.Services
 
         }
 
-        public async Task<CourseDTO> CreateCourseWithSteps(CourseDTO courseDTO)
+        public async Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseCreateDTO)
         {
             // Check unique name
-            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name);
+            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseCreateDTO.Name);
 
             if (courseExists)
                 throw new BadHttpRequestException("Course name must be unique.");
 
-			var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == courseDTO.CategoryId);
+			var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == courseCreateDTO.CategoryId);
 			if (category == null)
 				throw new BadHttpRequestException("Category does not exist.");
 			if (category.IsParent)
 				throw new BadHttpRequestException("Cannot assign a parent category to a course.");
 
-			if (courseDTO.Steps == null || !courseDTO.Steps.Any())
+			if (courseCreateDTO.Steps == null || !courseCreateDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
-            var course = _mapper.Map<Course>(courseDTO);
+            var course = _mapper.Map<Course>(courseCreateDTO);
 
             // Save course in db
             await _unitOfWork.CourseRepository.AddAsync(course);
