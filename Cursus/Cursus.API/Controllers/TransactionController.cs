@@ -9,12 +9,12 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class TransactionController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
         private readonly APIResponse _response;
 
-        public PaymentController(IPaymentService paymentService, APIResponse response)
+        public TransactionController(IPaymentService paymentService, APIResponse response)
         {
             _paymentService = paymentService;
             _response = response;
@@ -33,9 +33,7 @@
         {
             // Create payment and retrieve approval URL
             var approvalUrl = await _paymentService.CreatePayment(
-                request.OrderId,
-                request.ReturnUrl,
-                request.CancelUrl);
+                request.OrderId);
 
             // Build successful response
             _response.IsSuccess = true;
@@ -59,7 +57,7 @@
             // Capture the payment and retrieve transaction details
             var transaction = await _paymentService.CapturePayment(
                 request.Token,
-                request.UserId,
+                request.PayId,
                 request.OrderId);
 
             // Build successful response
