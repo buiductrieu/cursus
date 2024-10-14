@@ -1,4 +1,4 @@
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Service.Services;
@@ -113,6 +113,7 @@ namespace Cursus.API.Controllers
             return BadRequest(_response);
         }
 
+
         /// <summary>
         /// Confirm email
         /// </summary>
@@ -144,5 +145,42 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+                /// <summary>
+        /// List all instructors along with user and instructor information
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("list-instructors")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetAllInstructors()
+        {
+            var instructors = await _instructorService.GetAllInstructors();
+            if (instructors == null || !instructors.Any())
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("No instructors found");
+                return NotFound(_response);
+            }
+
+            var result = instructors.Select(instructor => new
+            {
+                UserId = instructor.User?.Id,
+                UserName = instructor.User?.UserName,
+                Email = instructor.User?.Email,
+                PhoneNumber = instructor.User?.PhoneNumber,
+                InstructorId = instructor.Id,
+                CardName = instructor.CardName,
+                CardProvider = instructor.CardProvider,
+                CardNumber = instructor.CardNumber,
+                SubmitCertificate = instructor.SubmitCertificate,
+                StatusInstructor = instructor.StatusInsructor
+            });
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = result;
+
+            return Ok(_response);
     }
 }

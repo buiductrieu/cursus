@@ -14,5 +14,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO);
         Task<bool> ApproveInstructorAsync(string instructorId);
         Task<bool> RejectInstructorAsync(string instructorId);
+        Task<IEnumerable<InstructorInfo>> GetAllInstructors();
+
     }
 }
