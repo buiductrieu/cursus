@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Cursus.Data.Entities;
 using System.Linq.Expressions;
 using Cursus.Data.DTO;
+using Cursus.RepositoryContract.Interfaces;
 
 namespace Cursus.ServiceContract.Interfaces
 {
-    public interface IInstructorInfoRepository
+    public interface IInstructorInfoRepository : IRepository<InstructorInfo>
     {
         Task<IEnumerable<InstructorInfo>> GettAllAsync();
-        Task<InstructorInfo> GetByIDAsync(int id);
+
 
         Task AddAsync(InstructorInfo instructorInfo);
 

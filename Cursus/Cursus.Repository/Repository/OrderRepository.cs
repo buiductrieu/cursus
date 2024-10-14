@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    internal class OrderRepository : Repository<Order>, IOrderRepository
-    {
-        private readonly CursusDbContext _db;
+	public class OrderRepository : Repository<Order>, IOrderRepository
+	{
+		private readonly CursusDbContext _db;
         public OrderRepository(CursusDbContext db) : base(db)
         {
             _db = db;
@@ -38,5 +38,5 @@ namespace Cursus.Repository.Repository
         }
 
 
-    }
+	}
 }

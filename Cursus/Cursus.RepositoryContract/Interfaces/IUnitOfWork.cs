@@ -1,4 +1,4 @@
-﻿using Cursus.ServiceContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -20,6 +20,15 @@ namespace Cursus.RepositoryContract.Interfaces
         IStepRepository StepRepository { get; }
         IStepContentRepository StepContentRepository { get; }
         ICourseCommentRepository CourseCommentRepository { get; }
+        IRefreshTokenRepository RefreshTokenRepository { get; }
+        IProgressRepository ProgressRepository { get; }
+        IStepCommentRepository StepCommentRepository { get; }
+        ICartItemsRepository CartItemsRepository { get; }
+        IBookmarkRepository BookmarkRepository { get; }
+		ICartRepository CartRepository { get; }
+		IOrderRepository OrderRepository { get; }
+        ICourseProgressRepository CourseProgressRepository { get; }
+
 
         IStepCommentRepository StepCommentRepository { get; }
 
@@ -27,5 +36,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IOrderRepository OrderRepository { get; }
         ICartRepository CartRepository { get; } 
         Task SaveChanges();
+
+
     }
 }

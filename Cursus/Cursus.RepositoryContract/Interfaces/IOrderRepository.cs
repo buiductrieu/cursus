@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    public interface IOrderRepository : IRepository<Order>
-    {
+	public interface IOrderRepository : IRepository<Order>
+	{
         Task<Order> GetOrderWithCartAndItemsAsync(int orderId);
         Task UpdateOrderStatus(int orderId, OrderStatus newStatus);
-    }
+	}
 }

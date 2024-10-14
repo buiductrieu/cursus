@@ -1,4 +1,4 @@
-﻿using Cursus.Repository.Repository;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
@@ -27,8 +27,15 @@ namespace Cursus.Repository
             services.AddTransient<ICourseCommentRepository, CourseCommentRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<IProgressRepository, ProgressRepository>();
+            services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddTransient<IStepCommentRepository, StepCommentRepository>();
+            services.AddTransient<IBookmarkRepository, BookmarkRepository>();
+            services.AddTransient<IStepRepository, StepRepository>();
+			services.AddTransient<ICartRepository, CartRepository>();
+			services.AddTransient<IOrderRepository, OrderRepository>();
+			services.AddTransient<ICourseProgressRepository, CourseProgressRepository>();
+            services.AddTransient<ICartItemsRepository, CartItemsRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<ICartRepository, CartRepository>();
             // DI UnitOfWork

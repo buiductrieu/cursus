@@ -2,19 +2,22 @@
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("default")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
-
+        private readonly APIResponse _response;
         public AdminController(IAdminService adminService)
         {
             _adminService = adminService;
+            _response = new APIResponse();
         }
         /// <summary>
         /// Modify user's status
@@ -78,6 +81,29 @@ namespace Cursus.API.Controllers
 
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
 
+        }
+
+        [HttpPost("add-comments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AdminComments([FromQuery]string userId,[FromQuery] string comment)
+        {
+          
+            var result = await _adminService.AdminComments(userId, comment);
+            if (result)
+            {
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = "Comment is sucessful";
+                return Ok(_response);
+            }
+            else
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Failed to add comment");
+                return BadRequest(_response);
+            }
         }
     }
 }

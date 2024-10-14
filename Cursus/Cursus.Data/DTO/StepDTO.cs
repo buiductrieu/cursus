@@ -1,11 +1,13 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Cursus.Data.DTO
 {
 	public class StepDTO
 	{
-		public int Id { get; set; }
+        [JsonIgnore]
+        public int Id { get; set; }
 		public int CourseId { get; set; }
 		[Required]
 		public string Name { get; set; }

@@ -200,7 +200,7 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<CourseDTO> UpdateCourseWithSteps(CourseDTO courseDTO)
+        public async Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO)
         {
             var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
 
@@ -215,13 +215,16 @@ namespace Cursus.Service.Services
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
-            _mapper.Map(courseDTO, existingCourse);
+            existingCourse.DateModified = DateTime.UtcNow;
 
+            _mapper.Map(courseDTO, existingCourse);
+            
             await _unitOfWork.SaveChanges();
 
             var updatedCourseDTO = _mapper.Map<CourseDTO>(existingCourse);
             return updatedCourseDTO;
         }
+
 
         public async Task<bool> DeleteCourse(int courseId)
         {
@@ -238,5 +241,18 @@ namespace Cursus.Service.Services
             return true; 
         }
 
+        public async Task<CourseDTO> GetCourseByIdAsync(int courseId)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                throw new KeyNotFoundException("Course not found");
+            }
+
+            var output = _mapper.Map<CourseDTO>(course);
+
+            return output;
+        }
     }
 }

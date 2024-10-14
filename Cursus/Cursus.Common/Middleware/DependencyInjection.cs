@@ -11,6 +11,7 @@ namespace Cursus.Common.Middleware
             services.AddExceptionHandler<KeyNotFoundExceptionHandler>();
             services.AddExceptionHandler<NotImplementExceptionHandler>();
             services.AddExceptionHandler<BadRequestExceptionHandler>();
+            services.AddExceptionHandler<EmailNotConfirmedExceptionHandler>();
             return services;
         }
     }

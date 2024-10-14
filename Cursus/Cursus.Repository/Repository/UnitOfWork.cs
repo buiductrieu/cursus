@@ -23,7 +23,17 @@ namespace Cursus.Repository.Repository
         public IStepContentRepository StepContentRepository { get; }
         public UserManager<ApplicationUser> UserManager { get; }
         public ICourseCommentRepository CourseCommentRepository { get; }
+        public IRefreshTokenRepository RefreshTokenRepository { get; }
+        public IStepCommentRepository StepCommentRepository { get; }
+        public IProgressRepository ProgressRepository { get; }
+		public ICartRepository CartRepository { get; }
+		public IOrderRepository OrderRepository { get; }
+        public ICourseProgressRepository CourseProgressRepository { get; }
+        public ICartItemsRepository CartItemsRepository { get; }
+
         public ITransactionRepository TransactionRepository { get; }
+        public IBookmarkRepository BookmarkRepository { get; }
+		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository,ICartItemsRepository cartItemsRepository)
         public IStepCommentRepository StepCommentRepository { get; }
         public IOrderRepository OrderRepository { get; }
 
@@ -40,13 +50,21 @@ namespace Cursus.Repository.Repository
             UserManager = userManager;
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
-            TransactionRepository = transactionRepository;
+            RefreshTokenRepository  = refreshTokenRepository;
             StepCommentRepository = stepCommentRepository;
+            ProgressRepository = progressRepository;
+            TransactionRepository = transactionRepository;
+            CartRepository = cartRepository;
+            OrderRepository = orderRepository;
+            CourseProgressRepository = courseProgressRepository;
+            BookmarkRepository = bookmarkRepository;
+            CartItemsRepository = cartItemsRepository;
+        }
+
+        public IInstructorInfoRepository InstructorInfoRepository
             OrderRepository = orderRepository;
             CartRepository = cartRepository;
         }   
-
-        public IInstructorInfoRepository InstructorInfoRepository
         {
             get
             {

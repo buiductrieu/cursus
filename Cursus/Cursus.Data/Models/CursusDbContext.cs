@@ -1,4 +1,4 @@
-﻿using Cursus.Data.Entities;
+using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,10 +32,15 @@ namespace Cursus.Data.Models
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
         public virtual DbSet<InstructorInfo> InstructorInfos { get; set; } = null!;
         public virtual DbSet<CourseComment> CourseComments { get; set; } = null!;
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public virtual DbSet<Cart> Cart { get; set; } = null!;
         public virtual DbSet<CartItems> CartItems { get; set; } = null!;
         public virtual DbSet<Order> Order { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
+
+        public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
+        public virtual DbSet<AdminComment> AdminComments { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
