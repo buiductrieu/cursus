@@ -65,6 +65,11 @@ namespace Cursus.Data.Models
                     NormalizedName = "USER"
                 }
             );
+            modelBuilder.Entity<AdminComment>()
+                .HasOne(c => c.Commenter)
+                .WithMany()
+                .HasForeignKey(c => c.CommenterId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

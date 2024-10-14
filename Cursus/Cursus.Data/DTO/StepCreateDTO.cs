@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cursus.Data.DTO
 {
-    public class CreateStepDTO
+    public class StepCreateDTO
     {
         [Required]
         public int CourseId { get; set; }
@@ -17,6 +17,5 @@ namespace Cursus.Data.DTO
         public int Order { get; set; }
         [Required]
         public string Description { get; set; }
-        public DateTime DateCreated { get; set; }
     }
 }
