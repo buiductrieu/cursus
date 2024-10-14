@@ -24,7 +24,7 @@ namespace Cursus.API.Controllers
             _response = response;
             _unitOfWork = unitOfWork;
         }
-        [HttpPut("DeleteCart{id}")]
+        [HttpDelete("DeleteCart{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> DeleteCart(int id)

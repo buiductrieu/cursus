@@ -25,11 +25,6 @@ namespace Cursus.Repository.Repository
         {
             return await GetAllAsync();
         }
-
-        public async Task<CartItems> UpdateCartItems(CartItems cartItems)
-        {
-            return await UpdateAsync(cartItems);
-        }
         public async Task<CartItems> GetItemByID(int cartItemsId)
         {
             return await GetAsync(filter: b => b.CartItemsId == cartItemsId);

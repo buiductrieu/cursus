@@ -35,17 +35,5 @@ namespace Cursus.Service.Services
         {
             return await _unitOfWork.CartItemsRepository.GetAllItems();
         }
-
-        public async Task<CartItems> UpdateCartItems(CartItems cartItems, int id)
-        {
-            var OldCartItem = await _unitOfWork.CartItemsRepository.GetItemByID(id);
-            if (OldCartItem == null)
-            {
-                throw new Exception("Cart Item not found");
-            }
-            OldCartItem.Course= cartItems.Course;
-            OldCartItem.Price= cartItems.Price;
-            return await _unitOfWork.CartItemsRepository.UpdateCartItems(OldCartItem);
-        }
     }
 }

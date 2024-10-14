@@ -10,7 +10,6 @@ namespace Cursus.RepositoryContract.Interfaces
     public interface ICartItemsRepository
     {
         public Task<bool> DeleteCartItems(CartItems cartItems);
-        public Task<CartItems> UpdateCartItems(CartItems cartItems);
         public Task<IEnumerable<CartItems>> GetAllItems();
         public Task<CartItems> GetItemByID(int cartItemsId);
     }

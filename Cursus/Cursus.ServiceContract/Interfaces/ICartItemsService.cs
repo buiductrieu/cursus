@@ -11,6 +11,5 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<bool> DeleteCartItem(int id);
         Task<IEnumerable<CartItems>> GetAllCartItems();
-        Task<CartItems> UpdateCartItems(CartItems cartItems, int id);
     }
 }
