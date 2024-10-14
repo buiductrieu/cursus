@@ -43,13 +43,11 @@ namespace Cursus.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CommenterId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AdminComments");
                 });
@@ -160,6 +158,9 @@ namespace Cursus.Data.Migrations
 
                     b.Property<bool>("IsPurchased")
                         .HasColumnType("bit");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -420,11 +421,20 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("PaidAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("OrderId");
 
@@ -630,19 +640,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "76a4986b-d886-4460-a4a7-9d4d9ab7c926",
+                            Id = "b62443d9-f34a-440b-8621-d64941fbfc08",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f127709f-b209-4f91-b462-75e630775a45",
+                            Id = "83119f7d-f3cb-4b4c-b769-dc645ef67dbc",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "50b4ae9d-fdf9-43ad-997e-b75ed0006e92",
+                            Id = "289e3385-f85f-4b35-8092-a0cf32be0f2e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -759,18 +769,10 @@ namespace Cursus.Data.Migrations
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "Commenter")
                         .WithMany()
                         .HasForeignKey("CommenterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Commenter");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Bookmark", b =>

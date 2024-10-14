@@ -49,18 +49,17 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
 
 			//Course mapper
-			CreateMap<CourseDTO, Course>()
-			   .ForMember(dest => dest.Id, opt => opt.Ignore())
+			CreateMap<CourseCreateDTO, Course>()
 			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+
 
 			CreateMap<Course, CourseDTO>()
-			    .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+	           .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
             // Step Mapping
-            CreateMap<StepDTO, Step>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+            CreateMap<StepCreateDTO, Step>()
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
             CreateMap<StepUpdateDTO, Step>()
@@ -69,11 +68,6 @@ namespace Cursus.Common.Helper
 
             CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
             CreateMap<Step, StepDTO>().ReverseMap();
-
-            // CreateStepDTO Mapping (newly added)
-            CreateMap<CreateStepDTO, Step>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
 
 
 
@@ -132,6 +126,32 @@ namespace Cursus.Common.Helper
 
             CreateMap<Course, CourseDetailDTO>()
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
-        }
+
+			//Cart Mapping
+			CreateMap<CartDTO, Cart>().ReverseMap();
+
+			//CartItems Mapping
+			CreateMap<CartItems, CartItemsDTO>()
+				.ForPath(dest => dest.Name, opt => opt.MapFrom(src => src.Course.Name)).ReverseMap();
+
+            CreateMap<StepCommentCreateDTO, StepComment>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            // Mapping từ Transaction sang TransactionDTO
+            CreateMap<Transaction, TransactionDTO>()
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+	        //Oder Mapping
+			CreateMap<Order, OrderDTO>()
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+				.ReverseMap();
+		}
     }
 }

@@ -24,10 +24,6 @@ namespace Cursus.Data.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-
-        [ForeignKey("UserId")]
-        public ApplicationUser? User { get; set; } 
-
         [ForeignKey("CommenterId")]
         public ApplicationUser? Commenter { get; set; }
 

@@ -1,7 +1,10 @@
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Data.DTO;
+using Cursus.Data.Entities;
+using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -15,10 +18,16 @@ namespace Cursus.API.Controllers
     {
         private readonly IInstructorService _instructorService;
         private readonly APIResponse _response;
-        public InstructorController(IInstructorService instructorService , APIResponse aPIResponse)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
+        private readonly IAuthService _authService;
+        public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _instructorService = instructorService;
             _response = aPIResponse;
+            _authService = authService;
+            _userManager = userManager;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -38,20 +47,35 @@ namespace Cursus.API.Controllers
                 _response.Result = ModelState;
                 return BadRequest(_response);
             }
-
+            var existingUser = await _userManager.FindByEmailAsync(registerInstructorDTO.Email);
+            if (existingUser != null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = "An account with this email already exists.";
+                return BadRequest(_response);
+            }
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            if (result.Succeeded)
+            if (result != null)
             {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(result);
+                var confirmationLink = Url.Action(
+                    nameof(ConfirmEmail),
+                    "Instructor",
+                    new { userId = result.Id, token = token },
+                    Request.Scheme);
+                _emailService.SendEmailConfirmation(result.Email, confirmationLink);
+
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.Created;
-                _response.Result = "Instructor registered successfully";
+                _response.Result = "Instructor registered successfully, please confirm your email";
                 return CreatedAtAction(nameof(RegisterInstructor), _response);
             }
 
             _response.IsSuccess = false;
             _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.ErrorMessages = result.Errors.Select(e => e.Description).ToList();
+            _response.Result = "Failed to register instructor";
             return BadRequest(_response);
         }
 
@@ -88,7 +112,40 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages.Add("Failed to reject instructor");
             return BadRequest(_response);
         }
+
+
         /// <summary>
+        /// Confirm email
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpGet("confirm-email")]
+        public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token, [FromQuery] string username)
+        {
+            try
+            {
+                var result = await _authService.ConfirmEmail(username, token);
+                if (result)
+                {
+                    _response.IsSuccess = true;
+                    _response.StatusCode = HttpStatusCode.OK;
+                    return Ok(_response);
+                }
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Can not confirm your email");
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+            catch (Exception e)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(e.Message);
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
+                /// <summary>
         /// List all instructors along with user and instructor information
         /// </summary>
         /// <returns></returns>
@@ -125,6 +182,5 @@ namespace Cursus.API.Controllers
             _response.Result = result;
 
             return Ok(_response);
-        }
     }
 }

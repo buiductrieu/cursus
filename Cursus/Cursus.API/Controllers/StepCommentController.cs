@@ -54,7 +54,8 @@ namespace Cursus.API.Controllers
         public async Task<ActionResult> DeleteComment(int commentId, string adminId)
         {
             var isDeleted = await _stepCommentService.DeleteStepCommentIfAdmin(commentId, adminId);
-    //        return Ok("Comment deleted successfully.");
+            if (!isDeleted) return NotFound();
+            //        return Ok("Comment deleted successfully.");
             return NoContent();
         }
     }

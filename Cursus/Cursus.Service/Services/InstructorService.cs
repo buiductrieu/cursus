@@ -30,7 +30,7 @@ namespace Cursus.Service.Services
             _context = context;
 
         }
-        public async Task<IdentityResult> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
+        public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
             var user = new ApplicationUser
             {
@@ -43,20 +43,17 @@ namespace Cursus.Service.Services
 
             var userResult = await _userManager.CreateAsync(user, registerInstructorDTO.Password);
 
-            if(userResult.Succeeded)
+            if (userResult.Succeeded)
             {
-
-                // Thêm vai trò "Instructor" cho người dùng
                 var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
 
-                // Kiểm tra xem việc gán role có thành công không
                 if (!roleResult.Succeeded)
                 {
-                    return IdentityResult.Failed(roleResult.Errors.ToArray());
+                    return null; // Gán vai trò không thành công
                 }
+
                 var instructorInfo = new InstructorInfo
                 {
-
                     UserId = user.Id,
                     CardName = registerInstructorDTO.CardName,
                     CardProvider = registerInstructorDTO.CardProvider,
@@ -67,20 +64,11 @@ namespace Cursus.Service.Services
 
                 await _unitOfWork.InstructorInfoRepository.AddAsync(instructorInfo);
                 await _unitOfWork.SaveChanges();
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"https://yourapplication.com/confirm?userId={user.Id}&email={user.Email}";
-                try
-                {              
-                    _emailService.SendEmailConfirmation(user.Email, confirmationLink);
-    
-                }
-                catch (Exception ex)
-                {
-                    // Log lỗi nếu việc gửi email thất bại
-                    return IdentityResult.Failed(new IdentityError { Description = $"User registered successfully, but failed to send confirmation email. Error: {ex.Message}" });
-                }
+
+                return user; // Trả về đối tượng ApplicationUser để tiếp tục xử lý
             }
-            return userResult;
+
+            return null; // Đăng ký không thành công
         }
 
         public async Task<IdentityResult> ConfirmInstructorEmailAsync(string userId, string token)
@@ -99,7 +87,7 @@ namespace Cursus.Service.Services
 
         public async Task<bool> ApproveInstructorAsync(string instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Approved;
@@ -121,7 +109,7 @@ namespace Cursus.Service.Services
 
         public async Task<bool> RejectInstructorAsync(string instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetByIDAsync(int.Parse(instructorId));
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
 
             instructorInfo.StatusInsructor = InstructorStatus.Rejected;

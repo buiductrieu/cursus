@@ -12,12 +12,13 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    public class InstructorRepository : IInstructorInfoRepository
-    {
+    public class InstructorRepository : Repository<InstructorInfo>, IInstructorInfoRepository
+    { 
         private readonly CursusDbContext _dbContext;
-        public InstructorRepository(CursusDbContext dbcontext)
+
+        public InstructorRepository(CursusDbContext dbContext ) :base (dbContext)
         {
-            _dbContext = dbcontext; 
+            _dbContext = dbContext;
         }
 
         public async Task AddAsync(InstructorInfo instructorInfo)
