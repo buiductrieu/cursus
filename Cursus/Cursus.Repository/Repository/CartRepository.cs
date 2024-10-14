@@ -12,25 +12,32 @@ namespace Cursus.Repository.Repository
 {
     public class CartRepository : Repository<Cart>, ICartRepository
     {
-		private readonly CursusDbContext _db;
-        
+        private readonly CursusDbContext _db;
+
         public CartRepository(CursusDbContext db) : base(db)
         {
             _db = db;
         }
         public async Task<bool> DeleteCart(Cart cart)
+        {
+            cart.IsPurchased = true;
+            return await UpdateAsync(cart) != null;
+
+        }
 
         public async Task UpdateIsPurchased(int cartId, bool isPurchased)
         {
-            cart.IsPurchased = true;
-            return await UpdateAsync(cart) != null; 
-
-        }
             var cart = await _db.Cart.FindAsync(cartId);
             if (cart != null)
             {
                 cart.IsPurchased = isPurchased;
                 _db.Cart.Update(cart);
+                cart.IsPurchased = true;
+                await UpdateAsync(cart);
+            }
+
+        }
+            
 
         public async Task<IEnumerable<Cart>> GetCart()
         {

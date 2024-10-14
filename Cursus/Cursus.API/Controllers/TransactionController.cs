@@ -1,45 +1,73 @@
-﻿using Cursus.Common.Helper;
-using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-
-namespace Cursus.API.Controllers
+﻿namespace Demo_PayPal.Controllers
 {
+    using Microsoft.AspNetCore.Mvc;
+    using Cursus.Common.Helper;  // Use APIResponse from Helper
+    using System.Net;
+    using System.Threading.Tasks;
+    using Cursus.ServiceContract.Interfaces;
+    using Cursus.Data.DTO.Payment;
+
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionController : ControllerBase
+    public class PaymentController : ControllerBase
     {
-
-
-        private readonly ITransactionService _transactionService;
+        private readonly IPaymentService _paymentService;
         private readonly APIResponse _response;
 
-        public TransactionController(ITransactionService transactionService, APIResponse response)
+        public PaymentController(IPaymentService paymentService, APIResponse response)
         {
-            _transactionService = transactionService;
+            _paymentService = paymentService;
             _response = response;
         }
 
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllTransactions(int page = 1, int pageSize = 20)
+        /// <summary>
+        /// Creates a payment request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("create-payment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> CreatePayment([FromBody] CreatePaymentRequest request)
         {
-            var transactions = await _transactionService.GetListTransaction(page, pageSize);
+            // Create payment and retrieve approval URL
+            var approvalUrl = await _paymentService.CreatePayment(
+                request.OrderId,
+                request.ReturnUrl,
+                request.CancelUrl);
+
+            // Build successful response
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = transactions;
+            _response.Result = new { ApprovalUrl = approvalUrl };
+
             return Ok(_response);
         }
 
-       
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetTransactionsByUserId(string userId, int page = 1, int pageSize = 20)
+        /// <summary>
+        /// Captures a payment
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("capture-payment")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> CapturePayment([FromBody] CapturePaymentRequest request)
         {
-            var transactions = await _transactionService.GetListTransactionByUserId(userId, page, pageSize);
+            // Capture the payment and retrieve transaction details
+            var transaction = await _paymentService.CapturePayment(
+                request.Token,
+                request.UserId,
+                request.OrderId);
+
+            // Build successful response
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = transactions;
+            _response.Result = new { Message = "Payment successful", Transaction = transaction };
+
             return Ok(_response);
         }
-
     }
 }

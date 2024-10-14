@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241014022402_CartV5")]
-    partial class CartV5
+    [Migration("20241014081749_meme")]
+    partial class meme
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -582,6 +582,9 @@ namespace Cursus.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -640,19 +643,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e4f99486-55b7-4429-b134-af9e96fa7860",
+                            Id = "b62443d9-f34a-440b-8621-d64941fbfc08",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "675206a8-93a3-4e15-bb41-08c5949fa82e",
+                            Id = "83119f7d-f3cb-4b4c-b769-dc645ef67dbc",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "15bcca43-d3df-435e-bba7-f43909b01721",
+                            Id = "289e3385-f85f-4b35-8092-a0cf32be0f2e",
                             Name = "User",
                             NormalizedName = "USER"
                         });

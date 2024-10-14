@@ -30,6 +30,8 @@ namespace Cursus.Repository
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddTransient<IStepCommentRepository, StepCommentRepository>();
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IBookmarkRepository, BookmarkRepository>();
             services.AddTransient<IStepRepository, StepRepository>();
 			services.AddTransient<ICartRepository, CartRepository>();

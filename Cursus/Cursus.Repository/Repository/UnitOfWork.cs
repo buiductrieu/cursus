@@ -4,103 +4,82 @@ using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly CursusDbContext _db;
-        public ICategoryRepository CategoryRepository { get; }
 
-        private IInstructorInfoRepository _instructorInfoRepository;
+        public ICategoryRepository CategoryRepository { get; }
+        public IInstructorInfoRepository InstructorInfoRepository { get; private set; }
         public ICourseRepository CourseRepository { get; }
         public IStepRepository StepRepository { get; }
         public IUserRepository UserRepository { get; }
         public IStepContentRepository StepContentRepository { get; }
         public UserManager<ApplicationUser> UserManager { get; }
         public ICourseCommentRepository CourseCommentRepository { get; }
-        public IRefreshTokenRepository RefreshTokenRepository { get; }
+        public ITransactionRepository TransactionRepository { get; }
+        public IOrderRepository OrderRepository { get; }
         public IStepCommentRepository StepCommentRepository { get; }
+        public IRefreshTokenRepository RefreshTokenRepository { get; }
         public IProgressRepository ProgressRepository { get; }
-		public ICartRepository CartRepository { get; }
-		public IOrderRepository OrderRepository { get; }
+        public ICartRepository CartRepository { get; }
         public ICourseProgressRepository CourseProgressRepository { get; }
         public ICartItemsRepository CartItemsRepository { get; }
-
-        public ITransactionRepository TransactionRepository { get; }
         public IBookmarkRepository BookmarkRepository { get; }
-		public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository,IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository,ICartItemsRepository cartItemsRepository)
-        public IStepCommentRepository StepCommentRepository { get; }
-        public IOrderRepository OrderRepository { get; }
+        public IInstructorInfoRepository InstructorInfoRepository { get; }
 
-        public ICartRepository CartRepository { get; }
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository,
-         IStepCommentRepository stepCommentRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository,ITransactionRepository transactionRepository, IOrderRepository orderRepository, ICartRepository cartRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
             CourseRepository = courseRepository;
             StepRepository = stepRepository;
             UserRepository = userRepository;
-            _instructorInfoRepository = instructorInfoRepository;
+            InstructorInfoRepository = instructorInfoRepository;
             UserManager = userManager;
             StepContentRepository = stepContentRepository;
             CourseCommentRepository = courseCommentRepository;
-            RefreshTokenRepository  = refreshTokenRepository;
+            RefreshTokenRepository = refreshTokenRepository;
             StepCommentRepository = stepCommentRepository;
+            RefreshTokenRepository = refreshTokenRepository;
             ProgressRepository = progressRepository;
             TransactionRepository = transactionRepository;
-            CartRepository = cartRepository;
             OrderRepository = orderRepository;
+            CartRepository = cartRepository;
             CourseProgressRepository = courseProgressRepository;
+            CartItemsRepository = cartItemsRepository;
             BookmarkRepository = bookmarkRepository;
             CartItemsRepository = cartItemsRepository;
+            TransactionRepository = transactionRepository;
         }
 
-        public IInstructorInfoRepository InstructorInfoRepository
-            OrderRepository = orderRepository;
-            CartRepository = cartRepository;
-        }   
+
+        private bool _disposed = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            get
+            if (!_disposed)
             {
-                if( _instructorInfoRepository == null)
+                if (disposing)
                 {
-                    _instructorInfoRepository = new InstructorRepository(_db);
+                    _db.Dispose();
                 }
-                return _instructorInfoRepository;
             }
+            _disposed = true;
         }
 
-        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-        private bool disposed = false;
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-					_db.Dispose();
-				}
-			}
-			this.disposed = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		public async Task SaveChanges()
-		{
-			await _db.SaveChangesAsync();
-		}
-	}
+        public async Task SaveChanges()
+        {
+            await _db.SaveChangesAsync();
+        }
+    }
 }

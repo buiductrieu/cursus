@@ -1,5 +1,8 @@
+
+
 ﻿using Cursus.Common.Helper;
 using Cursus.Common.Middleware;
+
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
@@ -13,6 +16,7 @@ using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
+using Cursus.Service.Services;
 
 
 namespace Cursus.API
@@ -105,9 +109,6 @@ namespace Cursus.API
                 opt.IncludeXmlComments(Assembly.GetExecutingAssembly());
 
             });
-
-
-
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())

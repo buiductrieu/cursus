@@ -9,11 +9,7 @@ namespace Cursus.Data.DTO.Payment
 {
     public class CreatePaymentRequest
     {
-
-
-
-        [Required(ErrorMessage = "OrderId is required.")]
-        
+        [Required(ErrorMessage = "OrderId is required.")]       
         public int OrderId { get; set; }
         
        

@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-	public class OrderRepository : Repository<Order>, IOrderRepository
-	{
-		private readonly CursusDbContext _db;
+
+    public class OrderRepository : Repository<Order>, IOrderRepository
+    {
+        private readonly CursusDbContext _db;
+
         public OrderRepository(CursusDbContext db) : base(db)
         {
             _db = db;
@@ -27,6 +29,10 @@ namespace Cursus.Repository.Repository
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
             }
 
+        
+
+
+
         public async Task UpdateOrderStatus(int orderId, OrderStatus newStatus)
         {
            
@@ -39,4 +45,5 @@ namespace Cursus.Repository.Repository
 
 
 	}
+
 }

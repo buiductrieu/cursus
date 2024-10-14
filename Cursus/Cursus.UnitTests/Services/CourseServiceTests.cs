@@ -30,13 +30,20 @@ namespace Cursus.Test.Service
 			_userServiceMock = new Mock<IUserService>();
 			_repository = new Mock<ICourseRepository>();
 
-			_courseService = new CourseService(
-				_repository.Object,
-				_courseProgressServiceMock.Object,
-				_userServiceMock.Object,
-				_unitOfWorkMock.Object,
-				_mapperMock.Object);
-		}
+//			_courseService = new CourseService(
+//				_repository.Object,
+//				_courseProgressServiceMock.Object,
+//				_userServiceMock.Object,
+//				_unitOfWorkMock.Object,
+//				_mapperMock.Object);
+//		}
+		//	_courseService = new CourseService(
+				
+		//		_courseProgressServiceMock.Object,
+		//		_userServiceMock.Object,
+		//		_unitOfWorkMock.Object,
+		//		_mapperMock.Object);
+		//}
 
 		[Test]
 		public async Task CreateCourseWithSteps_ShouldReturnCourseDTO_WhenCourseIsCreatedSuccessfully()
