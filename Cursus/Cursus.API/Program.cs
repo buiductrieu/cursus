@@ -1,5 +1,8 @@
+
+
 ﻿using Cursus.Common.Helper;
 using Cursus.Common.Middleware;
+
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
@@ -106,9 +109,6 @@ namespace Cursus.API
                 opt.IncludeXmlComments(Assembly.GetExecutingAssembly());
 
             });
-
-
-
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
