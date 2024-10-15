@@ -46,7 +46,23 @@ namespace Cursus.Repository.Repository
         {
            return await _dbContext.InstructorInfos.Include(i => i.User).ToListAsync();
         }
+        public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        {
+            return await _dbContext.InstructorInfos
+                                   .Include(i => i.User)
+                                   .ToListAsync();
+        }
 
-        
+        public async Task UpdateAsync(InstructorInfo instructorInfo)
+        {
+            _dbContext.InstructorInfos.Update(instructorInfo);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddAsync(InstructorInfo instructorInfo)
+        {
+            await _dbContext.InstructorInfos.AddAsync(instructorInfo);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -149,7 +149,7 @@ namespace Cursus.UnitTest.Services
             };
 
             _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);                              
+                .ReturnsAsync(IdentityResult.Success);
 
             _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"))
                 .ReturnsAsync(IdentityResult.Success);
@@ -160,8 +160,8 @@ namespace Cursus.UnitTest.Services
             _unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
 
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
-            Assert.IsNotNull(result); 
-            Assert.AreEqual(registerInstructorDTO.UserName, result.Email); 
+            Assert.IsNotNull(result);
+            Assert.AreEqual(registerInstructorDTO.UserName, result.Email);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
             _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Once);
         }
@@ -188,16 +188,16 @@ namespace Cursus.UnitTest.Services
 
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            Assert.IsNull(result); 
+            Assert.IsNull(result);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
-            _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Never); 
+            _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Never);
         }
         [Test]
         public async Task RegisterInstructorAsync_InvalidUsername_ReturnsNull()
         {
             var registerInstructorDTO = new RegisterInstructorDTO
             {
-                UserName = "invalid-email", 
+                UserName = "invalid-email",
                 Password = "Password123!",
                 ConfirmPassword = "Password123!",
                 Phone = "123456789",
@@ -222,7 +222,7 @@ namespace Cursus.UnitTest.Services
             var registerInstructorDTO = new RegisterInstructorDTO
             {
                 UserName = "test@example.com",
-                Password = "pass", 
+                Password = "pass",
                 ConfirmPassword = "pass",
                 Phone = "123456789",
                 Address = "123 Main St",
@@ -248,7 +248,7 @@ namespace Cursus.UnitTest.Services
             {
                 UserName = "test@example.com",
                 Password = "Password123!",
-                ConfirmPassword = "DifferentPassword123!", 
+                ConfirmPassword = "DifferentPassword123!",
                 Phone = "123456789",
                 Address = "123 Main St",
                 CardName = "Test Card",
@@ -277,7 +277,7 @@ namespace Cursus.UnitTest.Services
                 Address = "123 Main St",
                 CardName = "Test Card",
                 CardProvider = "Visa",
-                CardNumber = "1234",  
+                CardNumber = "1234",
                 SubmitCertificate = "SampleCertificate"
             };
             var validationResults = new List<ValidationResult>();
@@ -286,7 +286,7 @@ namespace Cursus.UnitTest.Services
             var isValid = Validator.TryValidateObject(registerInstructorDTO, context, validationResults, true);
 
             var cardNumberError = validationResults.FirstOrDefault(vr => vr.ErrorMessage.Contains("Card number must be exactly 16 digits"));
-            Assert.IsNotNull(cardNumberError); 
+            Assert.IsNotNull(cardNumberError);
             Assert.That(cardNumberError.ErrorMessage, Does.Contain("Card number must be exactly 16 digits"));
         }
         public static class TestDataHelper
