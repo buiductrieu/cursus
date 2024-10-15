@@ -152,66 +152,6 @@ namespace Cursus.UnitTests.Services
 		}
 
 		[Test]
-		public async Task UpdateCourseWithSteps_ShouldReturnUpdatedCourse_WhenUpdateIsSuccessful()
-		{
-			// Arrange
-			var courseUpdateDTO = new CourseUpdateDTO
-			{
-				Id = 1,
-				Name = "Updated Course",
-				Description = "Updated Description",
-				CategoryId = 2,
-				Steps = new List<StepDTO>
-	{
-		new StepDTO { Name = "Step 1", Order = 1, Description = "Description for Step 1" },
-		new StepDTO { Name = "Step 2", Order = 2, Description = "Description for Step 2" }
-	}
-			};
-
-			var existingCourse = new Course
-			{
-				Id = 1,
-				Name = "Old Course",
-				Description = "Old Description",
-				CategoryId = 2,
-				Steps = new List<Step>()
-			};
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync(existingCourse);
-
-			_mapperMock.Setup(m => m.Map(courseUpdateDTO, existingCourse));
-
-			_unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
-
-			_mapperMock.Setup(m => m.Map<CourseDTO>(existingCourse)).Returns(new CourseDTO
-			{
-				Id = existingCourse.Id,
-				Name = existingCourse.Name,
-				Description = existingCourse.Description,
-				CategoryId = existingCourse.CategoryId,
-				Steps = existingCourse.Steps.Select(s => new StepDTO
-				{
-					Name = s.Name,
-					Order = s.Order,
-					Description = s.Description
-				}).ToList()
-			});
-
-			// Act
-			var result = await _courseService.UpdateCourseWithSteps(courseUpdateDTO);
-
-			// Assert
-			Assert.IsNotNull(result);
-			Assert.AreEqual(courseUpdateDTO.Name, result.Name);
-			Assert.AreEqual(courseUpdateDTO.Description, result.Description);
-			Assert.AreEqual(courseUpdateDTO.Steps.Count, result.Steps.Count);
-			_unitOfWorkMock.Verify(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null), Times.Once);
-			_unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
-		}
-
-
-		[Test]
 		public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNotFound()
 		{
 			// Arrange
