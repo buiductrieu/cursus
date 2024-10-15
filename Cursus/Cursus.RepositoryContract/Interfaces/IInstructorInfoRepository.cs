@@ -14,12 +14,9 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<IEnumerable<InstructorInfo>> GettAllAsync();
 
-
-        Task AddAsync(InstructorInfo instructorInfo);
-
-        Task UpdateAsync(InstructorInfo instructorInfo);
-
         Task DeleteAsync(int id);
+        Task<IEnumerable<InstructorInfo>> GetAllInstructorsAsync();
+
 
     }
 }

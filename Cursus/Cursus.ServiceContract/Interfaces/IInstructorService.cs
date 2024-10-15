@@ -1,4 +1,4 @@
-﻿using Cursus.Data.DTO;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -15,5 +15,6 @@ namespace Cursus.ServiceContract.Interfaces
         Task<bool> ApproveInstructorAsync(string instructorId);
         Task<bool> RejectInstructorAsync(string instructorId);
         Task<List<InstuctorTotalEarnCourseDTO>> GetTotalAmountAsync (int instructorId);
+        Task<IEnumerable<InstructorInfo>> GetAllInstructors();
     }
 }

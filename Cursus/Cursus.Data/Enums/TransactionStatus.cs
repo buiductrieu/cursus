@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Cursus.Data.Enums
 {
-    public enum OrderStatus
+    public enum TransactionStatus
     {
-        PendingPayment,
-        Paid,
+        Pending,
+        Completed,
         Failed
     }
 }

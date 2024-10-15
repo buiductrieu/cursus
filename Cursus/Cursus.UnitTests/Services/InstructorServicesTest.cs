@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;

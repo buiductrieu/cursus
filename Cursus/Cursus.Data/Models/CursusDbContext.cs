@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Cursus.Data.Models

@@ -1,4 +1,4 @@
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Service.Services;
@@ -14,6 +14,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    
     public class InstructorController : ControllerBase
     {
         private readonly IInstructorService _instructorService;
@@ -21,15 +22,13 @@ namespace Cursus.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly IAuthService _authService;
-        private readonly ILogger<InstructorController> _logger;
-        public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService, ILogger<InstructorController> logger)
+        public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _instructorService = instructorService;
             _response = aPIResponse;
             _authService = authService;
             _userManager = userManager;
             _emailService = emailService;
-            _logger = logger;
         }
 
         /// <summary>
@@ -40,12 +39,10 @@ namespace Cursus.API.Controllers
         [HttpPost("register-instructor")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> RegisterInstructor (RegisterInstructorDTO registerInstructorDTO)
+        public async Task<ActionResult<APIResponse>> RegisterInstructor(RegisterInstructorDTO registerInstructorDTO)
         {
-            _logger.LogInformation("Registering user with username: {Username}", registerInstructorDTO); // Log
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Model validation failed. Errors: {Errors}", ModelState.Values); // Log lỗi
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 _response.Result = ModelState;
@@ -95,15 +92,17 @@ namespace Cursus.API.Controllers
             if (result)
             {
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor approved successfully";
                 return Ok(_response);
             }
 
             _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
             _response.ErrorMessages.Add("Failed to approve instructor");
             return BadRequest(_response);
         }
-
+        // API để từ chối tài khoản giảng viên
         /// <summary>
         /// 
         /// </summary>
@@ -116,14 +115,17 @@ namespace Cursus.API.Controllers
             if (result)
             {
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor rejected successfully";
                 return Ok(_response);
             }
 
             _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
             _response.ErrorMessages.Add("Failed to reject instructor");
             return BadRequest(_response);
         }
+
 
         /// <summary>
         /// Confirm email
@@ -203,6 +205,43 @@ namespace Cursus.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
         }
+        /// <summary>
+        /// List all instructors along with user and instructor information
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("list-instructors")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetAllInstructors()
+        {
+            var instructors = await _instructorService.GetAllInstructors();
+            if (instructors == null || !instructors.Any())
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("No instructors found");
+                return NotFound(_response);
+            }
 
+            var result = instructors.Select(instructor => new
+            {
+                UserId = instructor.User?.Id,
+                UserName = instructor.User?.UserName,
+                Email = instructor.User?.Email,
+                PhoneNumber = instructor.User?.PhoneNumber,
+                InstructorId = instructor.Id,
+                CardName = instructor.CardName,
+                CardProvider = instructor.CardProvider,
+                CardNumber = instructor.CardNumber,
+                SubmitCertificate = instructor.SubmitCertificate,
+                StatusInstructor = instructor.StatusInsructor
+            });
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = result;
+
+            return Ok(_response);
+        }
     }
 }

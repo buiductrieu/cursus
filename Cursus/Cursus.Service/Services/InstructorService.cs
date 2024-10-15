@@ -1,11 +1,13 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,13 +23,14 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
-
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService , IMapper mapper)
+        private readonly CursusDbContext _context;
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, CursusDbContext context, IMapper mapper)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _mapper = mapper;
+            _context = context;
         }
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
@@ -141,8 +144,16 @@ namespace Cursus.Service.Services
             }
 
             return courseSummaryDTOs;
+        }
+
+        public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        {
+            var instructors = await _context.InstructorInfos
+                                                       .Include(i => i.User) 
+                                                       .ToListAsync();
 
 
+            return instructors;
         }
     }
 }

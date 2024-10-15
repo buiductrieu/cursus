@@ -30,7 +30,7 @@ namespace Cursus.Repository.Repository
 
         public async Task<T> DeleteAsync(T entity)
         {
-            _db.Remove(entity);
+             _db.Remove(entity);
             return entity;
         }
 

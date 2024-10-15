@@ -21,11 +21,6 @@ namespace Cursus.Repository.Repository
             _dbContext = dbContext;
         }
 
-        public async Task AddAsync(InstructorInfo instructorInfo)
-        {
-            await _dbContext.InstructorInfos.AddAsync(instructorInfo);
-            await _dbContext.SaveChangesAsync();
-        }
 
         public async Task DeleteAsync(int id)
         {
@@ -35,6 +30,11 @@ namespace Cursus.Repository.Repository
                 _dbContext.InstructorInfos.Remove(instructor);
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<InstructorInfo>> GetAllInstructorsAsync()
+        {
+            return await _dbContext.InstructorInfos.Include(i => i.User).ToListAsync();
         }
 
         public async Task<InstructorInfo> GetByIDAsync(int id)
@@ -47,10 +47,6 @@ namespace Cursus.Repository.Repository
            return await _dbContext.InstructorInfos.Include(i => i.User).ToListAsync();
         }
 
-        public async Task UpdateAsync(InstructorInfo instructorInfo)
-        {
-            _dbContext.InstructorInfos.Update(instructorInfo);
-            await _dbContext.SaveChangesAsync();
-        }
+        
     }
 }

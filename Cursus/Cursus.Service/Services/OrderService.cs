@@ -57,7 +57,7 @@ namespace Cursus.Service.Services
 			if (order == null)
 				throw new KeyNotFoundException("Order not found or payment not completed.");
 
-			var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
+			var user = await _unitOfWork.UserRepository.ExiProfile(userId);
 			if (user == null)
 				throw new KeyNotFoundException("User not found.");
 
