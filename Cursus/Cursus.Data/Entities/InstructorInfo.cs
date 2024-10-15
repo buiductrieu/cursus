@@ -19,7 +19,10 @@ namespace Cursus.Data.Entities
         public string? CardNumber { get; set; }
         public string? SubmitCertificate { get; set; } 
 
-        public InstructorStatus StatusInsructor { get; set; } 
+        public InstructorStatus StatusInsructor { get; set; }
 
-     }
+        public double TotalEarning { get; set; } = 0;
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
+
+    }
 }

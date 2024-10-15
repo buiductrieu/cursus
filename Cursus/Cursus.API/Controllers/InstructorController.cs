@@ -22,14 +22,6 @@ namespace Cursus.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly IAuthService _authService;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="instructorService"></param>
-        /// <param name="aPIResponse"></param>
-        /// <param name="authService"></param>
-        /// <param name="userManager"></param>
-        /// <param name="emailService"></param>
         public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _instructorService = instructorService;
@@ -56,7 +48,7 @@ namespace Cursus.API.Controllers
                 _response.Result = ModelState;
                 return BadRequest(_response);
             }
-            var existingUser = await _userManager.FindByEmailAsync(registerInstructorDTO.Email);
+            var existingUser = await _userManager.FindByEmailAsync(registerInstructorDTO.UserName);
             if (existingUser != null)
             {
                 _response.IsSuccess = false;
@@ -72,9 +64,9 @@ namespace Cursus.API.Controllers
                 var confirmationLink = Url.Action(
                     nameof(ConfirmEmail),
                     "Instructor",
-                    new { userId = result.Id, token = token },
+                    new {token = token ,username = result.UserName},
                     Request.Scheme);
-                _emailService.SendEmailConfirmation(result.Email, confirmationLink);
+                _emailService.SendEmailConfirmation(result.UserName, confirmationLink);
 
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.Created;
@@ -110,7 +102,6 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages.Add("Failed to approve instructor");
             return BadRequest(_response);
         }
-
         // API để từ chối tài khoản giảng viên
         /// <summary>
         /// 
@@ -165,6 +156,53 @@ namespace Cursus.API.Controllers
                 _response.ErrorMessages.Add(e.Message);
                 _response.StatusCode = HttpStatusCode.BadRequest;
                 return BadRequest(_response);
+            }
+        }
+
+        /// <summary>
+        /// Get instructor courses with earnings
+        /// </summary>
+        /// <param name="instructorId"></param>
+        /// <returns></returns>
+        [HttpGet("instructor-courses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> GetInstructorCourses(int instructorId)
+        {
+            APIResponse _response = new APIResponse();
+
+            try
+            {
+                // Gọi service để lấy thông tin các khóa học của giảng viên
+                var courseSummary = await _instructorService.GetTotalAmountAsync(instructorId);
+
+                if (courseSummary == null || !courseSummary.Any())
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Result = "No courses found for this instructor.";
+                    return NotFound(_response);
+                }
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = courseSummary;
+                return Ok(_response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.Result = ex.Message;
+                return NotFound(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Result = $"An unexpected error occurred: {ex.Message}";
+                return StatusCode(StatusCodes.Status500InternalServerError, _response);
             }
         }
         /// <summary>

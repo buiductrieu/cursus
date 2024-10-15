@@ -33,6 +33,10 @@ namespace Cursus.Data.Entities
         public DateTime StartedDate { get; set; }
 
         public double Rating { get; set; } = 0;
+        [ForeignKey("InstructorInfo")]
+        public int InstructorInfoId { get; set; }
+
+        public InstructorInfo? InstructorInfo { get; set; }
 
         public ICollection<CourseVersion> CourseVersions { get; set; } = new List<CourseVersion>();
 
