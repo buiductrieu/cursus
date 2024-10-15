@@ -148,12 +148,7 @@ namespace Cursus.Service.Services
 
         public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
         {
-            var instructors = await _context.InstructorInfos
-                                                       .Include(i => i.User) 
-                                                       .ToListAsync();
-
-
-            return instructors;
+            return await _unitOfWork.InstructorInfoRepository.GetAllInstructors();
         }
     }
 }
