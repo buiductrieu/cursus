@@ -27,9 +27,6 @@ namespace Cursus.API.Controllers
 		[HttpPost("create")]
 		public async Task<ActionResult<APIResponse>> CreateOrder(string userId)
 		{
-			if (string.IsNullOrEmpty(userId))
-				return Unauthorized("User must be logged in.");
-
 			var order = await _orderService.CreateOrderAsync(userId);
 
 			_response.IsSuccess = true;
@@ -49,9 +46,6 @@ namespace Cursus.API.Controllers
 		[Route("confirm-purchase")]
 		public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
 		{
-			if (string.IsNullOrEmpty(userId))
-				return Unauthorized("User must be logged in.");
-
 			await _orderService.UpdateUserCourseAccessAsync(orderId, userId);
 
 			_response.IsSuccess = true;

@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -55,5 +56,37 @@ namespace Cursus.Repository.Repository
             request.Body = body;
             SendEmail(request);
         }
-    }
+
+		public void SendEmailSuccessfullyPurchasedCourse(EmailRequestDTO request, Order order)
+		{
+			var body = $@"
+<h1>Course Purchase Confirmation</h1>
+<p>Dear {request.toEmail},</p>
+<p>We are excited to inform you that your purchase of the following courses has been successfully completed!</p>
+
+<h3>Purchase Details:</h3>
+<ul>";
+			foreach (var item in order.Cart.CartItems)
+			{
+				body += $@"
+        <li>
+            <strong>Course Name:</strong> {item.Course.Name}<br />
+            <strong>Price:</strong> {item.Course.Price}<br />
+        </li>";
+			}
+			body += $@"
+</ul>
+<p><strong>Total Paid:</strong> {order.PaidAmount}</p>
+<p><strong>Order ID:</strong> {order.OrderId}</p>
+
+<p>If you have any questions, feel free to contact our support team at <a href='mailto:{_emailSetting.Email}'></a>.</p>
+
+<p>Thank you for choosing us! We wish you the best of luck in your learning journey.</p>
+
+<p>Warm regards,</p>
+<p><strong>Cursus</strong></p>";
+			request.Body = body;
+			SendEmail(request);
+		}
+	}
 }
