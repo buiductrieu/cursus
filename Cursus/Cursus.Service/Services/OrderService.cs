@@ -12,11 +12,13 @@ namespace Cursus.Service.Services
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
+		private readonly IEmailService _emailService;
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper)
+		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
+			_emailService = emailService;
 		}
 
 		public async Task<OrderDTO> CreateOrderAsync(string userId)
@@ -52,7 +54,7 @@ namespace Cursus.Service.Services
 
 		public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
 		{
-			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems");
+			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
 
 			if (order == null)
 				throw new KeyNotFoundException("Order not found or payment not completed.");
@@ -74,6 +76,8 @@ namespace Cursus.Service.Services
 
 				await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
 			}
+
+			_emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
 
 			await _unitOfWork.SaveChanges();
 		}
