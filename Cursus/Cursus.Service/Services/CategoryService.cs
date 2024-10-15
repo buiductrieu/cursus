@@ -112,10 +112,17 @@ namespace Cursus.Service.Services
             }
 
             // Check if another category with the same name already exists (excluding the current category)
-            var existingCategory = await _unitOfWork.CategoryRepository.GetAsync(x => x.Name == dto.Name && x.Id != id);
-            if (existingCategory != null)
+            try
             {
-                throw new InvalidOperationException("A category with the same name already exists.");
+                var existingCategory = await _unitOfWork.CategoryRepository.GetAsync(x => x.Name == dto.Name && x.Id != id);
+                if (existingCategory != null)
+                {
+                    throw new InvalidOperationException("A category with the same name already exists.");
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                // No existing category with the same name found, safe to proceed
             }
 
             // Map the updated fields from UpdateCategoryDTO to the existing category

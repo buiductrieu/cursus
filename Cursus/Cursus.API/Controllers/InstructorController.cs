@@ -14,6 +14,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    
     public class InstructorController : ControllerBase
     {
         private readonly IInstructorService _instructorService;
@@ -21,6 +22,14 @@ namespace Cursus.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly IAuthService _authService;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instructorService"></param>
+        /// <param name="aPIResponse"></param>
+        /// <param name="authService"></param>
+        /// <param name="userManager"></param>
+        /// <param name="emailService"></param>
         public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _instructorService = instructorService;
@@ -38,7 +47,7 @@ namespace Cursus.API.Controllers
         [HttpPost("register-instructor")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> RegisterInstructor (RegisterInstructorDTO registerInstructorDTO)
+        public async Task<ActionResult<APIResponse>> RegisterInstructor(RegisterInstructorDTO registerInstructorDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +88,11 @@ namespace Cursus.API.Controllers
             return BadRequest(_response);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instructorId"></param>
+        /// <returns></returns>
         [HttpPost("approve")]
         public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] string instructorId)
         {
@@ -87,16 +100,23 @@ namespace Cursus.API.Controllers
             if (result)
             {
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor approved successfully";
                 return Ok(_response);
             }
 
             _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
             _response.ErrorMessages.Add("Failed to approve instructor");
             return BadRequest(_response);
         }
 
         // API để từ chối tài khoản giảng viên
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instructorId"></param>
+        /// <returns></returns>
         [HttpPost("reject")]
         public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] string instructorId)
         {
@@ -104,11 +124,13 @@ namespace Cursus.API.Controllers
             if (result)
             {
                 _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor rejected successfully";
                 return Ok(_response);
             }
 
             _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
             _response.ErrorMessages.Add("Failed to reject instructor");
             return BadRequest(_response);
         }
@@ -145,7 +167,7 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
-                /// <summary>
+        /// <summary>
         /// List all instructors along with user and instructor information
         /// </summary>
         /// <returns></returns>
@@ -182,5 +204,6 @@ namespace Cursus.API.Controllers
             _response.Result = result;
 
             return Ok(_response);
+        }
     }
 }

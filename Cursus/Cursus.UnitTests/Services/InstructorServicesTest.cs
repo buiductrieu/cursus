@@ -58,13 +58,13 @@ namespace Cursus.UnitTest.Services
                             .ReturnsAsync(IdentityResult.Success);
 
             // Gi? l?p ph??ng th?c AddAsync c?a InstructorInfoRepository tr? v? Task.CompletedTask
-            _instructorInfoRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<InstructorInfo>())).Returns(Task.CompletedTask);
+            _instructorInfoRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<InstructorInfo>())).Returns((Task<InstructorInfo>)Task.CompletedTask);
 
             // Act: G?i hm InstructorAsync
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
             // Assert: Ki?m tra k?t qu? tr? v? c thnh cng hay khng
-            Assert.IsTrue(result.Succeeded);
+            Assert.IsTrue(result.Status);
             _userManagerMock.Verify(um => um.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
             _instructorInfoRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<InstructorInfo>()), Times.Once);
         }
