@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Cursus.UnitTests.Services
 {
     [TestFixture]
-    public class BookmarkControllerTests
+    public class BookmarkServiceTests
     {
         private Mock<IBookmarkService> _bookmarkServiceMock;
         private BookmarkController _controller;
