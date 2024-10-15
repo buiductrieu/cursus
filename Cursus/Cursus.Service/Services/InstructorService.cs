@@ -1,11 +1,14 @@
-﻿using Cursus.Data.DTO;
+﻿using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,21 +18,24 @@ namespace Cursus.Service.Services
     public class InstructorService : IInstructorService
     {
         public readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
 
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService )
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService , IMapper mapper)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _mapper = mapper;
         }
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
+            var context = new ValidationContext(registerInstructorDTO);
             var user = new ApplicationUser
             {
-                UserName = registerInstructorDTO.Email,
-                Email = registerInstructorDTO.Email,
+                UserName = registerInstructorDTO.UserName,
+                Email = registerInstructorDTO.UserName,
                 PhoneNumber = registerInstructorDTO.Phone,
                 Address = registerInstructorDTO.Address,
                 EmailConfirmed = false
@@ -41,11 +47,6 @@ namespace Cursus.Service.Services
             {
                 var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
 
-                if (!roleResult.Succeeded)
-                {
-                    return null; // Gán vai trò không thành công
-                }
-
                 var instructorInfo = new InstructorInfo
                 {
                     UserId = user.Id,
@@ -53,16 +54,17 @@ namespace Cursus.Service.Services
                     CardProvider = registerInstructorDTO.CardProvider,
                     CardNumber = registerInstructorDTO.CardNumber,
                     SubmitCertificate = registerInstructorDTO.SubmitCertificate,
+                    TotalEarning = registerInstructorDTO.TotalEarning,
                     StatusInsructor = InstructorStatus.Pending
                 };
 
                 await _unitOfWork.InstructorInfoRepository.AddAsync(instructorInfo);
                 await _unitOfWork.SaveChanges();
 
-                return user; // Trả về đối tượng ApplicationUser để tiếp tục xử lý
+                return user;
             }
 
-            return null; // Đăng ký không thành công
+            return null;
         }
 
         public async Task<IdentityResult> ConfirmInstructorEmailAsync(string userId, string token)
@@ -120,6 +122,27 @@ namespace Cursus.Service.Services
             _emailService.SendEmail(emailRequest);
 
             return true;
+        }
+
+        public async Task<List<InstuctorTotalEarnCourseDTO>> GetTotalAmountAsync(int instructorId)
+        {
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == instructorId);
+            if (instructorInfo == null)
+                throw new KeyNotFoundException("Instructor is not found");
+            var course = await _unitOfWork.CourseRepository.GetAllAsync(c => c.InstructorInfoId == instructorId);
+            if (!course.Any() || course == null)
+                throw new KeyNotFoundException("\"No courses found for this instructor.");
+            var courseSummaryDTOs = _mapper.Map<List<InstuctorTotalEarnCourseDTO>>(course);
+            foreach (var item in courseSummaryDTOs)
+            {
+                item.Earnings = item.Price;
+                item.InstructorName = instructorInfo.User?.UserName;
+                item.Id = instructorInfo.Id;
+            }
+
+            return courseSummaryDTOs;
+
+
         }
     }
 }

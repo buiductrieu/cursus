@@ -1,11 +1,16 @@
-﻿using Cursus.Data.DTO;
+﻿using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
+using NUnit.Framework.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace Cursus.UnitTest.Services
 {
@@ -16,221 +21,303 @@ namespace Cursus.UnitTest.Services
         private Mock<UserManager<ApplicationUser>> _userManagerMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private Mock<IInstructorInfoRepository> _instructorInfoRepositoryMock;
+        private Mock<IMapper> _mapperMock;
+        private Mock<ICourseRepository> _courseMock;
+        private Mock<IEmailService> _mailRepositoryMock;
 
-        //[SetUp]
-        //public void Setup()
-        //{
-        //    var store = new Mock<IUserStore<ApplicationUser>>();
-        //    _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
-
-        //    _instructorInfoRepositoryMock = new Mock<IInstructorInfoRepository>();
-        //    _unitOfWorkMock = new Mock<IUnitOfWork>();
-        //    _unitOfWorkMock.Setup(u => u.InstructorInfoRepository).Returns(_instructorInfoRepositoryMock.Object);
-
-        //    _instructorService = new InstructorService(_userManagerMock.Object, _unitOfWorkMock.Object);
-        //}
-
-        private bool Isvalid(object model, out List<ValidationResult> results)
+        [SetUp]
+        public void Setup()
         {
-            var context = new ValidationContext(model, null, null);
-            results = new List<ValidationResult>();
-            return Validator.TryValidateObject(model, context, results, true);
+            _userManagerMock = new Mock<UserManager<ApplicationUser>>(
+                Mock.Of<IUserStore<ApplicationUser>>(), null, null, null, null, null, null, null, null
+            );
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _instructorInfoRepositoryMock = new Mock<IInstructorInfoRepository>();
+            _mapperMock = new Mock<IMapper>();
+            _courseMock = new Mock<ICourseRepository>();
+            _mailRepositoryMock = new Mock<IEmailService>();
+
+            _unitOfWorkMock.Setup(u => u.InstructorInfoRepository).Returns(_instructorInfoRepositoryMock.Object);
+            _unitOfWorkMock.Setup(u => u.CourseRepository).Returns(_courseMock.Object);
+
+            _instructorService = new InstructorService(
+                    _userManagerMock.Object,
+                    _unitOfWorkMock.Object,
+                    _mailRepositoryMock.Object,
+                    _mapperMock.Object
+                );
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+        }
+
+        //User application 
+        private UserManager<ApplicationUser> GetUserManagerMock()
+        {
+            var store = new Mock<IUserStore<ApplicationUser>>();
+            var options = new Mock<IOptions<IdentityOptions>>();
+            var passwordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
+            var userValidators = new List<IUserValidator<ApplicationUser>> { new Mock<IUserValidator<ApplicationUser>>().Object };
+            var passwordValidators = new List<IPasswordValidator<ApplicationUser>> { new Mock<IPasswordValidator<ApplicationUser>>().Object };
+            var keyNormalizer = new Mock<ILookupNormalizer>();
+            var errors = new Mock<IdentityErrorDescriber>();
+            var services = new Mock<IServiceProvider>();
+            var logger = new Mock<ILogger<UserManager<ApplicationUser>>>();
+
+            return new UserManager<ApplicationUser>(
+                store.Object,
+                options.Object,
+                passwordHasher.Object,
+                userValidators,
+                passwordValidators,
+                keyNormalizer.Object,
+                errors.Object,
+                services.Object,
+                logger.Object
+            );
         }
 
         [Test]
-        public async Task InstructorAsync_ValidRegisterInstructorDTO_ReturnsSuccess()
+        public async Task GetInstructorCoursesAsync_WithCourses_ReturnsCourseList()
         {
-            // Arrange: T?o d? li?u gi? l?p cho vi?c thm Instructor
+            // Arrange
+            int instructorId = 123;
+
+            var instructorInfo = TestDataHelper.GetInstructorInfo();
+            var courses = TestDataHelper.GetCourses();
+            _instructorInfoRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<InstructorInfo, bool>>>(), null))
+                .ReturnsAsync(instructorInfo);
+            _courseMock.Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync(courses);
+            _mapperMock.Setup(m => m.Map<List<InstuctorTotalEarnCourseDTO>>(courses))
+                .Returns(TestDataHelper.GetInstructorTotalEarnCourseDTOs());
+            var result = await _instructorService.GetTotalAmountAsync(instructorId);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.Count());
+        }
+
+        [Test]
+        public async Task GetInstructorCoursesAsync_NoCourses_ThrowsKeyNotFoundException()
+        {
+            int instructorId = 123;
+
+            var instructorInfo = TestDataHelper.GetInstructorInfo();
+            var emptyCourses = new List<Course>();
+
+            _instructorInfoRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<InstructorInfo, bool>>>(), null))
+                .ReturnsAsync(instructorInfo);
+            _courseMock.Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync(emptyCourses);
+            Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+                await _instructorService.GetTotalAmountAsync(instructorId)
+            );
+        }
+        [Test]
+        public async Task GetInstructorCoursesAsync_InstructorNotFound_ThrowsKeyNotFoundException()
+        {
+            int instructorId = 999;
+            _instructorInfoRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<InstructorInfo, bool>>>(), null))
+                .ReturnsAsync((InstructorInfo)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+                await _instructorService.GetTotalAmountAsync(instructorId)
+            );
+        }
+        [Test]
+        public async Task RegisterInstructorAsync_Success_ReturnsUser()
+        {
+            // Arrange
             var registerInstructorDTO = new RegisterInstructorDTO
             {
-                Email = "test@example.com",
-                Phone = "123456789",
-                Address = "Test Address",
+                UserName = "test@example.com",
                 Password = "Password123!",
+                ConfirmPassword = "Password123!",
+                Phone = "123456789",
+                Address = "123 Main St",
                 CardName = "Test Card",
-                CardProvider = "Test Provider",
-                CardNumber = "1234567890",
-                SubmitCertificate = "None",
+                CardProvider = "Visa",
+                CardNumber = "1234567812345678",
+                SubmitCertificate = "SampleCertificate"
             };
 
-            // Gi? l?p vi?c t?o user thnh cng b?ng UserManager
-            _userManagerMock.Setup(um => um.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-                            .ReturnsAsync(IdentityResult.Success);
+            var user = new ApplicationUser
+            {
+                UserName = registerInstructorDTO.UserName,
+                Email = registerInstructorDTO.UserName,
+                PhoneNumber = registerInstructorDTO.Phone,
+                Address = registerInstructorDTO.Address
+            };
 
-            // Gi? l?p ph??ng th?c AddAsync c?a InstructorInfoRepository tr? v? Task.CompletedTask
-            _instructorInfoRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<InstructorInfo>())).Returns(Task.CompletedTask);
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);                              
 
-            // Act: G?i hm InstructorAsync
+            _userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"))
+                .ReturnsAsync(IdentityResult.Success);
+
+            _unitOfWorkMock.Setup(u => u.InstructorInfoRepository.AddAsync(It.IsAny<InstructorInfo>()))
+                                    .Returns(Task.CompletedTask);
+
+            _unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+
+            var result = await _instructorService.InstructorAsync(registerInstructorDTO);
+            Assert.IsNotNull(result); 
+            Assert.AreEqual(registerInstructorDTO.UserName, result.Email); 
+            _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
+            _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Once);
+        }
+
+        [Test]
+        public async Task RegisterInstructorAsync_UserCreationFails_ReturnsNull()
+        {
+
+            var registerInstructorDTO = new RegisterInstructorDTO
+            {
+                UserName = "test@example.com",
+                Password = "Password123!",
+                ConfirmPassword = "Password123!",
+                Phone = "123456789",
+                Address = "123 Main St",
+                CardName = "Test Card",
+                CardProvider = "Visa",
+                CardNumber = "1234567812345678",
+                SubmitCertificate = "SampleCertificate"
+            };
+
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Failed to create user" }));
+
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            // Assert: Ki?m tra k?t qu? tr? v? c thnh cng hay khng
-            Assert.IsTrue(result.Succeeded);
-            _userManagerMock.Verify(um => um.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
-            _instructorInfoRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<InstructorInfo>()), Times.Once);
+            Assert.IsNull(result); 
+            _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
+            _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Never); 
         }
         [Test]
-        public void RegisterInstructorDTO_EmptyField()
+        public async Task RegisterInstructorAsync_InvalidUsername_ReturnsNull()
         {
-            //Tr??ng h?p t?o DTO r?ng
-            var dto = new RegisterInstructorDTO();
-            var isValid = Isvalid(dto, out var validationResults);
-
-            Assert.IsFalse(isValid);
-            Assert.AreEqual(13, validationResults.Count);
-        }
-        [Test]
-        public void RegisterInstructorDTO_EmptyFields_ReturnsValidationErrors()
-        {
-            // Arrange: T?o DTO v?i cc tr??ng r?ng
-            var dto = new RegisterInstructorDTO();
-
-            // Act: Ki?m tra tnh h?p l? c?a DTO
-            var isValid = Isvalid(dto, out var validationResults);
-
-            // Assert: ??m b?o DTO khng h?p l? v c l?i
-            Assert.IsFalse(isValid);
-            Assert.AreEqual(13, validationResults.Count); // C 13 tr??ng Required trong DTO
-        }
-
-        [Test]
-        public void RegisterInstructorDTO_InvalidEmailFormat_ReturnsValidationError()
-        {
-            // Arrange: T?o DTO v?i email khng h?p l?
-            var dto = new RegisterInstructorDTO
+            var registerInstructorDTO = new RegisterInstructorDTO
             {
-                Email = "invalid-email", // Email khng h?p l?
+                UserName = "invalid-email", 
                 Password = "Password123!",
                 ConfirmPassword = "Password123!",
-                FullName = "John Doe",
-                Birthday = DateTime.Now,
-                Phone = "1234567890",
-                Address = "123 Street",
-                TaxNumber = "1234567890",
-                CardName = "Visa",
-                CardProvider = "Visa Provider",
+                Phone = "123456789",
+                Address = "123 Main St",
+                CardName = "Test Card",
+                CardProvider = "Visa",
                 CardNumber = "1234567812345678",
-                SubmitCertificate = "Certificate"
+                SubmitCertificate = "SampleCertificate"
             };
 
-            // Act
-            var isValid = Isvalid(dto, out var validationResults);
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Invalid email format" }));
+            var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            // Assert
-            Assert.IsFalse(isValid);
-            Assert.IsTrue(validationResults.Exists(vr => vr.ErrorMessage == "Invalid email format"));
+            Assert.IsNull(result);
+            _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]
-        public void RegisterInstructorDTO_PasswordsDoNotMatch_ReturnsValidationError()
+        public async Task RegisterInstructorAsync_InvalidPassword_ReturnsNull()
         {
-            // Arrange: T?o DTO v?i Password v ConfirmPassword khng kh?p
-            var dto = new RegisterInstructorDTO
+            var registerInstructorDTO = new RegisterInstructorDTO
             {
-                Email = "test@example.com",
+                UserName = "test@example.com",
+                Password = "pass", 
+                ConfirmPassword = "pass",
+                Phone = "123456789",
+                Address = "123 Main St",
+                CardName = "Test Card",
+                CardProvider = "Visa",
+                CardNumber = "1234567812345678",
+                SubmitCertificate = "SampleCertificate"
+            };
+
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Invalid password format" }));
+            var result = await _instructorService.InstructorAsync(registerInstructorDTO);
+
+            Assert.IsNull(result);
+            _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public async Task RegisterInstructorAsync_PasswordsDoNotMatch_ReturnsNull()
+        {
+            // Arrange
+            var registerInstructorDTO = new RegisterInstructorDTO
+            {
+                UserName = "test@example.com",
                 Password = "Password123!",
-                ConfirmPassword = "DifferentPassword!", // Password khng kh?p
-                FullName = "John Doe",
-                Birthday = DateTime.Now,
-                Phone = "1234567890",
-                Address = "123 Street",
-                TaxNumber = "1234567890",
-                CardName = "Visa",
-                CardProvider = "Visa Provider",
+                ConfirmPassword = "DifferentPassword123!", 
+                Phone = "123456789",
+                Address = "123 Main St",
+                CardName = "Test Card",
+                CardProvider = "Visa",
                 CardNumber = "1234567812345678",
-                SubmitCertificate = "Certificate"
+                SubmitCertificate = "SampleCertificate"
             };
 
-            // Act
-            var isValid = Isvalid(dto, out var validationResults);
+            _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Passwords do not match" }));
+            var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            // Assert
-            Assert.IsFalse(isValid);
-            Assert.IsTrue(validationResults.Exists(vr => vr.ErrorMessage == "Passwords do not match"));
+            Assert.IsNull(result);
+            _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]
-        public void RegisterInstructorDTO_InvalidPhoneNumber_ReturnsValidationError()
+        public void RegisterInstructorAsync_InvalidCardNumber_ThrowsValidationException()
         {
-            // Arrange: T?o DTO v?i s? ?i?n tho?i khng h?p l?
-            var dto = new RegisterInstructorDTO
+            var registerInstructorDTO = new RegisterInstructorDTO
             {
-                Email = "test@example.com",
-                Password = "Password123!",
-                ConfirmPassword = "Password123!",
-                FullName = "John Doe",
-                Birthday = DateTime.Now,
-                Phone = "InvalidPhone", // S? ?i?n tho?i khng h?p l?
-                Address = "123 Street",
-                TaxNumber = "1234567890",
-                CardName = "Visa",
-                CardProvider = "Visa Provider",
-                CardNumber = "1234567812345678",
-                SubmitCertificate = "Certificate"
-            };
-
-            // Act
-            var isValid = Isvalid(dto, out var validationResults);
-
-            // Assert
-            Assert.IsFalse(isValid);
-            Assert.IsTrue(validationResults.Exists(vr => vr.ErrorMessage == "Invalid phone number"));
-        }
-
-        [Test]
-        public void RegisterInstructorDTO_InvalidTaxNumber_ReturnsValidationError()
-        {
-            // Arrange: T?o DTO v?i Tax Number khng h?p l? (ph?i l 10 ch? s?)
-            var dto = new RegisterInstructorDTO
-            {
-                Email = "test@example.com",
+                UserName = "test@example.com",
                 Password = "Password123!",
                 ConfirmPassword = "Password123!",
-                FullName = "John Doe",
-                Birthday = DateTime.Now,
-                Phone = "1234567890",
-                Address = "123 Street",
-                TaxNumber = "1234", // Tax Number khng h?p l?
-                CardName = "Visa",
-                CardProvider = "Visa Provider",
-                CardNumber = "1234567812345678",
-                SubmitCertificate = "Certificate"
+                Phone = "123456789",
+                Address = "123 Main St",
+                CardName = "Test Card",
+                CardProvider = "Visa",
+                CardNumber = "1234",  
+                SubmitCertificate = "SampleCertificate"
             };
+            var validationResults = new List<ValidationResult>();
+            var context = new ValidationContext(registerInstructorDTO);
 
-            // Act
-            var isValid = Isvalid(dto, out var validationResults);
+            var isValid = Validator.TryValidateObject(registerInstructorDTO, context, validationResults, true);
 
-            // Assert
-            Assert.IsFalse(isValid);
-            Assert.IsTrue(validationResults.Exists(vr => vr.ErrorMessage == "Tax number must be exactly 10 digits"));
+            var cardNumberError = validationResults.FirstOrDefault(vr => vr.ErrorMessage.Contains("Card number must be exactly 16 digits"));
+            Assert.IsNotNull(cardNumberError); 
+            Assert.That(cardNumberError.ErrorMessage, Does.Contain("Card number must be exactly 16 digits"));
         }
-
-        [Test]
-        public void RegisterInstructorDTO_ValidDTO_ReturnsSuccess()
+        public static class TestDataHelper
         {
-            // Arrange: T?o DTO h?p l?
-            var dto = new RegisterInstructorDTO
+            public static InstructorInfo GetInstructorInfo()
             {
-                Email = "test@example.com",
-                Password = "Password123!",
-                ConfirmPassword = "Password123!",
-                FullName = "John Doe",
-                Birthday = DateTime.Now,
-                Phone = "1234567890",
-                Address = "123 Street",
-                TaxNumber = "1234567890",
-                CardName = "Visa",
-                CardProvider = "Visa Provider",
-                CardNumber = "1234567812345678",
-                SubmitCertificate = "Certificate"
+                return new InstructorInfo
+                {
+                    Id = 1,
+                    UserId = "test-instructor-id",
+                    User = new ApplicationUser { UserName = "John Doe" }
+                };
+            }
+
+            public static List<Course> GetCourses()
+            {
+                return new List<Course>
+            {
+                new Course { Id = 1, Name = "Course 1", Price = 100.00 },
+                new Course { Id = 2, Name = "Course 2", Price = 200.00 }
             };
+            }
 
-            // Act
-            var isValid = Isvalid(dto, out var validationResults);
-
-            // Assert
-            Assert.IsTrue(isValid);
-            Assert.IsEmpty(validationResults);
+            public static List<InstuctorTotalEarnCourseDTO> GetInstructorTotalEarnCourseDTOs()
+            {
+                return new List<InstuctorTotalEarnCourseDTO>
+            {
+                new InstuctorTotalEarnCourseDTO { CourseName = "Course 1", Price = 100.00, Earnings = 100.00, InstructorName = "John Doe" },
+                new InstuctorTotalEarnCourseDTO { CourseName = "Course 2", Price = 200.00, Earnings = 200.00, InstructorName = "John Doe" }
+            };
+            }
         }
-
     }
 }
