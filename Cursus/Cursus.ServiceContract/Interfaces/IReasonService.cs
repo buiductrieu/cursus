@@ -11,5 +11,6 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IReasonService
     {
         Task<Reason> CreateReason(CreateReasonDTO reasonDTO);
+        Task<ReasonDTO> GetReasonByIdAsync(int id);
     }
 }

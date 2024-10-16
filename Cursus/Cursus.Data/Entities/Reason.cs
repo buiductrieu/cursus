@@ -19,7 +19,6 @@ namespace Cursus.Data.Entities
 
         public DateTime DateCancel { get; set; } = DateTime.UtcNow;
 
-        // Điều hướng đến Course
         public Course Course { get; set; }
     }
 }

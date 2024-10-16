@@ -9,5 +9,6 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface IReasonRepository : IRepository<Reason>
     {
+        Task<Reason> GetByIdAsync(int id);
     }
 }

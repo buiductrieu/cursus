@@ -23,6 +23,11 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
+        /// <summary>
+        /// Create reason
+        /// </summary>
+        /// <param name="createReasonDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -33,6 +38,13 @@ namespace Cursus.API.Controllers
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
+        }
+
+        [HttpGet("{reasonId}")]
+        public async Task<ActionResult<IEnumerable<ReasonDTO>>> GetReason (int reasonId)
+        {
+            var reason = await _reasonService.GetReasonByIdAsync(reasonId);
+            return Ok(reason);
         }
 
     }

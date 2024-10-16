@@ -1,6 +1,7 @@
 ﻿using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,18 @@ namespace Cursus.Repository.Repository
 {
     public class ReasonRepository : Repository<Reason>, IReasonRepository
     {
-        private readonly CursusDbContext _db
-            ;
+        private readonly CursusDbContext _db;
         public ReasonRepository(CursusDbContext db) : base(db)
         {
             _db = db;
         }
+
+        public async Task<Reason> GetByIdAsync(int id)
+        {
+            return await _db.Reason.FirstOrDefaultAsync(r => r.Id == id) ?? throw new KeyNotFoundException("Reason content is not found");
+        }
+
+       
 
     }
 }
