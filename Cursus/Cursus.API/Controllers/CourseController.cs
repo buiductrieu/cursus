@@ -227,6 +227,20 @@ namespace Cursus.API.Controllers
             _response.Result = course;
             return Ok(_response);
         }
+        /// <summary>
+        /// Approve Course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("ApproveCourse{id}")]
+        public async Task<ActionResult<APIResponse>> ApproveCourse(int id , bool choice)
+        {
+            
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = await _courseService.CourseApproval(id, choice);
+            return Ok(_response);
+        }
 
     }
 }
