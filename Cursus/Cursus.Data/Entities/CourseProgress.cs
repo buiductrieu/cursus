@@ -12,9 +12,6 @@ namespace Cursus.Data.Entities
     {
         [Key]
         public int ProgressId { get; set; }
-
-        
-
         [ForeignKey("Course")]
         public int CourseId { get; set; }
         public Course? Course { get; set; }

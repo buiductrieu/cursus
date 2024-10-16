@@ -38,7 +38,7 @@ namespace Cursus.Service.Services
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDTO.Username);
             if (user == null)
-                throw new BadHttpRequestException("Username or password is incorrect!");            
+                throw new BadHttpRequestException("Username or password is incorrect!");
 
             var isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
@@ -46,7 +46,8 @@ namespace Cursus.Service.Services
                 throw new BadHttpRequestException("Username or password is incorrect!");
 
             if (!user.EmailConfirmed)
-                throw new EmailNotConfirmedException("Please confirm your email before logging in. ");
+                return null;
+
 
             var token = await GenerateJwtToken(user);
             var refreshToken = await GetRefreshTokenAsync(user);

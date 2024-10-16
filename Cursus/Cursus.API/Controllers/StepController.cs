@@ -29,7 +29,7 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateStep([FromBody] CreateStepDTO createStepDTO)
+        public async Task<ActionResult<APIResponse>> CreateStep([FromBody] StepCreateDTO createStepDTO)
         {
             if (!ModelState.IsValid)
             {
