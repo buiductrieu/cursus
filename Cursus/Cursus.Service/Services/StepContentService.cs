@@ -33,6 +33,17 @@ namespace Cursus.Service.Services
             if (string.IsNullOrEmpty(stepContentDTO.ContentType))
                 throw new ArgumentException("ContentType is required.");
 
+            var existingStepContent = await _unitOfWork.StepContentRepository
+                                                       .FirstOrDefaultAsync(sc => sc.StepId == stepContentDTO.StepId);
+
+            if (existingStepContent != null)
+            {
+                throw new InvalidOperationException("StepContent already exists for this Step.");
+            }
+
+            // log debug
+            Console.WriteLine("Creating new StepContent for StepId: " + stepContentDTO.StepId);
+
             var stepContentEntity = _mapper.Map<StepContent>(stepContentDTO);
 
             if (stepContentEntity.DateCreated == DateTime.MinValue)
@@ -46,6 +57,7 @@ namespace Cursus.Service.Services
             var createdStepContentDTO = _mapper.Map<StepContentDTO>(stepContentEntity);
             return createdStepContentDTO;
         }
+
 
         public async Task<StepContentDTO> GetStepContentByIdAsync(int id)
         {

@@ -2,6 +2,7 @@
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Cursus.Repository.Repository
 {
@@ -19,9 +20,13 @@ namespace Cursus.Repository.Repository
 
         public async Task<StepContent> GetByIdAsync(int id)
         {
-            // Sử dụng phương thức FindAsync để tìm StepContent theo Id
             return await _db.StepContents
                                    .FirstOrDefaultAsync(sc => sc.Id == id) ?? throw new KeyNotFoundException("Step content is not found");
+        }
+
+        public async Task<StepContent> FirstOrDefaultAsync(Expression<Func<StepContent, bool>> predicate)
+        {
+            return await _db.StepContents.FirstOrDefaultAsync(predicate);
         }
     }
 }
