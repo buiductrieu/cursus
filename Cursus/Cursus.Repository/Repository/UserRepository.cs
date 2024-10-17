@@ -39,15 +39,14 @@ namespace Cursus.Repository.Repository
         }
         public async Task<bool> UsernameExistsAsync(string username)
         {
-            try
-            {
-                await GetAsync(filter: b => b.UserName.Equals(username));
-                return true;
-            }
-            catch (Exception e)
+            var user = await _db.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == username);
+            if (user == null)
             {
                 return false;
             }
+            return true;
+
+
         }
     }
 }
