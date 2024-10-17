@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CartV5 : Migration
+    public partial class reason : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -485,6 +485,27 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reason",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    DateCancel = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reason", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reason_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Steps",
                 columns: table => new
                 {
@@ -563,9 +584,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "36d3da5a-8fcf-4022-bf64-5e29826f6bf4", null, "Admin", "ADMIN" },
-                    { "45e80838-72be-47cf-8e32-e5913127ebca", null, "User", "USER" },
-                    { "ee19aa47-fc1a-43dc-9e46-da6fc37501b3", null, "Instructor", "INSTRUCTOR" }
+                    { "0b77b783-149b-4ef3-8b0f-ea69cd199d6d", null, "Admin", "ADMIN" },
+                    { "2a414cf7-d0bd-4e15-a898-fc3674eeeab8", null, "User", "USER" },
+                    { "8472b578-0d26-49c8-a359-c7942730de67", null, "Instructor", "INSTRUCTOR" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -678,6 +699,11 @@ namespace Cursus.Data.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reason_CourseId",
+                table: "Reason",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId");
@@ -748,6 +774,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseVersions");
+
+            migrationBuilder.DropTable(
+                name: "Reason");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

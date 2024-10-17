@@ -80,7 +80,22 @@ namespace Cursus.Common.Helper
 			CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
 			CreateMap<Step, StepDTO>().ReverseMap();
 
+            // CreateReasonMapper
+            CreateMap<CreateReasonDTO, Reason>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCancel, opt => opt.MapFrom(src => DateTime.UtcNow));
+            // Reason Mapping
+            CreateMap<ReasonDTO, Reason>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCancel, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
+            /*CreateMap<StepUpdateDTO, Step>()
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+
+            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần*/
+            CreateMap<Reason, ReasonDTO>().ReverseMap();
 
 			// StepContent Mapping
 			CreateMap<StepContentDTO, StepContent>()

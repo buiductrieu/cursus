@@ -40,6 +40,7 @@ namespace Cursus.API.Controllers
         {
             try
             {
+
                 // check file
                 if (file == null || file.Length == 0)
                 {
