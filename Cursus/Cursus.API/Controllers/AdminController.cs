@@ -105,6 +105,43 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+        [HttpGet("get-instructor-info")]
+        public async Task<IActionResult> GetInformationInstructor([FromQuery] int instructorId)
+        {
+            var apiResponse = new APIResponse();
+
+            // Lấy thông tin của instructor thông qua service
+            var instructorInfo = await _adminService.GetInformationInstructor(instructorId);
+
+            if (instructorInfo != null && instructorInfo.Count > 0)
+            {
+                apiResponse.StatusCode = HttpStatusCode.OK;
+                apiResponse.IsSuccess = true;
+                apiResponse.Result = new
+                {
+                    UserName = instructorInfo.ContainsKey("UserName") ? instructorInfo["UserName"] : null,
+                    Email = instructorInfo.ContainsKey("Email") ? instructorInfo["Email"] : null,
+                    PhoneNumber = instructorInfo.ContainsKey("PhoneNumber") ? instructorInfo["PhoneNumber"] : null,
+                    TotalCourses = instructorInfo.ContainsKey("TotalCourses") ? instructorInfo["TotalCourses"] : 0,
+                    TotalActiveCourses = instructorInfo.ContainsKey("TotalActiveCourses") ? instructorInfo["TotalActiveCourses"] : 0,
+                    TotalEarning = instructorInfo.ContainsKey("TotalEarning") ? instructorInfo["TotalEarning"] : 0.0,
+                    TotalPayout = instructorInfo.ContainsKey("TotalPayout") ? instructorInfo["TotalPayout"] : 0.0,
+                    AverageRating = instructorInfo.ContainsKey("AverageRating") ? instructorInfo["AverageRating"] : 0.0,
+                    AdminComment = instructorInfo.ContainsKey("AdminComment") ? instructorInfo["AdminComment"] : null,
+                };
+            }
+            else
+            {
+                apiResponse.StatusCode = HttpStatusCode.NotFound;
+                apiResponse.IsSuccess = false;
+                apiResponse.ErrorMessages.Add("Instructor not found");
+            }
+
+            return StatusCode((int)apiResponse.StatusCode, apiResponse);
+        }
+
+
+
     }
 }
 

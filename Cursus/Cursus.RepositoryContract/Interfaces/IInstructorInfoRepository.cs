@@ -18,6 +18,10 @@ namespace Cursus.ServiceContract.Interfaces
         Task UpdateAsync(InstructorInfo instructorInfo);
         Task DeleteAsync(int id);
         Task<IEnumerable<InstructorInfo>> GetAllInstructors();
+        Task<int> TotalCourse(int id);
+        Task<int> TotalActiveCourse(int id);
+        Task<double> RatingNumber(int id);
+        Task<double> TotalPayout(int id);
 
 
     }

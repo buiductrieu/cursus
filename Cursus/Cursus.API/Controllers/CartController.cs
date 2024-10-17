@@ -25,7 +25,12 @@ namespace Cursus.API.Controllers
 			_response = response;
 			_unitOfWork = unitOfWork;
 		}
-		[HttpDelete("DeleteCart{id}")]
+        /// <summary>
+        /// Delete Cart
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteCart{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<APIResponse>> DeleteCart(int id)
@@ -50,8 +55,11 @@ namespace Cursus.API.Controllers
 			_response.StatusCode = HttpStatusCode.BadRequest;
 			return BadRequest(_response);
 		}
-
-		[HttpGet("GetAllCart")]
+        /// <summary>
+        /// Get All Carts
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllCart")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<APIResponse>> GetAllCarts()
@@ -68,7 +76,12 @@ namespace Cursus.API.Controllers
 			_response.StatusCode = HttpStatusCode.BadRequest;
 			return BadRequest(_response);
 		}
-		[HttpPut("GetCart{id}")]
+        /// <summary>
+        /// Get Cart By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut("GetCart{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<APIResponse>> GetCartById(int id)

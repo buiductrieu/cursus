@@ -23,14 +23,12 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
-        private readonly CursusDbContext _context;
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, CursusDbContext context, IMapper mapper)
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _mapper = mapper;
-            _context = context;
         }
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
@@ -146,9 +144,9 @@ namespace Cursus.Service.Services
             return courseSummaryDTOs;
         }
 
-        public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        public  Task<IEnumerable<InstructorInfo>> GetAllInstructors()
         {
-            return await _unitOfWork.InstructorInfoRepository.GetAllInstructors();
+            return  _unitOfWork.InstructorInfoRepository.GetAllInstructors();
         }
     }
 }
