@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class mig : Migration
+    public partial class CartV5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -306,7 +306,8 @@ namespace Cursus.Data.Migrations
                     Discount = table.Column<int>(type: "int", nullable: false),
                     StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
-                    InstructorInfoId = table.Column<int>(type: "int", nullable: false)
+                    InstructorInfoId = table.Column<int>(type: "int", nullable: false),
+                    IsApprove = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -562,9 +563,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3211e641-0358-4363-b529-d1ed559f2000", null, "User", "USER" },
-                    { "52d38a88-7e01-4c7d-9585-bb81cf78e313", null, "Instructor", "INSTRUCTOR" },
-                    { "a0eeff5a-f72a-4f19-b483-340bef973385", null, "Admin", "ADMIN" }
+                    { "36d3da5a-8fcf-4022-bf64-5e29826f6bf4", null, "Admin", "ADMIN" },
+                    { "45e80838-72be-47cf-8e32-e5913127ebca", null, "User", "USER" },
+                    { "ee19aa47-fc1a-43dc-9e46-da6fc37501b3", null, "Instructor", "INSTRUCTOR" }
                 });
 
             migrationBuilder.CreateIndex(

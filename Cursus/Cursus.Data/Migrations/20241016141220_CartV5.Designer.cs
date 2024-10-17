@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241015084833_mig")]
-    partial class mig
+    [Migration("20241016141220_CartV5")]
+    partial class CartV5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -259,6 +259,9 @@ namespace Cursus.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("InstructorInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsApprove")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -648,19 +651,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a0eeff5a-f72a-4f19-b483-340bef973385",
+                            Id = "36d3da5a-8fcf-4022-bf64-5e29826f6bf4",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "52d38a88-7e01-4c7d-9585-bb81cf78e313",
+                            Id = "ee19aa47-fc1a-43dc-9e46-da6fc37501b3",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "3211e641-0358-4363-b529-d1ed559f2000",
+                            Id = "45e80838-72be-47cf-8e32-e5913127ebca",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -805,7 +808,7 @@ namespace Cursus.Data.Migrations
 
             modelBuilder.Entity("Cursus.Data.Entities.CartItems", b =>
                 {
-                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                    b.HasOne("Cursus.Data.Entities.Cart", null)
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -816,8 +819,6 @@ namespace Cursus.Data.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Cart");
 
                     b.Navigation("Course");
                 });

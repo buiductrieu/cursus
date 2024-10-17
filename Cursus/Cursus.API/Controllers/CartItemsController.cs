@@ -22,6 +22,11 @@ namespace Cursus.API.Controllers
             _response = response;
             _unitOfWork = unitOfWork;
         }
+        /// <summary>
+        /// Delete Cart Items
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,7 +52,10 @@ namespace Cursus.API.Controllers
             _response.StatusCode = HttpStatusCode.BadRequest;
             return BadRequest(_response);
         }
-
+        /// <summary>
+        /// Get All Cart Items
+        /// </summary>
+        /// <returns></returns>
         [HttpPut("GetAll{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

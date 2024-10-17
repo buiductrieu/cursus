@@ -61,6 +61,26 @@ namespace Cursus.Repository.Repository
             return result > 0;
 
         }
+
+        public async Task<(string? UserName, string? Email, string? PhoneNumber, string? AdminComment)> GetInformationInstructorAsync(int instructorId)
+        {
+            var instructorInfo = await db.InstructorInfos.FirstOrDefaultAsync(i => i.Id == instructorId);
+            if (instructorInfo != null)
+            {
+                var user = await db.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == instructorInfo.UserId);
+                var comment = await db.AdminComments.FirstOrDefaultAsync(c => c.UserId == instructorInfo.UserId);
+
+                if (user != null)
+                {
+                    return (user.UserName, user.Email, user.PhoneNumber, comment?.CommentText);
+                }
+            }
+
+            // Trả về giá trị mặc định nếu không tìm thấy
+            return (null, null, null, null);
+        }
+
+
     }
 }
 
