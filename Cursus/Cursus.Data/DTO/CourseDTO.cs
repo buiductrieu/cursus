@@ -4,6 +4,7 @@ namespace Cursus.Data.DTO
 {
 	public class CourseDTO
 	{
+		public int InstructorId { get; set; }
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }

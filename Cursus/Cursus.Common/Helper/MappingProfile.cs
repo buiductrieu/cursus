@@ -51,13 +51,15 @@ namespace Cursus.Common.Helper
 
 			//Course mapper
 			CreateMap<CourseCreateDTO, Course>()
+			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
 			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
 			   .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
 			   .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
 
 			CreateMap<Course, CourseDTO>()
-			   .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+               .ForMember(dest => dest.InstructorId, opt => opt.MapFrom(src => src.InstructorInfoId))
+               .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
 			CreateMap<CourseDTO, CourseUpdateDTO>()
 			   .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
