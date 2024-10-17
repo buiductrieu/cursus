@@ -25,7 +25,7 @@ namespace Cursus.Service.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<StepDTO> CreateStep(CreateStepDTO dto)
+        public async Task<StepDTO> CreateStep(StepCreateDTO dto)
         {
             //Validate....
 

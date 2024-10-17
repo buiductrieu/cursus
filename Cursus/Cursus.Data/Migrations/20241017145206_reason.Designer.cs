@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cursus.Data.Migrations
 {
     [DbContext(typeof(CursusDbContext))]
-    [Migration("20241014041843_new")]
-    partial class @new
+    [Migration("20241017145206_reason")]
+    partial class reason
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,7 +148,7 @@ namespace Cursus.Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Bookmark");
+                    b.ToTable("Bookmarks");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Cart", b =>
@@ -258,6 +258,12 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("Discount")
                         .HasColumnType("int");
 
+                    b.Property<int>("InstructorInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsApprove")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -277,6 +283,8 @@ namespace Cursus.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("InstructorInfoId");
 
                     b.ToTable("Courses");
                 });
@@ -405,6 +413,9 @@ namespace Cursus.Data.Migrations
 
                     b.Property<string>("SubmitCertificate")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TotalEarning")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -665,19 +676,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3aa4c1e7-ecca-42b1-9eb1-535acfc82582",
+                            Id = "0b77b783-149b-4ef3-8b0f-ea69cd199d6d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "93fbddd0-7450-448c-b85b-2ecaf3fc8322",
+                            Id = "8472b578-0d26-49c8-a359-c7942730de67",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "3ec71fd0-2363-415f-a901-ffb57440fefd",
+                            Id = "2a414cf7-d0bd-4e15-a898-fc3674eeeab8",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -794,7 +805,7 @@ namespace Cursus.Data.Migrations
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "Commenter")
                         .WithMany()
                         .HasForeignKey("CommenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Commenter");
@@ -822,7 +833,7 @@ namespace Cursus.Data.Migrations
 
             modelBuilder.Entity("Cursus.Data.Entities.CartItems", b =>
                 {
-                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                    b.HasOne("Cursus.Data.Entities.Cart", null)
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -833,8 +844,6 @@ namespace Cursus.Data.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Cart");
 
                     b.Navigation("Course");
                 });
@@ -847,7 +856,15 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Cursus.Data.Entities.InstructorInfo", "InstructorInfo")
+                        .WithMany("Courses")
+                        .HasForeignKey("InstructorInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("InstructorInfo");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.CourseComment", b =>
@@ -1072,6 +1089,11 @@ namespace Cursus.Data.Migrations
                     b.Navigation("Reasons");
 
                     b.Navigation("Steps");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.InstructorInfo", b =>
+                {
+                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Step", b =>

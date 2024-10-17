@@ -25,17 +25,17 @@ namespace Cursus.API.Controllers
             _response = response;
         }
 
-        /// <summary>
-        /// Create course
-        /// </summary>
-        /// <param name="courseDTO"></param>
-        /// <returns></returns>
-        [HttpPost]
+		/// <summary>
+		/// Create course
+		/// </summary>
+		/// <param name="courseCreateDTO"></param>
+		/// <returns></returns>
+		[HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateCourse(CourseDTO courseDTO)
+        public async Task<ActionResult<APIResponse>> CreateCourse(CourseCreateDTO courseCreateDTO)
         {
-            var createdCourse = await _courseService.CreateCourseWithSteps(courseDTO);
+            var createdCourse = await _courseService.CreateCourseWithSteps(courseCreateDTO);
 
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
@@ -225,6 +225,20 @@ namespace Cursus.API.Controllers
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = course;
+            return Ok(_response);
+        }
+        /// <summary>
+        /// Approve Course
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("ApproveCourse{id}")]
+        public async Task<ActionResult<APIResponse>> ApproveCourse(int id , bool choice)
+        {
+            
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = await _courseService.CourseApproval(id, choice);
             return Ok(_response);
         }
 

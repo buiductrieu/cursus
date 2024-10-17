@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cursus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class @new : Migration
+    public partial class reason : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -112,7 +112,7 @@ namespace Cursus.Data.Migrations
                         column: x => x.CommenterId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,7 +231,8 @@ namespace Cursus.Data.Migrations
                     CardProvider = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SubmitCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StatusInsructor = table.Column<int>(type: "int", nullable: false)
+                    StatusInsructor = table.Column<int>(type: "int", nullable: false),
+                    TotalEarning = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -267,43 +268,15 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    Discount = table.Column<int>(type: "int", nullable: false),
-                    StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Courses_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Order",
                 columns: table => new
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     PaidAmount = table.Column<double>(type: "float", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -318,7 +291,72 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookmark",
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateModified = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Discount = table.Column<int>(type: "int", nullable: false),
+                    StartedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false),
+                    InstructorInfoId = table.Column<int>(type: "int", nullable: false),
+                    IsApprove = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Courses_InstructorInfos_InstructorInfoId",
+                        column: x => x.InstructorInfoId,
+                        principalTable: "InstructorInfos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    TransactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.TransactionId);
+                    table.ForeignKey(
+                        name: "FK_Transactions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transactions_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookmarks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -329,9 +367,9 @@ namespace Cursus.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookmark", x => x.Id);
+                    table.PrimaryKey("PK_Bookmarks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookmark_Courses_CourseId",
+                        name: "FK_Bookmarks_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -491,35 +529,6 @@ namespace Cursus.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
-                columns: table => new
-                {
-                    TransactionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Transactions", x => x.TransactionId);
-                    table.ForeignKey(
-                        name: "FK_Transactions_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Transactions_Order_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Order",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StepComments",
                 columns: table => new
                 {
@@ -575,9 +584,9 @@ namespace Cursus.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3aa4c1e7-ecca-42b1-9eb1-535acfc82582", null, "Admin", "ADMIN" },
-                    { "3ec71fd0-2363-415f-a901-ffb57440fefd", null, "User", "USER" },
-                    { "93fbddd0-7450-448c-b85b-2ecaf3fc8322", null, "Instructor", "INSTRUCTOR" }
+                    { "0b77b783-149b-4ef3-8b0f-ea69cd199d6d", null, "Admin", "ADMIN" },
+                    { "2a414cf7-d0bd-4e15-a898-fc3674eeeab8", null, "User", "USER" },
+                    { "8472b578-0d26-49c8-a359-c7942730de67", null, "Instructor", "INSTRUCTOR" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -625,8 +634,8 @@ namespace Cursus.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookmark_CourseId",
-                table: "Bookmark",
+                name: "IX_Bookmarks_CourseId",
+                table: "Bookmarks",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
@@ -668,6 +677,11 @@ namespace Cursus.Data.Migrations
                 name: "IX_Courses_CategoryId",
                 table: "Courses",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_InstructorInfoId",
+                table: "Courses",
+                column: "InstructorInfoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseVersions_CourseId",
@@ -747,7 +761,7 @@ namespace Cursus.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Bookmark");
+                name: "Bookmarks");
 
             migrationBuilder.DropTable(
                 name: "CartItems");
@@ -760,9 +774,6 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseVersions");
-
-            migrationBuilder.DropTable(
-                name: "InstructorInfos");
 
             migrationBuilder.DropTable(
                 name: "Reason");
@@ -796,6 +807,9 @@ namespace Cursus.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "InstructorInfos");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Cursus.Data.Models
@@ -66,6 +65,11 @@ namespace Cursus.Data.Models
                     NormalizedName = "USER"
                 }
             );
+            modelBuilder.Entity<AdminComment>()
+                .HasOne(c => c.Commenter)
+                .WithMany()
+                .HasForeignKey(c => c.CommenterId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

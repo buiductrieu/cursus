@@ -14,10 +14,7 @@ namespace Cursus.RepositoryContract.Interfaces
         ICategoryRepository CategoryRepository { get; }
         IUserRepository UserRepository { get; }
         IInstructorInfoRepository InstructorInfoRepository { get; }
-
         ICourseRepository CourseRepository { get; }
-        IReasonRepository ReasonRepository { get; }
-
         IStepRepository StepRepository { get; }
         IStepContentRepository StepContentRepository { get; }
         ICourseCommentRepository CourseCommentRepository { get; }
@@ -26,14 +23,11 @@ namespace Cursus.RepositoryContract.Interfaces
         IStepCommentRepository StepCommentRepository { get; }
         ICartItemsRepository CartItemsRepository { get; }
         IBookmarkRepository BookmarkRepository { get; }
-		ICartRepository CartRepository { get; }
-		IOrderRepository OrderRepository { get; }
+        ICartRepository CartRepository { get; }
+        IOrderRepository OrderRepository { get; }
         ICourseProgressRepository CourseProgressRepository { get; }
-        
-
-
+        ITransactionRepository TransactionRepository { get; }
+        IReasonRepository ReasonRepository { get; }
         Task SaveChanges();
-
-
     }
 }

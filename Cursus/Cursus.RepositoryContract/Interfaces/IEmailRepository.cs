@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
@@ -7,5 +8,6 @@ namespace Cursus.RepositoryContract.Interfaces
     {
         public void SendEmail(EmailRequestDTO request);
         public void SendEmailConfirmation(EmailRequestDTO request, string confirmLink);
-    }
+		void SendEmailSuccessfullyPurchasedCourse(EmailRequestDTO request, Order order);
+	}
 }

@@ -41,15 +41,30 @@ namespace Cursus.API.Controllers
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
-            var responseDTO = await _authService.LoginAsync(loginRequestDTO);
+            var loginResult = await _authService.LoginAsync(loginRequestDTO);
 
-            _response.IsSuccess = true;
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = responseDTO;
+            if (loginResult == null)
+            {
+                var response = new APIResponse
+                {
+                    StatusCode = HttpStatusCode.Unauthorized,
+                    IsSuccess = false,
+                    ErrorMessages = new List<string> { "Please confirm your email before logging in." }
+                };
 
-            return Ok(_response);
+                return Unauthorized(response);
+            }
+            var successResponse = new APIResponse
+            {
+                IsSuccess = true,
+                StatusCode = HttpStatusCode.OK,
+                Result = loginResult
+            };
+
+            return Ok(successResponse);
 
         }
         /// <summary>

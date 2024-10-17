@@ -1,11 +1,16 @@
-﻿using Cursus.Data.DTO;
+using AutoMapper;
+using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
+using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,21 +20,23 @@ namespace Cursus.Service.Services
     public class InstructorService : IInstructorService
     {
         public readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
-
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService)
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _mapper = mapper;
         }
-        public async Task<IdentityResult> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
+        public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
+            var context = new ValidationContext(registerInstructorDTO);
             var user = new ApplicationUser
             {
-                UserName = registerInstructorDTO.Email,
-                Email = registerInstructorDTO.Email,
+                UserName = registerInstructorDTO.UserName,
+                Email = registerInstructorDTO.UserName,
                 PhoneNumber = registerInstructorDTO.Phone,
                 Address = registerInstructorDTO.Address,
                 EmailConfirmed = false
@@ -37,44 +44,28 @@ namespace Cursus.Service.Services
 
             var userResult = await _userManager.CreateAsync(user, registerInstructorDTO.Password);
 
-            if(userResult.Succeeded)
+            if (userResult.Succeeded)
             {
-
-                // Thêm vai trò "Instructor" cho người dùng
                 var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");
 
-                // Kiểm tra xem việc gán role có thành công không
-                if (!roleResult.Succeeded)
-                {
-                    return IdentityResult.Failed(roleResult.Errors.ToArray());
-                }
                 var instructorInfo = new InstructorInfo
                 {
-
                     UserId = user.Id,
                     CardName = registerInstructorDTO.CardName,
                     CardProvider = registerInstructorDTO.CardProvider,
                     CardNumber = registerInstructorDTO.CardNumber,
                     SubmitCertificate = registerInstructorDTO.SubmitCertificate,
+                    TotalEarning = registerInstructorDTO.TotalEarning,
                     StatusInsructor = InstructorStatus.Pending
                 };
 
                 await _unitOfWork.InstructorInfoRepository.AddAsync(instructorInfo);
                 await _unitOfWork.SaveChanges();
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"https://yourapplication.com/confirm?userId={user.Id}&email={user.Email}";
-                try
-                {              
-                    _emailService.SendEmailConfirmation(user.Email, confirmationLink);
-    
-                }
-                catch (Exception ex)
-                {
-                    // Log lỗi nếu việc gửi email thất bại
-                    return IdentityResult.Failed(new IdentityError { Description = $"User registered successfully, but failed to send confirmation email. Error: {ex.Message}" });
-                }
+
+                return user;
             }
-            return userResult;
+
+            return null;
         }
 
         public async Task<IdentityResult> ConfirmInstructorEmailAsync(string userId, string token)
@@ -132,6 +123,30 @@ namespace Cursus.Service.Services
             _emailService.SendEmail(emailRequest);
 
             return true;
+        }
+
+        public async Task<List<InstuctorTotalEarnCourseDTO>> GetTotalAmountAsync(int instructorId)
+        {
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == instructorId);
+            if (instructorInfo == null)
+                throw new KeyNotFoundException("Instructor is not found");
+            var course = await _unitOfWork.CourseRepository.GetAllAsync(c => c.InstructorInfoId == instructorId);
+            if (!course.Any() || course == null)
+                throw new KeyNotFoundException("\"No courses found for this instructor.");
+            var courseSummaryDTOs = _mapper.Map<List<InstuctorTotalEarnCourseDTO>>(course);
+            foreach (var item in courseSummaryDTOs)
+            {
+                item.Earnings = item.Price;
+                item.InstructorName = instructorInfo.User?.UserName;
+                item.Id = instructorInfo.Id;
+            }
+
+            return courseSummaryDTOs;
+        }
+
+        public  Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        {
+            return  _unitOfWork.InstructorInfoRepository.GetAllInstructors();
         }
     }
 }
