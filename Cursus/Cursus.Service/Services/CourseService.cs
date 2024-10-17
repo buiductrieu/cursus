@@ -171,6 +171,10 @@ namespace Cursus.Service.Services
 
         public async Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseCreateDTO)
         {
+            var intructor = await _unitOfWork.InstructorInfoRepository.GetAsync(c => c.Id == courseCreateDTO.InstructorInfoId);
+            if(intructor == null) 
+                throw new KeyNotFoundException("Intructor not found.");
+
             // Check unique name
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseCreateDTO.Name);
 
