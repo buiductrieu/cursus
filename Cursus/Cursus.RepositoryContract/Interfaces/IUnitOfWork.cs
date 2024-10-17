@@ -16,6 +16,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IInstructorInfoRepository InstructorInfoRepository { get; }
 
         ICourseRepository CourseRepository { get; }
+        IReasonRepository ReasonRepository { get; }
 
         IStepRepository StepRepository { get; }
         IStepContentRepository StepContentRepository { get; }
@@ -28,6 +29,7 @@ namespace Cursus.RepositoryContract.Interfaces
 		ICartRepository CartRepository { get; }
 		IOrderRepository OrderRepository { get; }
         ICourseProgressRepository CourseProgressRepository { get; }
+        
 
 
         Task SaveChanges();

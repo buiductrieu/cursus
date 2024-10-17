@@ -40,11 +40,35 @@ namespace Cursus.API.Controllers
             return Ok(_response);
         }
 
+        /// <summary>
+        /// Get reason by id
+        /// </summary>
+        /// <param name="reasonId"></param>
+        /// <returns></returns>
         [HttpGet("{reasonId}")]
-        public async Task<ActionResult<IEnumerable<ReasonDTO>>> GetReason (int reasonId)
+        public async Task<ActionResult<IEnumerable<ReasonDTO>>> GetReason(int reasonId)
         {
             var reason = await _reasonService.GetReasonByIdAsync(reasonId);
-            return Ok(reason);
+            _response.Result = reason;
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Delete reson
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> DeleteReason(int id)
+        {
+            await _reasonService.DeleteReasonAsync(id);
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.NoContent;
+            return NoContent();
         }
 
     }

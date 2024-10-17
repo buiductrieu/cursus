@@ -70,5 +70,17 @@ namespace Cursus.Service.Services
             return _mapper.Map<ReasonDTO>(reason);
         }
 
+        public async Task DeleteReasonAsync(int id)
+        {
+            var reason = await _reasonRepository.GetByIdAsync(id);
+            if (reason == null)
+            {
+                throw new KeyNotFoundException("Reason not found.");
+            }
+
+            await _unitOfWork.ReasonRepository.DeleteAsync(reason);
+            await _unitOfWork.SaveChanges();
+        }
+
     }
 }

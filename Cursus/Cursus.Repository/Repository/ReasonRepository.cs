@@ -22,8 +22,5 @@ namespace Cursus.Repository.Repository
         {
             return await _db.Reason.FirstOrDefaultAsync(r => r.Id == id) ?? throw new KeyNotFoundException("Reason content is not found");
         }
-
-       
-
     }
 }

@@ -12,5 +12,6 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<Reason> CreateReason(CreateReasonDTO reasonDTO);
         Task<ReasonDTO> GetReasonByIdAsync(int id);
+        Task DeleteReasonAsync(int id);
     }
 }
