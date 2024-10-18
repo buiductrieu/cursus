@@ -32,6 +32,14 @@ namespace Cursus.Service.Services
             _mapper = mapper;
             _context = context;
         }
+
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
+        {
+            _userManager = userManager;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _emailService  = emailService;
+        }
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
             var context = new ValidationContext(registerInstructorDTO);

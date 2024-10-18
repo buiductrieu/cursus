@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -186,7 +187,8 @@ namespace Cursus.Service.Services
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
             var course = _mapper.Map<Course>(courseCreateDTO);
-
+             
+            course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == courseCreateDTO.InstructorInfoId);
             // Save course in db
             await _unitOfWork.CourseRepository.AddAsync(course);
             await _unitOfWork.SaveChanges();
