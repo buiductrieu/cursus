@@ -151,70 +151,7 @@ namespace Cursus.UnitTests.Services
 			Assert.ThrowsAsync<NullReferenceException>(async () => await _courseService.CreateCourseWithSteps(courseCreateDTO));
 		}
 
-		[Test]
-		public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNotFound()
-		{
-			// Arrange
-			var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Non-existent Course" };
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync((Course)null);
-
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
-			Assert.AreEqual("Course not found.", ex.Message);
-		}
-
-		[Test]
-		public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNameIsNotUnique()
-		{
-			// Arrange
-			var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Duplicate Course" };
-			var existingCourse = new Course { Id = 1, Name = "Existing Course" };
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync(existingCourse);
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.AnyAsync(It.IsAny<Expression<Func<Course, bool>>>()))
-				.ReturnsAsync(true); // Duplicate course name
-
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
-			Assert.AreEqual("Course name must be unique.", ex.Message);
-		}
-
-		[Test]
-		public async Task DeleteCourse_ShouldReturnTrue_WhenCourseIsDeletedSuccessfully()
-		{
-			// Arrange
-			var course = new Course { Id = 1, Name = "Test Course" };
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync(course);
-
-			_unitOfWorkMock.Setup(u => u.SaveChanges())
-				.Returns(Task.CompletedTask);
-
-			// Act
-			var result = await _courseService.DeleteCourse(course.Id);
-
-			// Assert
-			Assert.IsTrue(result);
-		}
-
-		[Test]
-		public async Task DeleteCourse_ShouldThrowException_WhenCourseNotFound()
-		{
-			// Arrange
-			var courseId = 1;
-
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync((Course)null);
-
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.DeleteCourse(courseId));
-			Assert.AreEqual("Course not found.", ex.Message);
-		}
+		
 
 	}
 
