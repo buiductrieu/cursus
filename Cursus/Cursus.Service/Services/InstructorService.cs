@@ -132,7 +132,7 @@ namespace Cursus.Service.Services
                 throw new KeyNotFoundException("Instructor is not found");
             var course = await _unitOfWork.CourseRepository.GetAllAsync(c => c.InstructorInfoId == instructorId);
             if (!course.Any() || course == null)
-                throw new KeyNotFoundException("\"No courses found for this instructor.");
+                throw new KeyNotFoundException("No courses found for this instructor.");
             var courseSummaryDTOs = _mapper.Map<List<InstuctorTotalEarnCourseDTO>>(course);
             foreach (var item in courseSummaryDTOs)
             {
