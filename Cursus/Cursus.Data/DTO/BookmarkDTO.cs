@@ -10,7 +10,6 @@ namespace Cursus.Data.DTO
     {
         public int Id { get; set; }
         public string CourseName { get; set; }
-        public string Summary { get; set; }
         public double Price { get; set; }
         public double Rating { get; set; }
     }
