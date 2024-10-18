@@ -1,100 +1,138 @@
-﻿using Cursus.API.Controllers;
+﻿using AutoMapper;
 using Cursus.Data.DTO;
-using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using Cursus.Data.Entities;
+using Cursus.RepositoryContract.Interfaces;
+using Cursus.Service.Services;
 using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class BookmarkServiceTests
     {
-        private Mock<IBookmarkService> _bookmarkServiceMock;
-        private BookmarkController _controller;
+        private Mock<IUnitOfWork> _unitOfWorkMock;
+        private Mock<IMapper> _mapperMock;
+        private BookmarkService _bookmarkService;
 
         [SetUp]
         public void Setup()
         {
-            _bookmarkServiceMock = new Mock<IBookmarkService>();
-            _controller = new BookmarkController(_bookmarkServiceMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _mapperMock = new Mock<IMapper>();
+            _bookmarkService = new BookmarkService(_unitOfWorkMock.Object, _mapperMock.Object);
         }
 
         [Test]
-        public async Task GetBookmarks_ReturnsOkResult_WithBookmarks()
+        public async Task GetFilteredAndSortedBookmarksAsync_ShouldReturnBookmarks_WhenCalledWithValidParams()
         {
             // Arrange
-            var userId = "test-user-id";
-            var bookmarks = new List<BookmarkDTO>
+            var userId = "user123";
+            var bookmarkEntities = new List<Bookmark>
             {
-                new BookmarkDTO { Id = 1, CourseName = "Course 1", Summary = "Summary 1", Price = 100, Rating = 4.5 },
-                new BookmarkDTO { Id = 2, CourseName = "Course 2", Summary = "Summary 2", Price = 200, Rating = 4.0 }
+                new Bookmark { Id = 1, CourseId = 1, UserId = userId },
+                new Bookmark { Id = 2, CourseId = 2, UserId = userId }
+            };
+            var bookmarkDTOs = new List<BookmarkDTO>
+            {
+                new BookmarkDTO { Id = 1, CourseName = "Course 1" },
+                new BookmarkDTO { Id = 2, CourseName = "Course 2" }
             };
 
-            _bookmarkServiceMock
-                .Setup(service => service.GetFilteredAndSortedBookmarksAsync(userId, null, null, null, "asc"))
-                .ReturnsAsync(bookmarks);
+            _unitOfWorkMock.Setup(u => u.BookmarkRepository.GetFilteredAndSortedBookmarksAsync(
+                userId, null, null))
+                .ReturnsAsync(bookmarkEntities);
+            _mapperMock.Setup(m => m.Map<IEnumerable<BookmarkDTO>>(bookmarkEntities))
+                .Returns(bookmarkDTOs);
 
             // Act
-            var result = await _controller.GetBookmarks(userId);
+            var result = await _bookmarkService.GetFilteredAndSortedBookmarksAsync(userId, null, null);
 
             // Assert
-            var okResult = result.Result as OkObjectResult; // Use 'as' for safe casting
-            Assert.IsNotNull(okResult); // Ensure okResult is not null
-            var returnValue = okResult.Value as IEnumerable<BookmarkDTO>; // Safe cast
-            Assert.IsNotNull(returnValue); // Ensure returnValue is not null
-            Assert.AreEqual(2, ((List<BookmarkDTO>)returnValue).Count);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.Count());
         }
 
         [Test]
-        public async Task GetCourseDetails_ReturnsOkResult_WithCourseDetails()
+        public async Task GetCourseDetailsAsync_ShouldReturnCourseDetails_WhenCourseExists()
         {
-            // Arrange
             var courseId = 1;
-            var courseDetail = new CourseDetailDTO
+            var courseEntity = new Course
             {
-                // Initialize properties here (e.g., Name, Description, etc.)
-                // Example:
-                // Name = "Sample Course",
-                // Description = "Sample Description",
-                // Price = 100,
-                // Rating = 4.5
+                Id = courseId,
+                Name = "Course 1",
+                Steps = new List<Step>
+        {
+            new Step { Id = 1, Description = "Step 1" },
+            new Step { Id = 2, Description = "Step 2" }
+        }
+            };
+            var courseDTO = new CourseDTO
+            {
+                Id = courseId,
+                Name = "Course 1",
+                Steps = new List<StepDTO>
+        {
+            new StepDTO { Id = 1, Description = "Step 1" },
+            new StepDTO { Id = 2, Description = "Step 2" }
+        }
             };
 
-            _bookmarkServiceMock
-                .Setup(service => service.GetCourseDetailsAsync(courseId))
-                .ReturnsAsync(courseDetail);
+            // Thiết lập mock cho repository
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(c => c.Id == courseId, "Steps"))
+                .ReturnsAsync(courseEntity);
+
+            // Thiết lập mock cho mapper
+            _mapperMock.Setup(m => m.Map<CourseDTO>(courseEntity))
+                .Returns(courseDTO);
 
             // Act
-            var result = await _controller.GetCourseDetails(courseId);
+            var result = await _bookmarkService.GetCourseDetailsAsync(courseId);
 
             // Assert
-            var okResult = result.Result as OkObjectResult; // Safe cast
-            Assert.IsNotNull(okResult); // Ensure okResult is not null
-            var returnValue = okResult.Value as CourseDetailDTO; // Safe cast
-            Assert.IsNotNull(returnValue); // Ensure returnValue is not null
+            Assert.IsNotNull(result);
+            Assert.AreEqual(courseId, result.Id);
+            Assert.AreEqual("Course 1", result.Name);
+            Assert.AreEqual(2, result.Steps.Count); // Kiểm tra số bước
+            Assert.AreEqual("Step 1", result.Steps[0].Description);
+            Assert.AreEqual("Step 2", result.Steps[1].Description);
         }
 
         [Test]
-        public async Task CreateBookmark_ReturnsCreatedAtActionResult()
+        public async Task CreateBookmarkAsync_ShouldReturnCourseDTO_WhenBookmarkIsCreatedSuccessfully()
         {
             // Arrange
-            var bookmarkCreateDTO = new BookmarkCreateDTO
-            {
-                UserId = "test-user-id",
-                CourseId = 1
-            };
+            var bookmarkCreateDTO = new BookmarkCreateDTO { UserId = "user123", CourseId = 1 };
+            var user = new ApplicationUser { Id = "user123", UserName = "TestUser" };
+            var course = new Course { Id = 1, Name = "Course 1", Price = 100, Rating = 5 };
+
+            // Giả lập phương thức ExiProfile để trả về người dùng
+            _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile(bookmarkCreateDTO.UserId))
+                .ReturnsAsync(user);
+
+            // Giả lập phương thức GetAsync để trả về khóa học
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null)).ReturnsAsync(course);
+
+            // Giả lập phương thức GetAsync để kiểm tra bookmark đã tồn tại
+            _unitOfWorkMock.Setup(u => u.BookmarkRepository.GetAsync(It.IsAny<Expression<Func<Bookmark, bool>>>(), null)).ReturnsAsync((Bookmark)null); // Giả lập không có bookmark nào tồn tại
+
+            // Giả lập phương thức AddAsync
+            _unitOfWorkMock.Setup(u => u.BookmarkRepository.AddAsync(It.IsAny<Bookmark>()))
+                .ReturnsAsync(new Bookmark()); // Trả về một bookmark hợp lệ
+
+            // Giả lập phương thức SaveChanges
+            _unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _controller.CreateBookmark(bookmarkCreateDTO);
+            await _bookmarkService.CreateBookmarkAsync(bookmarkCreateDTO);
 
             // Assert
-            var createdAtActionResult = result as CreatedAtActionResult; // Safe cast
-            Assert.IsNotNull(createdAtActionResult); // Ensure createdAtActionResult is not null
-            Assert.AreEqual("GetBookmarks", createdAtActionResult.ActionName);
-            Assert.AreEqual(bookmarkCreateDTO.UserId, createdAtActionResult.RouteValues["userId"]);
+            _unitOfWorkMock.Verify(u => u.UserRepository.ExiProfile(bookmarkCreateDTO.UserId), Times.Once);
+            _unitOfWorkMock.Verify(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null), Times.Once);
+            _unitOfWorkMock.Verify(u => u.BookmarkRepository.GetAsync(It.IsAny<Expression<Func<Bookmark, bool>>>(), null), Times.Once);
+            _unitOfWorkMock.Verify(u => u.BookmarkRepository.AddAsync(It.IsAny<Bookmark>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
         }
+
     }
 }
