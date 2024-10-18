@@ -51,6 +51,7 @@ namespace Cursus.Common.Helper
 
 			//Course mapper
 			CreateMap<CourseCreateDTO, Course>()
+			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
 			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
 			   .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
 			   .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
@@ -59,7 +60,8 @@ namespace Cursus.Common.Helper
 
 
 			CreateMap<Course, CourseDTO>()
-			   .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+               .ForMember(dest => dest.InstructorId, opt => opt.MapFrom(src => src.InstructorInfoId))
+               .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
 
 			CreateMap<CourseDTO, CourseUpdateDTO>()
 			   .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
@@ -82,7 +84,22 @@ namespace Cursus.Common.Helper
 			CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
 			CreateMap<Step, StepDTO>().ReverseMap();
 
+            // CreateReasonMapper
+            CreateMap<CreateReasonDTO, Reason>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCancel, opt => opt.MapFrom(src => DateTime.UtcNow));
+            // Reason Mapping
+            CreateMap<ReasonDTO, Reason>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseId, opt => opt.Ignore())
+                .ForMember(dest => dest.DateCancel, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
+            /*CreateMap<StepUpdateDTO, Step>()
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+
+            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần*/
+            CreateMap<Reason, ReasonDTO>().ReverseMap();
 
 			// StepContent Mapping
 			CreateMap<StepContentDTO, StepContent>()
@@ -157,7 +174,6 @@ namespace Cursus.Common.Helper
 			CreateMap<Transaction, TransactionDTO>()
 				.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-				.ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
 				.ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
 				.ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));

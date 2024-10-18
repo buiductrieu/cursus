@@ -17,17 +17,13 @@ namespace Cursus.Data.Entities
 
         public Wallet? Wallet { get; set; }
 
-        [ForeignKey("Course")]
-        public int CourseId { get; set; }
-
-        public Course? Course { get; set; }
 
         [ForeignKey("Transaction")]
         public int TransactionId { get; set; }
 
         public Transaction? Transaction { get; set; }
 
-        public string Description { get; set; } = "Buy Course";
+        public string Description { get; set; } = string.Empty;
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cursus.Data.Entities;
+using Cursus.Data.Enums;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,20 @@ namespace Cursus.Repository.Repository
                 course.Rating = Math.Round(listRating.Average(),2);
             }
 
+            _db.Update(course);
+        }
+        public async Task ApproveCourse(int courseid, bool choice)
+        {
+            var course = await _db.Courses.FirstOrDefaultAsync(c => c.Id == courseid);
+            if (choice == true)
+            {
+                course.IsApprove = ApproveStatus.Approved;
+            }
+            else
+            {
+                course.IsApprove = ApproveStatus.Denied;
+                course.Status = false;
+            }
             _db.Update(course);
         }
     }

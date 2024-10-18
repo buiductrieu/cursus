@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cursus.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace Cursus.Data.Entities
         public double Rating { get; set; } = 0;
         [ForeignKey("InstructorInfo")]
         public int InstructorInfoId { get; set; }
+        public ApproveStatus IsApprove { get; set; }
 
         public InstructorInfo? InstructorInfo { get; set; }
 
@@ -43,6 +45,7 @@ namespace Cursus.Data.Entities
         public ICollection<Step> Steps { get; set; } = new List<Step>();
 
         public ICollection<CourseComment> CourseComments { get; set; } = new List<CourseComment>();
+        public ICollection<Reason> Reasons { get; set; }
     }
 
 }

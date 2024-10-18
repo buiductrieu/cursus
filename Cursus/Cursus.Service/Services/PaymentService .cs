@@ -27,17 +27,34 @@ namespace Demo_PayPal.Service
             _mapper = mapper;
         }
 
-        public async Task<string> CreatePayment(int orderId)
+        public async Task<Transaction> CreateTransaction(string userId, string paymentMethod)
+        {
+            var transaction = new Transaction()
+            {
+                UserId = userId,
+                PaymentMethod = paymentMethod,
+                DateCreated = DateTime.Now,
+                Status = TransactionStatus.Pending
+            };
+
+            await _unitOfWork.TransactionRepository.AddAsync(transaction);
+
+            await _unitOfWork.SaveChanges();
+
+            return transaction;
+        }
+
+        public async Task<string> CreatePaymentOrder(int orderId)
         {
             string returnUrl = _configuration["PayPalSettings:ReturnUrl"];
             string cancelUrl = _configuration["PayPalSettings:CancelUrl"];
 
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId, includeProperties: "Cart,Cart.CartItems");
 
-            var order = await _unitOfWork.OrderRepository.GetOrderWithCartAndItemsAsync(orderId);
             if (order == null)
             {
                 throw new KeyNotFoundException("The order does not exist.");
-            }
+            }   
 
             if (order.Cart.IsPurchased)
             {
@@ -56,16 +73,6 @@ namespace Demo_PayPal.Service
 
                 throw new ArgumentException("The payment amount must be greater than 0.");
             }
-
-
-            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(orderId);
-            if (pendingTransaction != null)
-            {
-
-                throw new BadHttpRequestException("A pending transaction already exists for this order.");
-            }
-
-
 
             var request = new OrdersCreateRequest();
             request.Prefer("return=representation");
@@ -111,21 +118,10 @@ namespace Demo_PayPal.Service
             var token = result.Id;
 
 
+            var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.TransactionId == order.TransactionId);
 
+            transaction.Token = token;
 
-
-            //Create Transaction
-            var transactionEntry = new Transaction
-            {
-                UserId = order.Cart.UserId,
-                OrderId = orderId,
-                PaymentMethod = "PayPal",
-                DateCreated = DateTime.Now,
-                Status = TransactionStatus.Pending,
-                Token = token
-            };
-
-            await _unitOfWork.TransactionRepository.AddAsync(transactionEntry);
             await _unitOfWork.SaveChanges();
 
             string paymentUrl = $"{approvalUrl}";
@@ -133,18 +129,17 @@ namespace Demo_PayPal.Service
         }
 
 
-        public async Task<TransactionDTO> CapturePayment(string token, string payerId, int orderId)
+        public async Task<TransactionDTO> CapturePayment(string token, string payerId)
         {
+            var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.Token == token);
 
-            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(orderId);
+            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(transaction.TransactionId);
             if (pendingTransaction == null)
                 throw new KeyNotFoundException("Pending transaction not found.");
 
 
             if (pendingTransaction.Token != token)
                 throw new ArgumentException("Token does not match the transaction.");
-            if (pendingTransaction.OrderId != orderId)
-                throw new ArgumentException("OrderId does not match the transaction.");
 
 
             if (IsTransactionExpired(pendingTransaction))
@@ -178,12 +173,6 @@ namespace Demo_PayPal.Service
             }
         }
 
-
-
-
-
-
-
         private bool IsTransactionExpired(Transaction transaction)
         {
             return transaction.DateCreated <= DateTime.Now.AddMinutes(-10);
@@ -193,7 +182,8 @@ namespace Demo_PayPal.Service
         private async Task UpdateFailedTransaction(Transaction transaction)
         {
             await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Failed);
-            await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Cursus.Data.Entities.OrderStatus.Failed);
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
+            await _unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, OrderStatus.Failed);
             await _unitOfWork.SaveChanges();
 
         }
@@ -213,8 +203,9 @@ namespace Demo_PayPal.Service
             if (result.Status == "COMPLETED")
             {
                 await _unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, TransactionStatus.Completed);
-                await _unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Cursus.Data.Entities.OrderStatus.Paid);
-                await _unitOfWork.CartRepository.UpdateIsPurchased(transaction.Order.CartId, true);
+                var order = await _unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
+                await _unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, OrderStatus.Paid);
+                await _unitOfWork.CartRepository.UpdateIsPurchased(order.CartId, true);
             }
             else
             {

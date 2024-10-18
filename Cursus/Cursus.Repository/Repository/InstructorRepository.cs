@@ -2,6 +2,7 @@
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using System;
@@ -64,5 +65,41 @@ namespace Cursus.Repository.Repository
             await _dbContext.InstructorInfos.AddAsync(instructorInfo);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> TotalCourse(int instructorId)
+        {
+            return await _dbContext.Courses
+            .Where(c => c.InstructorInfoId == instructorId)
+            .CountAsync();
+        }
+
+        public async Task<int> TotalActiveCourse(int instructorId)
+        {
+
+            return await _dbContext.Courses
+             .Where(c => c.InstructorInfoId == instructorId && c.Status == true)
+             .CountAsync();
+        }
+        public async Task<double> TotalPayout(int id)
+        {
+            return await _dbContext.InstructorInfos
+                .Where(i => i.Id == id) // lọc theo InstructorId nếu cần
+                .SumAsync(i => i.TotalEarning * 0.7);
+        }
+
+        public async Task<double> RatingNumber(int id)
+        {
+                    var ratings = await _dbContext.Courses
+                .Where(c => c.InstructorInfoId == id)
+                .Select(c => c.Rating)
+                .ToListAsync();
+
+            if (ratings.Count == 0)
+                return 0;
+
+            double averageRating = ratings.Average();
+            return averageRating;
+        }
+
     }
 }

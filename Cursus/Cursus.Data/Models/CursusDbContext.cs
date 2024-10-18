@@ -36,7 +36,9 @@ namespace Cursus.Data.Models
         public virtual DbSet<CartItems> CartItems { get; set; } = null!;
         public virtual DbSet<Order> Order { get; set; } = null!;
         public virtual DbSet<Transaction> Transactions { get; set; } = null!;
-        public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
+        public virtual DbSet<Bookmark> Bookmarks { get; set; }=null!;
+        public virtual DbSet<Reason> Reason { get; set; }=null!;
+
         public virtual DbSet<AdminComment> AdminComments { get; set; } = null!;
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }

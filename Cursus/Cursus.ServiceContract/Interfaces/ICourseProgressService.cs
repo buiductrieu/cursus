@@ -9,5 +9,6 @@ namespace Cursus.ServiceContract.Interfaces
     public interface ICourseProgressService 
     {
         Task<IEnumerable<int>> GetRegisteredCourseIdsAsync(string userId);
+        Task<double> TrackingProgressAsync(string userId, int courseId);
     }
 }

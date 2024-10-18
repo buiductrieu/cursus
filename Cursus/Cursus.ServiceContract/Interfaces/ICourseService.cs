@@ -19,5 +19,6 @@ namespace Cursus.ServiceContract.Interfaces
         Task<bool> DeleteCourse(int courseId);
 
         Task<CourseDTO> GetCourseByIdAsync(int courseId);
+        Task <CourseDTO> CourseApproval(int courseId, bool choice);
     }
 }

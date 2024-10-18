@@ -13,6 +13,7 @@ namespace Cursus.Service.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
 		private readonly IEmailService _emailService;
+		private readonly IPaymentService _paymentService;
 
 		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
 		{
@@ -21,7 +22,16 @@ namespace Cursus.Service.Services
 			_emailService = emailService;
 		}
 
-		public async Task<OrderDTO> CreateOrderAsync(string userId)
+		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService,IPaymentService paymentService)
+		{
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _emailService = emailService;
+			_paymentService = paymentService;	
+        }
+
+
+        public async Task<OrderDTO> CreateOrderAsync(string userId)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
 			if (cart == null || !cart.CartItems.Any())
@@ -36,6 +46,8 @@ namespace Cursus.Service.Services
 
 			double taxAmount = Math.Round(totalAmount * 0.1, 2);
 
+			var transaction = await _paymentService.CreateTransaction(userId, "PayPal");
+
 			var order = new Order
 			{
 				CartId = cart.CartId,
@@ -43,7 +55,10 @@ namespace Cursus.Service.Services
 				PaidAmount = totalAmount + taxAmount,
 				DateCreated = DateTime.Now,
 				Status = OrderStatus.PendingPayment,
+				TransactionId = transaction.TransactionId,
+				Transaction = transaction
 			};
+			
 
 			await _unitOfWork.OrderRepository.AddAsync(order);
 			await _unitOfWork.SaveChanges();

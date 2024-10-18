@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
-using Cursus.Repository.Repository;
+using Cursus.Data.Enums;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -171,6 +171,9 @@ namespace Cursus.Service.Services
 
         public async Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseCreateDTO)
         {
+            var instructorID = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == courseCreateDTO.InstructorInfoId);
+            if (instructorID == null)
+                throw new KeyNotFoundException("Instructor not found");
             // Check unique name
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseCreateDTO.Name);
 
@@ -187,6 +190,7 @@ namespace Cursus.Service.Services
                 throw new BadHttpRequestException("Steps cannot be empty.");
 
             var course = _mapper.Map<Course>(courseCreateDTO);
+            course.IsApprove = ApproveStatus.Pending;
              
             course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == courseCreateDTO.InstructorInfoId);
             // Save course in db
@@ -216,9 +220,8 @@ namespace Cursus.Service.Services
 
             if (courseDTO.Steps == null || !courseDTO.Steps.Any())
                 throw new BadHttpRequestException("Steps cannot be empty.");
-
             existingCourse.DateModified = DateTime.UtcNow;
-
+            existingCourse.IsApprove = ApproveStatus.Pending;
             _mapper.Map(courseDTO, existingCourse);
             
             await _unitOfWork.SaveChanges();
@@ -254,6 +257,18 @@ namespace Cursus.Service.Services
 
             var output = _mapper.Map<CourseDTO>(course);
 
+            return output;
+        }
+        public async Task<CourseDTO> CourseApproval(int courseId, bool choice)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
+            if (course == null)
+            {
+                throw new KeyNotFoundException("Course not found");
+            }
+            await _unitOfWork.CourseRepository.ApproveCourse(courseId, choice);
+            await _unitOfWork.SaveChanges();
+            var output = _mapper.Map<CourseDTO>(course);
             return output;
         }
     }

@@ -5,6 +5,8 @@ namespace Cursus.Data.DTO
 	public class CourseCreateDTO
 	{
 		[Required]
+		public int InstructorInfoId { get; set; }
+		[Required]
 		public string Name { get; set; }
 		[Required]
 		public string Description { get; set; }
@@ -18,8 +20,6 @@ namespace Cursus.Data.DTO
 		[Required]
 		[Range(0, int.MaxValue, ErrorMessage = "Discount must be greater than or equal to 0.")]
 		public int Discount { get; set; }
-
-		public int InstructorInfoId { get; set; }
-		public List<StepCreateDTO> Steps { get; set; }
+		public List<StepCreateDTO> Steps { get; set; } = new List<StepCreateDTO>();
 	}
 }

@@ -29,8 +29,9 @@ namespace Cursus.Repository.Repository
         public ICourseProgressRepository CourseProgressRepository { get; }
         public ICartItemsRepository CartItemsRepository { get; }
         public IBookmarkRepository BookmarkRepository { get; }
+        public IReasonRepository ReasonRepository{ get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository, IReasonRepository reasonRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -53,6 +54,7 @@ namespace Cursus.Repository.Repository
             BookmarkRepository = bookmarkRepository;
             CartItemsRepository = cartItemsRepository;
             TransactionRepository = transactionRepository;
+            ReasonRepository = reasonRepository;
         }
 
 
@@ -82,3 +84,4 @@ namespace Cursus.Repository.Repository
         }
     }
 }
+

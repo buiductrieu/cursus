@@ -258,6 +258,9 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("InstructorInfoId")
                         .HasColumnType("int");
 
+                    b.Property<int>("IsApprove")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -444,11 +447,57 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderId");
 
                     b.HasIndex("CartId");
 
+                    b.HasIndex("TransactionId");
+
                     b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.PlatformWallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlatformWallets");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCancel")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Reason");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
@@ -590,9 +639,6 @@ namespace Cursus.Data.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -609,11 +655,60 @@ namespace Cursus.Data.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.TransactionHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WalletId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("TransactionHistories");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Wallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -645,19 +740,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a0eeff5a-f72a-4f19-b483-340bef973385",
+                            Id = "86333f75-fb7c-40f8-b323-20c1471d0e8f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "52d38a88-7e01-4c7d-9585-bb81cf78e313",
+                            Id = "4d915e92-0525-43b9-9707-9eb870b467b2",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "3211e641-0358-4363-b529-d1ed559f2000",
+                            Id = "c9f310d1-69d1-4d33-866b-db95da4006c4",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -802,7 +897,7 @@ namespace Cursus.Data.Migrations
 
             modelBuilder.Entity("Cursus.Data.Entities.CartItems", b =>
                 {
-                    b.HasOne("Cursus.Data.Entities.Cart", "Cart")
+                    b.HasOne("Cursus.Data.Entities.Cart", null)
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -813,8 +908,6 @@ namespace Cursus.Data.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Cart");
 
                     b.Navigation("Course");
                 });
@@ -902,7 +995,26 @@ namespace Cursus.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Cursus.Data.Entities.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Cart");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany("Reasons")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
@@ -959,17 +1071,37 @@ namespace Cursus.Data.Migrations
 
             modelBuilder.Entity("Cursus.Data.Entities.Transaction", b =>
                 {
-                    b.HasOne("Cursus.Data.Entities.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Order");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.TransactionHistory", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cursus.Data.Entities.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+
+                    b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("Cursus.Data.Entities.Wallet", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -1045,6 +1177,8 @@ namespace Cursus.Data.Migrations
                     b.Navigation("CourseComments");
 
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Reasons");
 
                     b.Navigation("Steps");
                 });

@@ -18,7 +18,6 @@ using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
 
-
 namespace Cursus.API
 {
     public class Program
@@ -26,6 +25,11 @@ namespace Cursus.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add logging
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+
             builder.Services.AddRepository().AddService();
 
             builder.Services.AddExceptionHandler();
@@ -33,6 +37,7 @@ namespace Cursus.API
             builder.Services.AddProblemDetails();
 
             builder.Services.Configure<EmailSetting>(builder.Configuration.GetSection("EmailSettings"));
+
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -51,7 +56,6 @@ namespace Cursus.API
             // Add Rate Limit
             builder.Services.AddRateLimiter(option =>
             {
-
                 option.AddFixedWindowLimiter("default", c =>
                 {
                     c.Window = TimeSpan.FromHours(1);
@@ -93,21 +97,20 @@ namespace Cursus.API
 
                 opt.AddSecurityRequirement(new OpenApiSecurityRequirement
                     {
-                        {
-                            new OpenApiSecurityScheme
                             {
-                                Reference = new OpenApiReference
+                                new OpenApiSecurityScheme
                                 {
-                                    Type=ReferenceType.SecurityScheme,
-                                    Id="Bearer"
-                                }
-                            },
-                            new string[]{}
-                        }
+                                    Reference = new OpenApiReference
+                                    {
+                                        Type=ReferenceType.SecurityScheme,
+                                        Id="Bearer"
+                                    }
+                                },
+                                new string[]{}
+                            }
                     });
 
                 opt.IncludeXmlComments(Assembly.GetExecutingAssembly());
-
             });
             var app = builder.Build();
 
@@ -118,22 +121,16 @@ namespace Cursus.API
             }
 
             // Configure the HTTP request pipeline.
-
-            if (app.Environment.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-
-
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
-                    c.RoutePrefix = string.Empty;
-                });
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseRateLimiter();
 
-            app.UseExceptionHandler(_ => { });
+            app.UseExceptionHandler("/error");
 
             app.UseHttpsRedirection();
 

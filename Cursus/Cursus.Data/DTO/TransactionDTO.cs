@@ -11,7 +11,6 @@ namespace Cursus.Data.DTO
     {
         public int TransactionId { get; set; } 
         public string? UserId { get; set; }  
-        public int OrderId { get; set; }  
         public DateTime DateCreated { get; set; }  
         public string PaymentMethod { get; set; }  
         public TransactionStatus Status { get; set; }

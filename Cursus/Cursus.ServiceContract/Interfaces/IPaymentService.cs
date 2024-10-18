@@ -10,7 +10,8 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IPaymentService
     {
-        Task<string> CreatePayment(int orderId);
-        Task<TransactionDTO> CapturePayment(string token, string payerId, int orderId);
+        Task<string> CreatePaymentOrder(int orderId);
+        Task<TransactionDTO> CapturePayment(string token, string payerId);
+        Task<Transaction> CreateTransaction(string userId, string paymentMethod );
     }
 }

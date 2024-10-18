@@ -23,23 +23,14 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
-        private readonly CursusDbContext _context;
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, CursusDbContext context, IMapper mapper)
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _mapper = mapper;
-            _context = context;
         }
 
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
-        {
-            _userManager = userManager;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _emailService  = emailService;
-        }
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
         {
             var context = new ValidationContext(registerInstructorDTO);
@@ -142,7 +133,7 @@ namespace Cursus.Service.Services
                 throw new KeyNotFoundException("Instructor is not found");
             var course = await _unitOfWork.CourseRepository.GetAllAsync(c => c.InstructorInfoId == instructorId);
             if (!course.Any() || course == null)
-                throw new KeyNotFoundException("\"No courses found for this instructor.");
+                throw new KeyNotFoundException("No courses found for this instructor.");
             var courseSummaryDTOs = _mapper.Map<List<InstuctorTotalEarnCourseDTO>>(course);
             foreach (var item in courseSummaryDTOs)
             {
@@ -154,9 +145,9 @@ namespace Cursus.Service.Services
             return courseSummaryDTOs;
         }
 
-        public async Task<IEnumerable<InstructorInfo>> GetAllInstructors()
+        public  Task<IEnumerable<InstructorInfo>> GetAllInstructors()
         {
-            return await _unitOfWork.InstructorInfoRepository.GetAllInstructors();
+            return  _unitOfWork.InstructorInfoRepository.GetAllInstructors();
         }
     }
 }

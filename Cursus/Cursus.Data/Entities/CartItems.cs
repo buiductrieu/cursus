@@ -9,9 +9,7 @@ namespace Cursus.Data.Entities
 		public int CartItemsId { get; set; }
 		public double Price { get; set; }
 
-		[ForeignKey("Cart")]
 		public int CartId { get; set; }
-		public Cart? Cart { get; set; }
 
 		[ForeignKey("Course")]
 		public int CourseId { get; set; }

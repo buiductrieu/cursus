@@ -11,10 +11,11 @@ namespace Cursus.Service.Services
     internal class CourseProgressService : ICourseProgressService
     {
         private readonly IProgressRepository _progressRepository;
-
-        public CourseProgressService(IProgressRepository progressRepository)
+        private readonly ICourseProgressRepository _courseProgressRepository;
+        public CourseProgressService(IProgressRepository progressRepository, ICourseProgressRepository courseProgressRepository)
         {
             _progressRepository = progressRepository;
+            _courseProgressRepository = courseProgressRepository;
         }
 
       
@@ -25,6 +26,13 @@ namespace Cursus.Service.Services
                 .Where(p => p.UserId == userId)
                 .Select(p => p.CourseId)
                 .ToList();
+        }
+
+        public async Task<double> TrackingProgressAsync(string userId, int courseId)
+        {
+            var (total, completed) = await _courseProgressRepository.TrackingProgress(userId, courseId);
+            return (completed / total) * 100;
+
         }
     }
     
