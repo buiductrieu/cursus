@@ -93,7 +93,7 @@ namespace Cursus.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(courseId, result.Id);
             Assert.AreEqual("Course 1", result.Name);
-            Assert.AreEqual(2, result.Steps.Count); // Kiểm tra số bước
+            Assert.AreEqual(2, result.Steps.Count); 
             Assert.AreEqual("Step 1", result.Steps[0].Description);
             Assert.AreEqual("Step 2", result.Steps[1].Description);
         }
@@ -106,21 +106,17 @@ namespace Cursus.UnitTests.Services
             var user = new ApplicationUser { Id = "user123", UserName = "TestUser" };
             var course = new Course { Id = 1, Name = "Course 1", Price = 100, Rating = 5 };
 
-            // Giả lập phương thức ExiProfile để trả về người dùng
             _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile(bookmarkCreateDTO.UserId))
                 .ReturnsAsync(user);
 
-            // Giả lập phương thức GetAsync để trả về khóa học
             _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null)).ReturnsAsync(course);
 
-            // Giả lập phương thức GetAsync để kiểm tra bookmark đã tồn tại
-            _unitOfWorkMock.Setup(u => u.BookmarkRepository.GetAsync(It.IsAny<Expression<Func<Bookmark, bool>>>(), null)).ReturnsAsync((Bookmark)null); // Giả lập không có bookmark nào tồn tại
+            _unitOfWorkMock.Setup(u => u.BookmarkRepository.GetAsync(It.IsAny<Expression<Func<Bookmark, bool>>>(), null)).ReturnsAsync((Bookmark)null); 
 
-            // Giả lập phương thức AddAsync
             _unitOfWorkMock.Setup(u => u.BookmarkRepository.AddAsync(It.IsAny<Bookmark>()))
-                .ReturnsAsync(new Bookmark()); // Trả về một bookmark hợp lệ
+                .ReturnsAsync(new Bookmark()); 
 
-            // Giả lập phương thức SaveChanges
+          
             _unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
 
             // Act
