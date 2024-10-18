@@ -10,14 +10,10 @@ namespace Cursus.Data.DTO
 {
     public class StepContentDTO
     {
-        [JsonIgnore]
         public int Id { get; set; }
         public int StepId { get; set; }
-        [JsonIgnore]
-        public string ContentType { get; set; } = string.Empty;
-        [JsonIgnore]
+        public string ?ContentType { get; set; } 
         public string ContentURL { get; set; } = string.Empty;
-        [JsonIgnore]
         public DateTime DateCreated { get; set; }
         public string Description { get; set; } = string.Empty;
 
@@ -28,12 +24,9 @@ namespace Cursus.Data.DTO
 
         public int StepId { get; set; }
 
-        [JsonIgnore]
         public string ContentType { get; set; } = string.Empty;
 
-        [JsonIgnore]
         public string ContentURL { get; set; } = string.Empty;
-        [JsonIgnore]
         public DateTime DateCreated { get; set; }
         public string Description { get; set; } = string.Empty;
 

@@ -41,7 +41,7 @@ namespace Cursus.Service.Services
                 throw new UnauthorizedAccessException("Your email is not confirmed. Please verify your email before commenting.");
             }
 
-            // Check if user is enrolled in the course
+            // Check if the user has taken the course
             if (!await IsEnrolledCourse(stepComment.UserId, stepComment.CourseId))
             {
                 throw new UnauthorizedAccessException("You are not enrolled in this course, so you cannot comment on this step.");
@@ -50,14 +50,22 @@ namespace Cursus.Service.Services
             // Map StepCommentCreateDTO to StepComment
             var comment = _mapper.Map<StepComment>(stepComment);
             comment.User = user;
-            comment.DateCreated = DateTime.Now;
+            comment.DateCreated = DateTime.UtcNow; 
 
-            // Add the comment to the repository
+            // Add comments to the repository
             await _unitOfWork.StepCommentRepository.AddAsync(comment);
             await _unitOfWork.SaveChanges();
 
-            return _mapper.Map<StepCommentDTO>(comment);
+            // Find step name based on StepId
+            var step = await _unitOfWork.StepRepository.GetByIdAsync(stepComment.StepId);
+
+            // Create DTO to return with stepName
+            var commentDto = _mapper.Map<StepCommentDTO>(comment);
+            commentDto.StepName = step?.Name; 
+
+            return commentDto;
         }
+
 
         // Get all comments for a step
         public async Task<IEnumerable<StepCommentDTO>> GetStepCommentsAsync(int stepId)

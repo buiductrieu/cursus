@@ -34,6 +34,7 @@ namespace Cursus.Repository
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IBookmarkRepository, BookmarkRepository>();
             services.AddTransient<IStepRepository, StepRepository>();
+            services.AddTransient<IReasonRepository, ReasonRepository>();
 			services.AddTransient<ICartRepository, CartRepository>();
 			services.AddTransient<IOrderRepository, OrderRepository>();
 			services.AddTransient<ICourseProgressRepository, CourseProgressRepository>();

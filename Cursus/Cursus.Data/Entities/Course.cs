@@ -45,6 +45,7 @@ namespace Cursus.Data.Entities
         public ICollection<Step> Steps { get; set; } = new List<Step>();
 
         public ICollection<CourseComment> CourseComments { get; set; } = new List<CourseComment>();
+        public ICollection<Reason> Reasons { get; set; }
     }
 
 }

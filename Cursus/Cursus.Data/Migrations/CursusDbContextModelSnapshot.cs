@@ -454,6 +454,31 @@ namespace Cursus.Data.Migrations
                     b.ToTable("Order");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCancel")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Reason");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -648,19 +673,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "36d3da5a-8fcf-4022-bf64-5e29826f6bf4",
+                            Id = "0b77b783-149b-4ef3-8b0f-ea69cd199d6d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "ee19aa47-fc1a-43dc-9e46-da6fc37501b3",
+                            Id = "8472b578-0d26-49c8-a359-c7942730de67",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "45e80838-72be-47cf-8e32-e5913127ebca",
+                            Id = "2a414cf7-d0bd-4e15-a898-fc3674eeeab8",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -906,6 +931,17 @@ namespace Cursus.Data.Migrations
                     b.Navigation("Cart");
                 });
 
+            modelBuilder.Entity("Cursus.Data.Entities.Reason", b =>
+                {
+                    b.HasOne("Cursus.Data.Entities.Course", "Course")
+                        .WithMany("Reasons")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Cursus.Data.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Cursus.Data.Entities.ApplicationUser", "User")
@@ -1046,6 +1082,8 @@ namespace Cursus.Data.Migrations
                     b.Navigation("CourseComments");
 
                     b.Navigation("CourseVersions");
+
+                    b.Navigation("Reasons");
 
                     b.Navigation("Steps");
                 });
