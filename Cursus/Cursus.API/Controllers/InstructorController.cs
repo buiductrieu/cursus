@@ -81,7 +81,7 @@ namespace Cursus.API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Approve instructor
         /// </summary>
         /// <param name="instructorId"></param>
         /// <returns></returns>
@@ -102,9 +102,8 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages.Add("Failed to approve instructor");
             return BadRequest(_response);
         }
-        // API để từ chối tài khoản giảng viên
         /// <summary>
-        /// 
+        /// Reject Instuctor
         /// </summary>
         /// <param name="instructorId"></param>
         /// <returns></returns>

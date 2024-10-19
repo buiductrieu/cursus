@@ -1,19 +1,23 @@
-﻿using Cursus.Data.DTO;
+﻿using Cursus.Common.Helper;
+using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Cursus.API.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class BookmarkController : ControllerBase
     {
         private readonly IBookmarkService _bookmarkService;
+        private readonly APIResponse _response;
 
-        public BookmarkController(IBookmarkService bookmarkService)
+        public BookmarkController(IBookmarkService bookmarkService, APIResponse response)
         {
             _bookmarkService = bookmarkService;
+            _response = response;
         }
         /// <summary>
         /// GetBookMarks
@@ -29,7 +33,7 @@ namespace Cursus.API.Controllers
             string? sortBy = null,
             string? sortOrder = "asc")
         {
-            var bookmarks = await _bookmarkService.GetFilteredAndSortedBookmarksAsync(userId, null, null, sortBy, sortOrder);
+            var bookmarks = await _bookmarkService.GetFilteredAndSortedBookmarksAsync(userId, sortBy, sortOrder);
             return Ok(bookmarks);
         }
         /// <summary>
@@ -50,10 +54,15 @@ namespace Cursus.API.Controllers
         /// <param name="bookmarkCreateDTO"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateBookmark([FromBody] BookmarkCreateDTO bookmarkCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateBookmark([FromBody] BookmarkCreateDTO bookmarkCreateDTO)
         {
             await _bookmarkService.CreateBookmarkAsync(bookmarkCreateDTO);
-            return CreatedAtAction(nameof(GetBookmarks), new { userId = bookmarkCreateDTO.UserId }, bookmarkCreateDTO);
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = "Create successfully.";
+
+            return Ok(_response);
         }
     }
 }
