@@ -195,6 +195,11 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Course.Rating));
 
 
+            //Wallet Mapping
+            CreateMap<Wallet, WalletDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.Balance))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
         }
     }
 }

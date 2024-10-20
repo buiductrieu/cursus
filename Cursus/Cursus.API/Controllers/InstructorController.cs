@@ -91,6 +91,7 @@ namespace Cursus.API.Controllers
             var result = await _instructorService.ApproveInstructorAsync(instructorId);
             if (result)
             {
+
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor approved successfully";
