@@ -13,13 +13,16 @@ namespace Cursus.RepositoryContract.Interfaces
 
         Task UpdateTransactionStatus(int transactionId, TransactionStatus status);
 
-        // Kiểm tra xem người dùng đã hoàn thành khóa học dựa trên UserId và CourseId
+      
         Task<bool> IsOrderCompleted(int orderId);
 
-        // Lấy giao dịch đang chờ xử lý (Pending) dựa trên UserId và OrderId (Thay thế CourseId bằng OrderId)       
+             
         Task<IEnumerable<Transaction>> GetPendingTransactions();
        
         Task<Transaction?> GetPendingTransaction(int orderId);
+
+        Task<Transaction?> GetTransactionByOrder(int orderId);
+
 
 
     }

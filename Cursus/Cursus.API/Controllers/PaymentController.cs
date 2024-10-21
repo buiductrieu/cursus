@@ -61,10 +61,23 @@
                 request.OrderId
                 );
 
-            // Build successful response
-            _response.IsSuccess = true;
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = new { Message = "Payment successful", Transaction = transaction };
+            // Build successful response          
+            if (transaction.Status == Cursus.Data.Enums.TransactionStatus.Completed)
+            {
+                
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = new { Message = "Payment successful", Transaction = transaction };
+                return Ok(_response);
+            }
+            else if (transaction.Status == Cursus.Data.Enums.TransactionStatus.Failed)
+            {
+                
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = new { Message = "Transaction failed, payment was canceled.", Transaction = transaction };
+                return Ok(_response);
+            }
 
             return Ok(_response);
         }

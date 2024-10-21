@@ -48,5 +48,11 @@ namespace Cursus.Repository.Repository
         {
             return _db.Transactions.AnyAsync(t => t.OrderId == orderId && t.Status == TransactionStatus.Completed);
         }
+
+        public async Task<Transaction?> GetTransactionByOrder(int orderId)
+        {
+            return await _db.Transactions
+                  .FirstOrDefaultAsync(t => t.OrderId == orderId);
+        }
     }
 }
