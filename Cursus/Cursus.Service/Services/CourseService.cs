@@ -191,6 +191,8 @@ namespace Cursus.Service.Services
 
             var course = _mapper.Map<Course>(courseCreateDTO);
             course.IsApprove = ApproveStatus.Pending;
+             
+            course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == courseCreateDTO.InstructorInfoId);
             // Save course in db
             await _unitOfWork.CourseRepository.AddAsync(course);
             await _unitOfWork.SaveChanges();

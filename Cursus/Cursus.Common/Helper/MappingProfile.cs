@@ -49,12 +49,14 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
 
 
-            //Course mapper
-            CreateMap<CourseCreateDTO, Course>()
-               .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
-               .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-               .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
+			//Course mapper
+			CreateMap<CourseCreateDTO, Course>()
+			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
+			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+			   .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+			   .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
+			   ;
 
 
             CreateMap<Course, CourseDTO>()
@@ -164,18 +166,19 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow));
 
-            // Mapping từ Transaction sang TransactionDTO
-            CreateMap<Transaction, TransactionDTO>()
-                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
-                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
-                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-            //Oder Mapping
-            CreateMap<Order, OrderDTO>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                .ReverseMap();
+			// Mapping từ Transaction sang TransactionDTO
+			CreateMap<Transaction, TransactionDTO>()
+				.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
+				.ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+			//Oder Mapping
+			CreateMap<Order, OrderDTO>()
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+				.ReverseMap();
 
             CreateMap<Course, InstuctorTotalEarnCourseDTO>()
             .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
@@ -194,6 +197,11 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Course.Rating));
 
 
+            //Wallet Mapping
+            CreateMap<Wallet, WalletDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.Balance))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using System.Reflection.Metadata;
 
 namespace Cursus.Data.Models
 {
@@ -40,6 +41,9 @@ namespace Cursus.Data.Models
         public virtual DbSet<Reason> Reason { get; set; }=null!;
 
         public virtual DbSet<AdminComment> AdminComments { get; set; } = null!;
+        public virtual DbSet<Wallet> Wallets { get; set; }
+        public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
+        public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,6 +74,17 @@ namespace Cursus.Data.Models
                 .WithMany()
                 .HasForeignKey(c => c.CommenterId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Transaction>()
+            .ToTable(tb => tb.HasTrigger("trg_Transaction_Log"));
+
+            modelBuilder.Entity<PlatformWallet>().HasData(
+                new
+                {
+                    Id = 1,
+                    Balance = 0.0
+                }
+            );
         }
     }
 }

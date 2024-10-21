@@ -15,6 +15,10 @@ namespace Cursus.Data.Entities
         public double PaidAmount { get; set; }
         public DateTime DateCreated { get; set; }
         public OrderStatus Status { get; set; }
+
+        [ForeignKey("Transaction")]
+        public int TransactionId { get; set; }
+        public Transaction? Transaction { get; set; }
     }
     public enum OrderStatus
     {

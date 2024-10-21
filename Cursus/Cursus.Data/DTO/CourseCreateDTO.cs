@@ -20,6 +20,6 @@ namespace Cursus.Data.DTO
 		[Required]
 		[Range(0, int.MaxValue, ErrorMessage = "Discount must be greater than or equal to 0.")]
 		public int Discount { get; set; }
-		public List<StepCreateDTO> Steps { get; set; }
+		public List<StepCreateDTO> Steps { get; set; } = new List<StepCreateDTO>();
 	}
 }

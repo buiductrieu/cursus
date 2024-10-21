@@ -1,13 +1,7 @@
 using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Repository
 {
@@ -41,6 +35,8 @@ namespace Cursus.Repository
             services.AddTransient<ICartItemsRepository, CartItemsRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<ICartRepository, CartRepository>();
+            services.AddTransient<IWalletRepository, WalletRepositoy>();
+            services.AddTransient<IPlatformWalletRepository, PlatformWalletRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

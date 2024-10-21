@@ -32,7 +32,7 @@
         public async Task<ActionResult<APIResponse>> CreatePayment([FromBody] CreatePaymentRequest request)
         {
             // Create payment and retrieve approval URL
-            var approvalUrl = await _paymentService.CreatePayment(
+            var approvalUrl = await _paymentService.CreatePaymentOrder(
                 request.OrderId);
 
             // Build successful response
@@ -57,8 +57,7 @@
             // Capture the payment and retrieve transaction details
             var transaction = await _paymentService.CapturePayment(
                 request.Token,
-                request.PayId,
-                request.OrderId
+                request.PayId
                 );
 
             // Build successful response          

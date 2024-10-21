@@ -79,10 +79,11 @@ namespace Cursus.Service.Services
                                     _logger.LogError(ex, "An error occurred while retrieving the transaction {TransactionId} from PayPal.", transaction.TransactionId);
                                 }                              
                                 await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
-                                await unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Data.Entities.OrderStatus.Failed);
+
+                                var order = await unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
+                                await unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, Data.Entities.OrderStatus.Failed);
                                 await unitOfWork.SaveChanges();
 
-                                _logger.LogInformation("Transaction {TransactionId} and Order {OrderId} have been marked as Failed", transaction.TransactionId, transaction.OrderId);
                             }
                         }
                     }
