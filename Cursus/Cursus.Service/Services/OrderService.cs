@@ -91,11 +91,18 @@ namespace Cursus.Service.Services
 				};
 
 				await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
-			}
 
-			_emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
+				cartItem.Course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == cartItem.Course.InstructorInfoId);
+                (await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == cartItem.Course.InstructorInfo.UserId)).Balance += order.PaidAmount * 70 / 100;
 
-			await _unitOfWork.SaveChanges();
+				(await _unitOfWork.PlatformWalletRepository.GetPlatformWallet()).Balance += order.PaidAmount * 30 / 100;
+				
+            }
+
+            await _unitOfWork.SaveChanges();
+
+            _emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
+
 		}
 	}
 }
