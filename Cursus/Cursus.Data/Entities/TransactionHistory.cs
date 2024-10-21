@@ -12,10 +12,10 @@ namespace Cursus.Data.Entities
         public int Id { get; set; }
 
 
-        [ForeignKey("Wallet")]
-        public int WalletId { get; set; }
+        [ForeignKey("ApplicationUser")]
+        public string UserId { get; set; }
 
-        public Wallet? Wallet { get; set; }
+        public ApplicationUser? User{ get; set; }
 
 
         [ForeignKey("Transaction")]
@@ -24,6 +24,8 @@ namespace Cursus.Data.Entities
         public Transaction? Transaction { get; set; }
 
         public string Description { get; set; } = string.Empty;
+
+        public DateTime DateCreated { get; set; } = DateTime.Now;
 
     }
 }

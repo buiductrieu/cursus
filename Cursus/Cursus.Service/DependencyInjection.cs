@@ -39,6 +39,7 @@ namespace Cursus.Service
             services.AddTransient<ICourseCommentService, CourseCommentService>();   
           
             services.AddTransient<IPaymentService,PaymentService>();
+            services.AddTransient<IWalletService, WalletService>();
             return services;
         }
     }

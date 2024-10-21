@@ -169,6 +169,8 @@ namespace Cursus.Common.Helper
 			// Mapping từ Transaction sang TransactionDTO
 			CreateMap<Transaction, TransactionDTO>()
 				.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
 				.ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
 				.ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))

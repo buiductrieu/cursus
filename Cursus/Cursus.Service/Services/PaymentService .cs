@@ -27,14 +27,15 @@ namespace Demo_PayPal.Service
             _mapper = mapper;
         }
 
-        public async Task<Transaction> CreateTransaction(string userId, string paymentMethod)
+        public async Task<Transaction> CreateTransaction(string userId, string paymentMethod, string description)
         {
             var transaction = new Transaction()
             {
                 UserId = userId,
                 PaymentMethod = paymentMethod,
                 DateCreated = DateTime.Now,
-                Status = TransactionStatus.Pending
+                Status = TransactionStatus.Pending,   
+                Description = description
             };
 
             await _unitOfWork.TransactionRepository.AddAsync(transaction);
@@ -121,6 +122,8 @@ namespace Demo_PayPal.Service
             var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.TransactionId == order.TransactionId);
 
             transaction.Token = token;
+
+            transaction.Amount = amount;
 
             await _unitOfWork.SaveChanges();
 

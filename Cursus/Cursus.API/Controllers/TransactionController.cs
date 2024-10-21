@@ -30,7 +30,13 @@
             return Ok(_response);
         }
 
-
+        /// <summary>
+        /// Get transaction by user id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetTransactionsByUserId(string userId, int page = 1, int pageSize = 20)
         {
@@ -38,6 +44,21 @@
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = transactions;
+            return Ok(_response);
+        }
+
+
+        /// <summary>
+        /// Get pending payout request
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-pending-payout")]
+        public async Task<IActionResult> GetPendingPayoutRequest()
+        {
+            var transaction = await _transactionService.GetAllPendingPayOutRequest();
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transaction;
             return Ok(_response);
         }
     }

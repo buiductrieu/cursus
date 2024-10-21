@@ -23,12 +23,14 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         public readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
-        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper)
+        private readonly IWalletService _walletService;
+        public InstructorService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IEmailService emailService, IMapper mapper, IWalletService walletService)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _mapper = mapper;
+            _walletService = walletService;
         }
 
         public async Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO)
@@ -90,6 +92,7 @@ namespace Cursus.Service.Services
             if (instructorInfo.StatusInsructor == InstructorStatus.Approved) throw new InvalidOperationException("Instructor already Approved.");
             instructorInfo.StatusInsructor = InstructorStatus.Approved;
             await _unitOfWork.InstructorInfoRepository.UpdateAsync(instructorInfo);
+            await _walletService.CreateWallet(instructorId);
             await _unitOfWork.SaveChanges();
 
             var user = await _userManager.FindByIdAsync(instructorInfo.UserId);
@@ -139,6 +142,8 @@ namespace Cursus.Service.Services
                 Body = emailBody,
             };
             _emailService.SendEmail(emailRequest);
+
+
 
             return true;
         }

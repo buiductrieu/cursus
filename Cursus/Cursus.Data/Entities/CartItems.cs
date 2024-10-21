@@ -13,6 +13,6 @@ namespace Cursus.Data.Entities
 
 		[ForeignKey("Course")]
 		public int CourseId { get; set; }
-		public Course? Course { get; set; }
+		public Course Course { get; set; }
 	}
 }

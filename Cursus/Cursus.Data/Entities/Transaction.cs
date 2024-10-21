@@ -24,11 +24,15 @@ namespace Cursus.Data.Entities
 
         public DateTime DateCreated { get; set; }
 
+        public double Amount { get; set; }
+
         public string PaymentMethod { get; set; } = string.Empty;
         
         public TransactionStatus Status { get; set; }
         
         public string Token { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
         
     }
     

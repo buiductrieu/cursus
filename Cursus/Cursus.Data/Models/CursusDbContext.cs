@@ -73,6 +73,7 @@ namespace Cursus.Data.Models
                 .WithMany()
                 .HasForeignKey(c => c.CommenterId)
                 .OnDelete(DeleteBehavior.Restrict);
+           
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<IEnumerable<TransactionDTO>> GetListTransaction(int page = 1, int pageSize = 20);
         Task<IEnumerable<TransactionDTO>> GetListTransactionByUserId(string userId, int page = 1, int pageSize = 20);
+        Task<IEnumerable<TransactionDTO>> GetAllPendingPayOutRequest();
     }
 }

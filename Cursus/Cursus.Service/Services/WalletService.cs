@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Cursus.Service.Services
 {
@@ -28,9 +29,31 @@ namespace Cursus.Service.Services
             await _unitOfWork.SaveChanges();
         }
 
-        public Task CreatePayout(string userId, double amount)
+        public async Task CreatePayout(string userId, double amount)
         {
-            throw new NotImplementedException();
+            Transaction transaction = new()
+            {
+                UserId = userId,
+                Amount = amount,
+                DateCreated = DateTime.Now,
+                Status = Data.Enums.TransactionStatus.Pending,
+                Description = $"User {userId} payout"
+            };
+
+            var wallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == userId);
+
+            if (wallet == null)
+            {
+                throw new KeyNotFoundException("Wallet not found");
+            }
+
+            if (wallet.Balance < amount)
+            {
+                throw new BadHttpRequestException($"Your wallet do not have enough money for a {amount} payout");
+            }
+
+            await _unitOfWork.TransactionRepository.AddAsync(transaction);
+
         }
 
         public async Task<WalletDTO> CreateWallet(string userId)

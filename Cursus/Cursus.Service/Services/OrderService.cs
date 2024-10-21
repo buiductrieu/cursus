@@ -46,7 +46,8 @@ namespace Cursus.Service.Services
 
 			double taxAmount = Math.Round(totalAmount * 0.1, 2);
 
-			var transaction = await _paymentService.CreateTransaction(userId, "PayPal");
+
+			var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
 
 			var order = new Order
 			{

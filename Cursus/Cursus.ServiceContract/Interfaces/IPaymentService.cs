@@ -12,6 +12,6 @@ namespace Cursus.ServiceContract.Interfaces
     {
         Task<string> CreatePaymentOrder(int orderId);
         Task<TransactionDTO> CapturePayment(string token, string payerId);
-        Task<Transaction> CreateTransaction(string userId, string paymentMethod );
+        Task<Transaction> CreateTransaction(string userId, string paymentMethod, string description);
     }
 }
