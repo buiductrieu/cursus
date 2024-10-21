@@ -56,7 +56,7 @@ namespace Cursus.Service.Services
             return  await _adminRepository.GetAllAsync();
         }
 
-        public async Task<Dictionary<string, object>> GetInformationInstructor(int instructorId)
+        public async Task<Dictionary<string, object>?> GetInformationInstructor(int instructorId)
         {
             var instructor = await _adminRepository.GetInformationInstructorAsync(instructorId);
             var details = new Dictionary<string, object>();

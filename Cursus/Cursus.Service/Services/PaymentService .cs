@@ -19,12 +19,20 @@ namespace Demo_PayPal.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<PaymentService> _logger;
+        public PaymentService(
+            PayPalClient payPalClient,
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IConfiguration configuration,
+            ILogger<PaymentService> logger) 
         public PaymentService(PayPalClient payPalClient, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration)
         {
             _payPalClient = payPalClient;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<Transaction> CreateTransaction(string userId, string paymentMethod, string description)
@@ -136,38 +144,14 @@ namespace Demo_PayPal.Service
         {
             var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.Token == token);
 
-            var pendingTransaction = await _unitOfWork.TransactionRepository.GetPendingTransaction(transaction.TransactionId);
-            if (pendingTransaction == null)
-                throw new KeyNotFoundException("Pending transaction not found.");
-
-
-            if (pendingTransaction.Token != token)
-                throw new ArgumentException("Token does not match the transaction.");
-
-
-            if (IsTransactionExpired(pendingTransaction))
-            {
-                await UpdateFailedTransaction(pendingTransaction);
-                throw new BadHttpRequestException("Transaction has expired.");
-            }
-
-
-            if (string.IsNullOrEmpty(payerId))
-            {
-                await UpdateFailedTransaction(pendingTransaction);
-                throw new BadHttpRequestException("Payment was cancelled by the user.");
-            }
-
             try
             {
-
                 var result = await CapturePayPalPayment(token);
 
+                await HandleTransactionResult(transaction, result, payerId);
 
-                await HandleTransactionResult(pendingTransaction, result, payerId);
+                var transactionDTO = _mapper.Map<TransactionDTO>(transaction);
 
-
-                var transactionDTO = _mapper.Map<TransactionDTO>(pendingTransaction);
                 return transactionDTO;
             }
             catch (Exception ex)
@@ -213,11 +197,11 @@ namespace Demo_PayPal.Service
             else
             {
                 await UpdateFailedTransaction(transaction);
+                await _unitOfWork.SaveChanges();
             }
 
-            await _unitOfWork.SaveChanges();
-        }
 
+        }
 
     }
 }

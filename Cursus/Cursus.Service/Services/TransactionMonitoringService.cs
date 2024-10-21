@@ -1,7 +1,9 @@
 ﻿using Cursus.RepositoryContract.Interfaces;
+using Demo_PayPal.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PayPalCheckoutSdk.Orders;
 using System;
 using System.Linq;
 using System.Threading;
@@ -28,6 +30,7 @@ namespace Cursus.Service.Services
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); // Inject PayPal client
 
                     _logger.LogInformation("Starting to check pending transactions at {Time}", DateTime.Now);
 
@@ -41,14 +44,40 @@ namespace Cursus.Service.Services
                         }
 
                         foreach (var transaction in pendingTransactions)
-                        {
-                           
-
-                            if (transaction.DateCreated <= DateTime.Now.AddMinutes(-10))
+                        {                            
+                            if (transaction.DateCreated <= DateTime.Now.AddMinutes(-1))
                             {
-                                _logger.LogInformation("Transaction {TransactionId} has expired. Updating status to Failed.", transaction.TransactionId);
+                                try
+                                {
+                                    var request = new OrdersGetRequest(transaction.Token);
+                                    var response = await payPalClient.Client().Execute(request);
+                                    var result = response.Result<PayPalCheckoutSdk.Orders.Order>();
 
-                                // Update status of the transaction and order
+                                    // Kiểm tra trạng thái đơn hàng từ PayPal
+                                    if (result.Status == "CREATED" || result.Status == "APPROVED")
+                                    {
+                                        _logger.LogInformation("Transaction {TransactionId} is in a cancellable state on PayPal.", transaction.TransactionId);
+
+                                        // Hủy hoặc không thực hiện capture thanh toán
+                                        // Hãy quyết định bỏ qua việc capture này hoặc thông báo lỗi cho người dùng
+                                        _logger.LogInformation("Skipping capture for transaction {TransactionId} as it has expired.", transaction.TransactionId);
+
+                                        // Cập nhật trạng thái giao dịch trên hệ thống của bạn thành Failed nếu chưa làm
+                                        await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
+                                        await unitOfWork.SaveChanges();
+
+                                        _logger.LogInformation("Transaction {TransactionId} has been marked as failed due to expiration.", transaction.TransactionId);
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning("Transaction {TransactionId} is not in a cancellable state on PayPal.", transaction.TransactionId);
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex, "An error occurred while retrieving the transaction {TransactionId} from PayPal.", transaction.TransactionId);
+                                }                              
                                 await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
 
                                 var order = await unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
@@ -56,7 +85,6 @@ namespace Cursus.Service.Services
                                 await unitOfWork.SaveChanges();
 
                             }
-                            
                         }
                     }
                     catch (Exception ex)
