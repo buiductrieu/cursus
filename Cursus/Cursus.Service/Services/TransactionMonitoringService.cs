@@ -14,7 +14,7 @@ namespace Cursus.Service.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<TransactionMonitoringService> _logger;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30); // Interval for checking
+        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30); 
 
         public TransactionMonitoringService(IServiceScopeFactory scopeFactory, ILogger<TransactionMonitoringService> logger)
         {
@@ -29,8 +29,7 @@ namespace Cursus.Service.Services
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); // PayPal client injected
-
+                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); 
                     _logger.LogInformation("Starting to check pending transactions at {Time}", DateTime.Now);
 
                     try
@@ -45,15 +44,15 @@ namespace Cursus.Service.Services
 
                         foreach (var transaction in pendingTransactions)
                         {
-                            // Check if the transaction has exceeded the allowed time limit (e.g., 1 minute)
+                           
                             if (transaction.DateCreated <= DateTime.Now.AddMinutes(-10))
                             {
                                 _logger.LogInformation($"Transaction {transaction.TransactionId} exceeded the allowed time. Marking it as Failed.");
 
-                                // Update the transaction status to Failed
+                               
                                 await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
 
-                                // Retrieve the associated order and update its status to Failed
+                               
                                 var order = await unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
                                 if (order != null)
                                 {
@@ -61,7 +60,7 @@ namespace Cursus.Service.Services
                                     _logger.LogInformation($"Order {order.OrderId} associated with transaction {transaction.TransactionId} has been marked as Failed.");
                                 }
 
-                                // Save the changes to the database
+                               
                                 await unitOfWork.SaveChanges();
                             }
                         }
@@ -72,7 +71,7 @@ namespace Cursus.Service.Services
                     }
                 }
 
-                // Wait for the next check interval
+               
                 await Task.Delay(_checkInterval, stoppingToken);
             }
         }
