@@ -11,61 +11,56 @@
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        private readonly IPaymentService _paymentService;
+        private readonly ITransactionService _transactionService;
         private readonly APIResponse _response;
 
-        public TransactionController(IPaymentService paymentService, APIResponse response)
+        public TransactionController(ITransactionService transactionService, APIResponse response)
         {
-            _paymentService = paymentService;
+            _transactionService = transactionService;
             _response = response;
         }
 
-        /// <summary>
-        /// Creates a payment request
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPost("create-payment")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreatePayment([FromBody] CreatePaymentRequest request)
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllTransactions(int page = 1, int pageSize = 20)
         {
-            // Create payment and retrieve approval URL
-            var approvalUrl = await _paymentService.CreatePayment(
-                request.OrderId);
-
-            // Build successful response
+            var transactions = await _transactionService.GetListTransaction(page, pageSize);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = new { ApprovalUrl = approvalUrl };
-
+            _response.Result = transactions;
             return Ok(_response);
         }
 
         /// <summary>
-        /// Captures a payment
+        /// Get transaction by user id
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="userId"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
         /// <returns></returns>
-        [HttpPost("capture-payment")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CapturePayment([FromBody] CapturePaymentRequest request)
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetTransactionsByUserId(string userId, int page = 1, int pageSize = 20)
         {
-            // Capture the payment and retrieve transaction details
-            var transaction = await _paymentService.CapturePayment(
-                request.Token,
-                request.PayId,
-                request.OrderId);
-
-            // Build successful response
+            var transactions = await _transactionService.GetListTransactionByUserId(userId, page, pageSize);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = new { Message = "Payment successful", Transaction = transaction };
+            _response.Result = transactions;
+            return Ok(_response);
+        }
 
+
+        /// <summary>
+        /// Get pending payout request
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-pending-payout")]
+        public async Task<IActionResult> GetPendingPayoutRequest()
+        {
+            var transaction = await _transactionService.GetAllPendingPayOutRequest();
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transaction;
             return Ok(_response);
         }
     }
 }
+

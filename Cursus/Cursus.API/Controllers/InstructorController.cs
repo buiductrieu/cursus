@@ -1,6 +1,7 @@
 using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
+using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    
+
     public class InstructorController : ControllerBase
     {
         private readonly IInstructorService _instructorService;
@@ -22,13 +23,16 @@ namespace Cursus.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly IAuthService _authService;
-        public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService)
+        private readonly IWalletService _walletService;
+
+        public InstructorController(IInstructorService instructorService, APIResponse aPIResponse, IAuthService authService, UserManager<ApplicationUser> userManager, IEmailService emailService, IWalletService walletService)
         {
             _instructorService = instructorService;
             _response = aPIResponse;
             _authService = authService;
             _userManager = userManager;
             _emailService = emailService;
+            _walletService = walletService;
         }
 
         /// <summary>
@@ -64,7 +68,7 @@ namespace Cursus.API.Controllers
                 var confirmationLink = Url.Action(
                     nameof(ConfirmEmail),
                     "Instructor",
-                    new {token = token ,username = result.UserName},
+                    new { token = token, username = result.UserName },
                     Request.Scheme);
                 _emailService.SendEmailConfirmation(result.UserName, confirmationLink);
 
@@ -81,7 +85,7 @@ namespace Cursus.API.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Approve instructor
         /// </summary>
         /// <param name="instructorId"></param>
         /// <returns></returns>
@@ -91,6 +95,7 @@ namespace Cursus.API.Controllers
             var result = await _instructorService.ApproveInstructorAsync(instructorId);
             if (result)
             {
+
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.Result = "Instructor approved successfully";
@@ -102,9 +107,8 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages.Add("Failed to approve instructor");
             return BadRequest(_response);
         }
-        // API để từ chối tài khoản giảng viên
         /// <summary>
-        /// 
+        /// Reject Instuctor
         /// </summary>
         /// <param name="instructorId"></param>
         /// <returns></returns>
@@ -243,5 +247,23 @@ namespace Cursus.API.Controllers
 
             return Ok(_response);
         }
+
+        /// <summary>
+        /// Instructor request a payout
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [HttpPost("instructor/payout")]
+        public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] string userId, double amount)
+        {
+            await _walletService.CreatePayout(userId, amount);
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = "Payout request created successfully";
+            return Ok(_response);
+        }
+
     }
 }

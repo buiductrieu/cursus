@@ -35,7 +35,7 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Login for user
         /// </summary>
-        /// <param name="LoginRequestDTO"></param>
+        /// <param name="loginRequestDTO"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("login")]
@@ -113,7 +113,7 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Register for user
         /// </summary>
-        /// <param name="UserRegisterDTO"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]

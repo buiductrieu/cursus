@@ -37,8 +37,9 @@ namespace Cursus.Service
             services.AddTransient<ICartItemsService, CartItemsService>();
 
             services.AddTransient<ICourseCommentService, CourseCommentService>();   
-          
+            services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IPaymentService,PaymentService>();
+            services.AddTransient<IWalletService, WalletService>();
             return services;
         }
     }

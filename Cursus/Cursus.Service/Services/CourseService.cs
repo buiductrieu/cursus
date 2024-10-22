@@ -171,10 +171,9 @@ namespace Cursus.Service.Services
 
         public async Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseCreateDTO)
         {
-            var intructor = await _unitOfWork.InstructorInfoRepository.GetAsync(c => c.Id == courseCreateDTO.InstructorInfoId);
-            if(intructor == null) 
-                throw new KeyNotFoundException("Intructor not found.");
-
+            var instructorID = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == courseCreateDTO.InstructorInfoId);
+            if (instructorID == null)
+                throw new KeyNotFoundException("Instructor not found");
             // Check unique name
             bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseCreateDTO.Name);
 
@@ -192,6 +191,8 @@ namespace Cursus.Service.Services
 
             var course = _mapper.Map<Course>(courseCreateDTO);
             course.IsApprove = ApproveStatus.Pending;
+             
+            course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == courseCreateDTO.InstructorInfoId);
             // Save course in db
             await _unitOfWork.CourseRepository.AddAsync(course);
             await _unitOfWork.SaveChanges();

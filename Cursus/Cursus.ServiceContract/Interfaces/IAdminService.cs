@@ -13,5 +13,6 @@ namespace Cursus.ServiceContract.Interfaces
         Task<IEnumerable<ApplicationUser>> GetAllUser();
         Task<bool> AdminComments(string userId, string comment);
         Task<Dictionary<string, object>> GetInformationInstructor(int instructorId);
+        Task<bool> AcceptPayout(int transactionId);
     }
 }

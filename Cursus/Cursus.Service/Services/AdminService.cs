@@ -1,13 +1,8 @@
 ﻿using Cursus.Data.Entities;
-using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Service.Services
 {
@@ -16,12 +11,39 @@ namespace Cursus.Service.Services
         private readonly IAdminRepository _adminRepository;
         private readonly IInstructorInfoRepository _instructorInfoRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AdminService(IAdminRepository adminRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager)
+        public AdminService(IAdminRepository adminRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
         {
             _adminRepository = adminRepository;
             _instructorInfoRepository = instructorInfoRepository;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<bool> AcceptPayout(int transactionId)
+        {
+            var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.TransactionId == transactionId);
+
+            if (transaction == null)
+            {
+                throw new KeyNotFoundException("Transaction not found");
+            }
+
+            if (!transaction.Description.Contains("payout"))
+            {
+                throw new BadHttpRequestException("Can not confirm this transaction!");
+            }
+
+            transaction.Status = Data.Enums.TransactionStatus.Completed;
+
+            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == transaction.UserId);
+
+            instructorWallet.Balance -= transaction.Amount;
+
+            await _unitOfWork.SaveChanges();
+
+            return true;
         }
 
         public async Task<bool> AdminComments(string userId, string comment)
@@ -34,7 +56,7 @@ namespace Cursus.Service.Services
             return  await _adminRepository.GetAllAsync();
         }
 
-        public async Task<Dictionary<string, object>> GetInformationInstructor(int instructorId)
+        public async Task<Dictionary<string, object>?> GetInformationInstructor(int instructorId)
         {
             var instructor = await _adminRepository.GetInformationInstructorAsync(instructorId);
             var details = new Dictionary<string, object>();

@@ -6,9 +6,9 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IBookmarkService
     {
-        Task<IEnumerable<BookmarkDTO>> GetFilteredAndSortedBookmarksAsync(string userId, string? courseName, int? courseId, string? sortBy, string sortOrder);
+        Task<IEnumerable<BookmarkDTO>> GetFilteredAndSortedBookmarksAsync(string userId, string? sortBy, string sortOrder);
 
-        Task<CourseDetailDTO> GetCourseDetailsAsync(int courseId);
+        Task<CourseDTO> GetCourseDetailsAsync(int courseId);
 
         Task CreateBookmarkAsync(BookmarkCreateDTO bookmarkCreateDTO);
     }

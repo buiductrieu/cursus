@@ -48,7 +48,7 @@ namespace Cursus.Repository.Repository
                 throw new Exception(e.Message);
             }
 
-        }
+        }   
 
         public void SendEmailConfirmation(EmailRequestDTO request, string confirmLink)
         {

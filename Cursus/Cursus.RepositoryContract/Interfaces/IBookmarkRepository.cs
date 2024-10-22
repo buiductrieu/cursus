@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    public interface IBookmarkRepository
+    public interface IBookmarkRepository : IRepository<Bookmark>
     {
-        Task<IEnumerable<BookmarkDTO>> GetFilteredAndSortedBookmarksAsync(string userId, string? courseName, int? courseId, string? sortBy, string sortOrder);
 
-        Task<CourseDetailDTO> GetCourseDetailsAsync(int courseId);
-
-        Task AddAsync(Bookmark bookmark);
+        Task<IEnumerable<Bookmark>> GetFilteredAndSortedBookmarksAsync(string userId, string? sortBy, string sortOrder);
     }
 }
