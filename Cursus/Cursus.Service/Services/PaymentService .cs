@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Cursus.Data.DTO;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using System.Linq.Expressions;
 
 
 namespace Demo_PayPal.Service
@@ -53,12 +54,21 @@ namespace Demo_PayPal.Service
             string returnUrl = _configuration["PayPalSettings:ReturnUrl"];
             string cancelUrl = _configuration["PayPalSettings:CancelUrl"];
 
-            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId, includeProperties: "Cart,Cart.CartItems");
+            var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId, includeProperties: "Cart,Cart.CartItems,Transaction");
+           
+
+
 
             if (order == null)
             {
                 throw new KeyNotFoundException("The order does not exist.");
-            }   
+            }
+            if (order.Transaction.Status != TransactionStatus.Pending)
+            {
+                _logger.LogInformation($"{order.Transaction.Status}");
+                _logger.LogInformation($"{order.Transaction.TransactionId}");
+                throw new BadHttpRequestException("Transaction was used with orther order");
+            }
 
             if (order.Cart.IsPurchased)
             {
@@ -145,12 +155,6 @@ namespace Demo_PayPal.Service
             }
 
 
-            if (transaction.Token != token)
-            {
-                throw new BadHttpRequestException("Token does not match the transaction.");
-            }
-
-
             var request = new OrdersGetRequest(transaction.Token);
             var response = await _payPalClient.Client().Execute(request);
             var result = response.Result<PayPalCheckoutSdk.Orders.Order>();
@@ -179,8 +183,6 @@ namespace Demo_PayPal.Service
             }
             else
             {
-
-
                 throw new BadHttpRequestException($"Payment failed or incomplete on PayPal. Status: {result.Status}");
             }
         }

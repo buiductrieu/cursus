@@ -3,7 +3,6 @@ using Demo_PayPal.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using PayPalCheckoutSdk.Orders;
 using System;
 using System.Linq;
 using System.Threading;
@@ -15,7 +14,7 @@ namespace Cursus.Service.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<TransactionMonitoringService> _logger;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30);
+        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30); // Interval for checking
 
         public TransactionMonitoringService(IServiceScopeFactory scopeFactory, ILogger<TransactionMonitoringService> logger)
         {
@@ -30,12 +29,13 @@ namespace Cursus.Service.Services
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); // Inject PayPal client
+                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); // PayPal client injected
 
                     _logger.LogInformation("Starting to check pending transactions at {Time}", DateTime.Now);
 
                     try
                     {
+                        // Get pending transactions from the repository
                         var pendingTransactions = await unitOfWork.TransactionRepository.GetPendingTransactions();
 
                         if (!pendingTransactions.Any())
@@ -44,46 +44,25 @@ namespace Cursus.Service.Services
                         }
 
                         foreach (var transaction in pendingTransactions)
-                        {                            
-                            if (transaction.DateCreated <= DateTime.Now.AddMinutes(-1))
+                        {
+                            // Check if the transaction has exceeded the allowed time limit (e.g., 1 minute)
+                            if (transaction.DateCreated <= DateTime.Now.AddMinutes(-10))
                             {
-                                try
-                                {
-                                    var request = new OrdersGetRequest(transaction.Token);
-                                    var response = await payPalClient.Client().Execute(request);
-                                    var result = response.Result<PayPalCheckoutSdk.Orders.Order>();
+                                _logger.LogInformation($"Transaction {transaction.TransactionId} exceeded the allowed time. Marking it as Failed.");
 
-                                    // Kiểm tra trạng thái đơn hàng từ PayPal
-                                    if (result.Status == "CREATED" || result.Status == "APPROVED")
-                                    {
-                                        _logger.LogInformation("Transaction {TransactionId} is in a cancellable state on PayPal.", transaction.TransactionId);
-
-                                        // Hủy hoặc không thực hiện capture thanh toán
-                                        // Hãy quyết định bỏ qua việc capture này hoặc thông báo lỗi cho người dùng
-                                        _logger.LogInformation("Skipping capture for transaction {TransactionId} as it has expired.", transaction.TransactionId);
-
-                                        // Cập nhật trạng thái giao dịch trên hệ thống của bạn thành Failed nếu chưa làm
-                                        await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
-                                        await unitOfWork.SaveChanges();
-
-                                        _logger.LogInformation("Transaction {TransactionId} has been marked as failed due to expiration.", transaction.TransactionId);
-                                    }
-                                    else
-                                    {
-                                        _logger.LogWarning("Transaction {TransactionId} is not in a cancellable state on PayPal.", transaction.TransactionId);
-                                    }
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogError(ex, "An error occurred while retrieving the transaction {TransactionId} from PayPal.", transaction.TransactionId);
-                                }                              
+                                // Update the transaction status to Failed
                                 await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
 
+                                // Retrieve the associated order and update its status to Failed
                                 var order = await unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
-                                await unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, Data.Entities.OrderStatus.Failed);
-                                await unitOfWork.SaveChanges();
+                                if (order != null)
+                                {
+                                    await unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, Data.Entities.OrderStatus.Failed);
+                                    _logger.LogInformation($"Order {order.OrderId} associated with transaction {transaction.TransactionId} has been marked as Failed.");
+                                }
 
+                                // Save the changes to the database
+                                await unitOfWork.SaveChanges();
                             }
                         }
                     }
@@ -93,6 +72,7 @@ namespace Cursus.Service.Services
                     }
                 }
 
+                // Wait for the next check interval
                 await Task.Delay(_checkInterval, stoppingToken);
             }
         }

@@ -21,7 +21,7 @@ namespace Cursus.RepositoryContract.Interfaces
        
         Task<Transaction?> GetPendingTransaction(int transactionId);
 
-        Task<Transaction?> GetTransactionByOrder(int orderId);
+       
 
 
 
