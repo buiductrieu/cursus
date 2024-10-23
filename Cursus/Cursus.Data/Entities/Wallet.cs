@@ -16,7 +16,7 @@ namespace Cursus.Data.Entities
 
         public ApplicationUser? User { get; set; }
 
-        public double Balance { get; set; }
+        public double? Balance { get; set; }
 
         public DateTime DateCreated { get; set; }
     }

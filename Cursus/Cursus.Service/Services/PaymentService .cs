@@ -65,8 +65,6 @@ namespace Demo_PayPal.Service
             }
             if (order.Transaction.Status != TransactionStatus.Pending)
             {
-                _logger.LogInformation($"{order.Transaction.Status}");
-                _logger.LogInformation($"{order.Transaction.TransactionId}");
                 throw new BadHttpRequestException("Transaction was used with orther order");
             }
 
@@ -148,6 +146,8 @@ namespace Demo_PayPal.Service
         public async Task<TransactionDTO> CapturePayment(string token, string payerId)
         {
             var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.Token == token);
+
+            
 
             if (transaction == null)
             {
