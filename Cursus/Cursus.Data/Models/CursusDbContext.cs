@@ -85,6 +85,14 @@ namespace Cursus.Data.Models
                     Balance = 0.0
                 }
             );
+
+            modelBuilder.Entity<TransactionHistory>()
+                .HasOne(th => th.Transaction)
+                .WithMany(t => t.TransactionHistories)
+                .HasForeignKey(t => t.TransactionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
         }
     }
 }
