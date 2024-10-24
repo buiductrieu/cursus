@@ -70,7 +70,7 @@ namespace Cursus.Service.Services
 
 		public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
 		{
-			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
+			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Cart.UserId == userId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
 
 			if (order == null)
 				throw new KeyNotFoundException("Order not found or payment not completed.");
