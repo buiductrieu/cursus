@@ -22,7 +22,7 @@ namespace Cursus.Data.Entities
 
         public Course Course { get; set; }
 
-        public ReasonStatus Status { get; set; } = ReasonStatus.Processing;
+        public int Status { get; set; } 
     }
 
 }
