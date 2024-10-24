@@ -9,7 +9,7 @@ using Cursus.Repository.Repository;
 using System.Threading.Tasks;
 using Cursus.Service.Services;
 
-namespace Cursus.UnitTest.Services
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class UserServiceTests

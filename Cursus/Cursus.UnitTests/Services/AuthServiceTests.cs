@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cursus.Service.Tests
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class AuthServiceTests
