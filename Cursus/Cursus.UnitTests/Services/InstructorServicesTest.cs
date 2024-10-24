@@ -12,7 +12,7 @@ using NUnit.Framework.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
-namespace Cursus.UnitTest.Services
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class Tests
