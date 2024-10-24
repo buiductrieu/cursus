@@ -290,5 +290,17 @@ namespace Cursus.API.Controllers
         }
 
 
+        [HttpPut("UpdateStatus")]
+        public async Task<ActionResult<APIResponse>> UpdateCourseStatus([FromBody] CourseUpdateStatusDTO courseUpdateStatusDTO)
+        {
+            var result = await _courseService.UpdateCourseStatus(courseUpdateStatusDTO);
+
+            _response.IsSuccess = result.IsSuccess;
+            _response.StatusCode = result.StatusCode;
+            _response.ErrorMessages = result.ErrorMessages;
+
+            return StatusCode((int)_response.StatusCode, _response);
+        }
+
     }
 }

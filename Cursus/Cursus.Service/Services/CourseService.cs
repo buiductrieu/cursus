@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enums;
+using Cursus.Repository.Enum;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Cursus.Service.Services
 {
@@ -271,5 +274,46 @@ namespace Cursus.Service.Services
             var output = _mapper.Map<CourseDTO>(course);
             return output;
         }
+
+        public async Task<APIResponse> UpdateCourseStatus(CourseUpdateStatusDTO courseUpdateStatusDTO)
+        {
+            var response = new APIResponse();
+
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseUpdateStatusDTO.Id);
+            if (course == null)
+            {
+                response.IsSuccess = false;
+                response.StatusCode = HttpStatusCode.NotFound;
+                response.ErrorMessages.Add("Course not found.");
+                return response;
+            }
+
+            // Cập nhật trạng thái khóa học
+            var previousStatus = course.Status; 
+            course.Status = courseUpdateStatusDTO.Status; // Gán bool
+
+            // Cập nhật trạng thái Reason dựa trên trạng thái mới của khóa học
+            var reason = await _unitOfWork.ReasonRepository.GetByCourseIdAsync(course.Id);
+            if (reason != null)
+            {
+                if (previousStatus == true && course.Status == false) 
+                {
+                    reason.Status = (int)ReasonStatus.Accepted;
+                }
+                else if (previousStatus == false && course.Status == true) 
+                {
+                    reason.Status = (int)ReasonStatus.Accepted; 
+                }
+
+                await _unitOfWork.ReasonRepository.UpdateAsync(reason);
+            }
+
+            await _unitOfWork.SaveChanges();
+
+            response.IsSuccess = true;
+            response.StatusCode = HttpStatusCode.OK;
+            return response;
+        }
+
     }
 }
