@@ -101,7 +101,7 @@ namespace Cursus.Service.Services
 					{
 						CourseId = cartItem.CourseId,
 						UserId = userId,
-						Type = "Purchased",
+						Type = "Enrollment",
 						Date = DateTime.Now,
 						IsCompleted = false
 					};
