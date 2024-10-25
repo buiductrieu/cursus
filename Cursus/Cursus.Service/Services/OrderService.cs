@@ -22,16 +22,16 @@ namespace Cursus.Service.Services
 			_emailService = emailService;
 		}
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService,IPaymentService paymentService)
+		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IPaymentService paymentService)
 		{
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _emailService = emailService;
-			_paymentService = paymentService;	
-        }
+			_unitOfWork = unitOfWork;
+			_mapper = mapper;
+			_emailService = emailService;
+			_paymentService = paymentService;
+		}
 
 
-        public async Task<OrderDTO> CreateOrderAsync(string userId)
+		public async Task<OrderDTO> CreateOrderAsync(string userId)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
 			if (cart == null || !cart.CartItems.Any())
@@ -59,7 +59,7 @@ namespace Cursus.Service.Services
 				TransactionId = transaction.TransactionId,
 				Transaction = transaction
 			};
-			
+
 
 			await _unitOfWork.OrderRepository.AddAsync(order);
 			await _unitOfWork.SaveChanges();
@@ -70,7 +70,7 @@ namespace Cursus.Service.Services
 
 		public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
 		{
-			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
+			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Cart.UserId == userId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
 
 			if (order == null)
 				throw new KeyNotFoundException("Order not found or payment not completed.");
@@ -79,29 +79,53 @@ namespace Cursus.Service.Services
 			if (user == null)
 				throw new KeyNotFoundException("User not found.");
 
+			bool flag = true;
+			
 			foreach (var cartItem in order.Cart.CartItems)
 			{
-				var newProgress = new CourseProgress
+			
+
+				if (flag == true)
 				{
-					CourseId = cartItem.CourseId,
-					UserId = userId,
-					Type = "Purchased",
-					Date = DateTime.Now,
-					IsCompleted = false
-				};
+					var existedProgress =  await _unitOfWork.CourseProgressRepository.GetAsync(c => c.CourseId == cartItem.CourseId && c.UserId == userId);
+					if (existedProgress == null)
+					{
+						flag = false;
+					}
+					else
+					{
+						throw new BadHttpRequestException("this order has been access granted");
+					}
+				}
 
-				await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
+					var newProgress = new CourseProgress
+					{
+						CourseId = cartItem.CourseId,
+						UserId = userId,
+						Type = "Enrollment",
+						Date = DateTime.Now,
+						IsCompleted = false
+					};
 
-				cartItem.Course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == cartItem.Course.InstructorInfoId);
-                (await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == cartItem.Course.InstructorInfo.UserId)).Balance += order.PaidAmount * 70 / 100;
+					await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
 
-				(await _unitOfWork.PlatformWalletRepository.GetPlatformWallet()).Balance += order.PaidAmount * 30 / 100;
+					cartItem.Course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == cartItem.Course.InstructorInfoId);
+					
+				var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == cartItem.Course.InstructorInfo.UserId);
+				if (instructorWallet == null)
+				{
+					throw new KeyNotFoundException("Instructor is not approve, approve instructor first");
+				}
+
+					instructorWallet.Balance += order.PaidAmount * 70 / 100;
+
+					(await _unitOfWork.PlatformWalletRepository.GetPlatformWallet()).Balance += order.PaidAmount * 30 / 100;
 				
-            }
+			}
 
-            await _unitOfWork.SaveChanges();
+			await _unitOfWork.SaveChanges();
 
-            _emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
+			_emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
 
 		}
 	}

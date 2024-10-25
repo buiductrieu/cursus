@@ -11,6 +11,7 @@ using Cursus.Data;
 using Cursus.Data.DTO;
 using Cursus.Repository.Repository;
 using Microsoft.AspNetCore.Http;
+using Cursus.Repository.Enum;
 
 namespace Cursus.Service.Services
 {
@@ -49,6 +50,8 @@ namespace Cursus.Service.Services
 
             var reason = _mapper.Map<Reason>(reasonDTO);
 
+            reason.Status = (int)ReasonStatus.Processing;
+
             if (reason.DateCancel == DateTime.MinValue)
             {
                 reason.DateCancel = DateTime.UtcNow;
@@ -82,5 +85,21 @@ namespace Cursus.Service.Services
             await _unitOfWork.SaveChanges();
         }
 
+        public async Task<List<Reason>> GetByCourseIdAsync(int courseId)
+        {
+            if (courseId <= 0)
+            {
+                throw new BadHttpRequestException("Invalid CourseId.");
+            }
+
+            var reasons = await _reasonRepository.GetAllAsync(r => r.CourseId == courseId);
+
+            if (reasons == null || !reasons.Any())
+            {
+                throw new BadHttpRequestException("No reasons found for this course.");
+            }
+
+            return reasons.ToList();
+        }
     }
 }

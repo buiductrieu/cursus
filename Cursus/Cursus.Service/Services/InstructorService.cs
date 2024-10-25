@@ -47,6 +47,7 @@ namespace Cursus.Service.Services
 
             var userResult = await _userManager.CreateAsync(user, registerInstructorDTO.Password);
 
+
             if (userResult.Succeeded)
             {
                 var roleResult = await _userManager.AddToRoleAsync(user, "Instructor");

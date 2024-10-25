@@ -43,7 +43,7 @@ namespace Cursus.Service.Services
 
 			EmailRequestDTO request = new EmailRequestDTO
 			{
-				Subject = "Cursus Email Successfully Purchased Course",
+				Subject = "Order Confirmation Email",
 				Body = "",
 				toEmail = user.Email
 			};
