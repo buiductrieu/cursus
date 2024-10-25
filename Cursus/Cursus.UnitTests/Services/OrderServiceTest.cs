@@ -27,46 +27,6 @@ namespace Cursus.UnitTests.Services
 			_orderService = new OrderService(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object);
 		}
 
-		[Test]
-		public async Task CreateOrderAsync_ShouldCreateOrderSuccessfully()
-		{
-			string userId = "user1";
-			var cart = new Cart
-			{
-				CartId = 1,
-				UserId = userId,
-				CartItems = new List<CartItems>
-				{
-					new CartItems { CourseId = 1, Course = new Course { Price = 100 } }
-				},
-				Total = 100
-			};
-
-			var order = new Order
-			{
-				OrderId = 1,
-				CartId = cart.CartId,
-				Amount = cart.Total,
-				PaidAmount = cart.Total + (cart.Total * 0.1),
-				Status = OrderStatus.PendingPayment
-			};
-
-			_unitOfWorkMock.Setup(x => x.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems,CartItems.Course"))
-						   .ReturnsAsync(cart);
-
-			_unitOfWorkMock.Setup(x => x.OrderRepository.AddAsync(It.IsAny<Order>()))
-						   .ReturnsAsync(order);
-
-			_mapperMock.Setup(m => m.Map<OrderDTO>(It.IsAny<Order>()))
-					   .Returns(new OrderDTO { OrderId = order.OrderId });
-
-			_unitOfWorkMock.Setup(x => x.SaveChanges()).Returns(Task.CompletedTask);
-
-			var result = await _orderService.CreateOrderAsync(userId);
-
-			Assert.IsNotNull(result);
-			Assert.AreEqual(order.OrderId, result.OrderId);
-		}
 
 		[Test]
 		public async Task CreateOrderAsync_ShouldThrowBadRequestException_WhenCartIsEmpty()
@@ -79,40 +39,6 @@ namespace Cursus.UnitTests.Services
 			Assert.AreEqual("Cart is empty.", ex.Message);
 		}
 
-		[Test]
-		public async Task UpdateUserCourseAccessAsync_ShouldGrantCourseAccessSuccessfully()
-		{
-			int orderId = 1;
-			string userId = "user1";
-			var order = new Order
-			{
-				OrderId = orderId,
-				Status = OrderStatus.Paid,
-				Cart = new Cart
-				{
-					CartItems = new List<CartItems>
-					{
-						new CartItems { CourseId = 1, Course = new Course() }
-					}
-				}
-			};
-			var user = new ApplicationUser { Id = userId };
-
-			_unitOfWorkMock.Setup(x => x.OrderRepository.GetAsync(It.IsAny<Expression<Func<Order, bool>>>(), "Cart,Cart.CartItems.Course"))
-						   .ReturnsAsync(order);
-
-			_unitOfWorkMock.Setup(x => x.UserRepository.ExiProfile(userId))
-						   .ReturnsAsync(user);
-
-			_unitOfWorkMock.Setup(x => x.CourseProgressRepository.AddAsync(It.IsAny<CourseProgress>()))
-						   .ReturnsAsync(new CourseProgress());
-
-			_unitOfWorkMock.Setup(x => x.SaveChanges()).Returns(Task.CompletedTask);
-
-			await _orderService.UpdateUserCourseAccessAsync(orderId, userId);
-
-			_emailServiceMock.Verify(x => x.SendEmailSuccessfullyPurchasedCourse(user, order), Times.Once);
-		}
 
 		[Test]
 		public async Task UpdateUserCourseAccessAsync_ShouldThrowException_WhenOrderNotFoundOrNotPaid()

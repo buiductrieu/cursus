@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cursus.Service.Services
 {
-    internal class CourseProgressService : ICourseProgressService
+    public class CourseProgressService : ICourseProgressService
     {
         private readonly IProgressRepository _progressRepository;
         private readonly ICourseProgressRepository _courseProgressRepository;
