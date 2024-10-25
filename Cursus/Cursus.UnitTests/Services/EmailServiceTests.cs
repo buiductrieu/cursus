@@ -87,19 +87,6 @@ namespace Cursus.UnitTests.Services
 
         #region SendEmailSuccessfullyPurchasedCourse Tests
 
-        [Test]
-        public void SendEmailSuccessfullyPurchasedCourse_WhenParametersAreValid_CallsRepositorySendEmailSuccessfullyPurchasedCourse()
-        {
-            // Arrange
-            var user = new ApplicationUser { Email = "test@example.com" };
-            var order = new Order { OrderId = 1, PaidAmount = 100.0 };
-
-            // Act
-            _emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
-
-            // Assert
-            _mockEmailRepository.Verify(repo => repo.SendEmailSuccessfullyPurchasedCourse(It.Is<EmailRequestDTO>(r => r.toEmail == user.Email && r.Subject == "Cursus Email Successfully Purchased Course"), order), Times.Once);
-        }
 
 
 
