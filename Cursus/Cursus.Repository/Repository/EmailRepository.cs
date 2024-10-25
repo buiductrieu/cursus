@@ -97,16 +97,16 @@ namespace Cursus.Repository.Repository
 				body += $@"
             <li>
                 <strong>Course Name:</strong> {item.Course.Name}<br />
-                <strong>Price:</strong> {item.Course.Price:C}
+                <strong>Price:</strong> ${item.Course.Price}
             </li>";
 			}
 
 			body += $@"
                 </ul>
-                <p><strong>Subtotal:</strong> {order.Cart.Total:C}</p>
-                <p><strong>Tax:</strong> {tax:C} (10%)</p>
+                <p><strong>Subtotal:</strong> ${order.Cart.Total}</p>
+                <p><strong>Tax:</strong> ${tax} (10%)</p>
 
-                <p style=""font-size: 18px;""><strong>Total Paid:</strong> {order.PaidAmount:C}</p>
+                <p style=""font-size: 18px;""><strong>Total Paid:</strong> ${order.PaidAmount}</p>
                
                 <p>Thank you for choosing us! We wish you the best of luck in your learning journey.</p>
                 <p>Warm regards,</p>
