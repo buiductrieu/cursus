@@ -90,7 +90,7 @@ namespace Cursus.Repository.Repository
         public async Task<double> RatingNumber(int id)
         {
                     var ratings = await _dbContext.Courses
-                .Where(c => c.InstructorInfoId == id)
+                .Where(c => c.InstructorInfoId == id && c.Status == true)
                 .Select(c => c.Rating)
                 .ToListAsync();
 
