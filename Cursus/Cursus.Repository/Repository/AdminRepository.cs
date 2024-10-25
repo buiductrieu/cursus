@@ -68,8 +68,10 @@ namespace Cursus.Repository.Repository
             if (instructorInfo != null)
             {
                 var user = await db.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == instructorInfo.UserId);
-                var comment = await db.AdminComments.FirstOrDefaultAsync(c => c.UserId == instructorInfo.UserId);
-
+                var comment = await db.AdminComments
+                                          .Where(c => c.UserId == instructorInfo.UserId)
+                                          .OrderByDescending(c => c.CreatedAt)
+                                          .FirstOrDefaultAsync();
                 if (user != null)
                 {
                     return (user.UserName, user.Email, user.PhoneNumber, comment?.CommentText);
