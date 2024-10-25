@@ -202,6 +202,18 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => src.Balance))
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated));
+
+            //RegisterInsstructor Mapping
+            CreateMap<RegisterInstructorDTO, ApplicationUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName)) 
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) 
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => false))
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore()) 
+                .ReverseMap(); 
+
         }
     }
 }

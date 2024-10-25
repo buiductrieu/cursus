@@ -47,9 +47,22 @@ namespace Cursus.API.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var errorDetails = new Dictionary<string, string>();
+
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    var errors = state.Errors.Select(e => e.ErrorMessage).ToList();
+
+                    if (errors.Any())
+                    {
+                        errorDetails.Add(key, string.Join(", ", errors));
+                    }
+                }
+
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Result = ModelState;
+                _response.Result = errorDetails;
                 return BadRequest(_response);
             }
             var existingUser = await _userManager.FindByEmailAsync(registerInstructorDTO.UserName);
