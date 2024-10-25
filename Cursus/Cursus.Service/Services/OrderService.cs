@@ -83,6 +83,7 @@ namespace Cursus.Service.Services
 			
 			foreach (var cartItem in order.Cart.CartItems)
 			{
+			
 
 				if (flag == true)
 				{
@@ -109,7 +110,14 @@ namespace Cursus.Service.Services
 					await _unitOfWork.CourseProgressRepository.AddAsync(newProgress);
 
 					cartItem.Course.InstructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == cartItem.Course.InstructorInfoId);
-					(await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == cartItem.Course.InstructorInfo.UserId)).Balance += order.PaidAmount * 70 / 100;
+					
+				var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == cartItem.Course.InstructorInfo.UserId);
+				if (instructorWallet == null)
+				{
+					throw new KeyNotFoundException("Instructor is not approve, approve instructor first");
+				}
+
+					instructorWallet.Balance += order.PaidAmount * 70 / 100;
 
 					(await _unitOfWork.PlatformWalletRepository.GetPlatformWallet()).Balance += order.PaidAmount * 30 / 100;
 				
