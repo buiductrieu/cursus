@@ -14,7 +14,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<ApplicationUser> InstructorAsync(RegisterInstructorDTO registerInstructorDTO);
         Task<bool> ApproveInstructorAsync(string instructorId);
         Task<bool> RejectInstructorAsync(string instructorId);
-        Task<List<InstuctorTotalEarnCourseDTO>> GetTotalAmountAsync (int instructorId);
+        Task<InstuctorTotalEarnCourseDTO> GetTotalAmountAsync (int instructorId);
         Task<IEnumerable<InstructorInfo>> GetAllInstructors();
     }
 }

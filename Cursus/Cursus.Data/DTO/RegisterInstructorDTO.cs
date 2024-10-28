@@ -40,5 +40,7 @@ namespace Cursus.Data.DTO
         public string? SubmitCertificate { get; set; }
 
         public double TotalEarning { get; set; } = 0;
+
+        public double TotalWithdrawn { get; set; } = 0;
     }
 }

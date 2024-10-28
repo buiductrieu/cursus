@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cursus.Data.Enum;
+using Cursus.Data.Enums;
 namespace Cursus.Data.Entities
 {
      public class InstructorInfo
@@ -22,7 +23,10 @@ namespace Cursus.Data.Entities
         public InstructorStatus StatusInsructor { get; set; }
 
         public double TotalEarning { get; set; } = 0;
+
+        public double TotalWithdrawn { get; set; } = 0;
         public ICollection<Course> Courses { get; set; } = new List<Course>();
 
+        public ICollection<PayoutRequest> WithdrawalHistory { get; set; } = new List<PayoutRequest>();
     }
 }
