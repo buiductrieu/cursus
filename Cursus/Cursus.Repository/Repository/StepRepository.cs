@@ -29,7 +29,11 @@ namespace Cursus.Repository.Repository
                             .Where(s => s.CourseId == courseId)
                             .ToListAsync(); 
         }
-
+        public async Task<double> GetToTalSteps(int couressId)
+        {
+            return await _db.Steps.Where(sc => sc.CourseId == couressId)
+                            .CountAsync();
+        }
 
     }
 }

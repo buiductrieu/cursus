@@ -186,7 +186,18 @@ namespace Cursus.Common.Helper
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.Earnings, opt => opt.Ignore()) 
             .ForMember(dest => dest.InstructorName, opt => opt.Ignore()) 
-            .ForMember(dest => dest.Id, opt => opt.Ignore()); 
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            // Tracking Mapping 
+            CreateMap<TrackingProgress, TrackingProgressDTO>()
+                 .ForMember(dest => dest.CourseProgressId, opt => opt.MapFrom(src => src.ProgressId))
+                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
+
+            CreateMap<TrackingProgressDTO, TrackingProgress>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProgressId, opt => opt.MapFrom(src => src.CourseProgressId))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
         }
     }
 }

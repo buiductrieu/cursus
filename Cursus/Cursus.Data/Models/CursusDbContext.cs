@@ -41,6 +41,8 @@ namespace Cursus.Data.Models
 
         public virtual DbSet<AdminComment> AdminComments { get; set; } = null!;
 
+        public virtual DbSet<TrackingProgress> TrackingProgresses { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -70,6 +72,18 @@ namespace Cursus.Data.Models
                 .WithMany()
                 .HasForeignKey(c => c.CommenterId)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<TrackingProgress>()
+             .HasOne(tp => tp.CourseProgress)
+             .WithMany()
+             .HasForeignKey(tp => tp.ProgressId)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TrackingProgress>()
+                .HasOne(tp => tp.Step)
+                .WithMany()
+                .HasForeignKey(tp => tp.StepId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

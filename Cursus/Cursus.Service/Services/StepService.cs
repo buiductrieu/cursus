@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -17,12 +18,14 @@ namespace Cursus.Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IStepRepository _stepRepository;
+        private readonly ITrackingProgressRepository _trackingProgressRepository;
 
-        public StepService(IStepRepository stepRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public StepService(IStepRepository stepRepository, IMapper mapper, IUnitOfWork unitOfWork, ITrackingProgressRepository trackingProgressRepository)
         {
             _stepRepository = stepRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _trackingProgressRepository = trackingProgressRepository;
         }
 
         public async Task<StepDTO> CreateStep(StepCreateDTO dto)
@@ -98,6 +101,71 @@ namespace Cursus.Service.Services
 
             return _mapper.Map<StepDTO>(step);
         }
+
+        public async Task<TrackingProgressDTO> StartStepAsync(string userId, int stepId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("UserId cannot be null or empty.", nameof(userId));
+            }
+
+            // Lấy CourseId từ step
+            var courseId = (await _unitOfWork.StepRepository.GetAsync(cp => cp.Id == stepId)).CourseId;
+
+            // Kiểm tra xem CourseProgress có tồn tại hay không
+            var courseProgress = await _unitOfWork.CourseProgressRepository.GetAsync(cp => cp.UserId == userId && courseId == cp.CourseId);
+            if (courseProgress == null)
+            {
+                throw new InvalidOperationException("CourseProgress not found for the specified UserId.");
+            }
+
+            // Kiểm tra xem TrackingProgress đã tồn tại chưa
+            var existingTrackingProgress = await _trackingProgressRepository.GetAsync(tp => tp.UserId == userId && tp.StepId == stepId);
+            if (existingTrackingProgress != null)
+            {
+                throw new InvalidOperationException("TrackingProgress already exists for this UserId and StepId.");
+            }
+
+            var trackingProgress = new TrackingProgress
+            {
+                UserId = userId,
+                StepId = stepId,
+                ProgressId = courseProgress.ProgressId,
+                Date = DateTime.Now
+            };
+
+            await _trackingProgressRepository.AddAsync(trackingProgress);
+            await _unitOfWork.SaveChanges();
+
+            return _mapper.Map<TrackingProgressDTO>(trackingProgress);
+        }
+
+
+
+
+        public async Task<double> GetPercentageTrackingProgress(string userId, int courseProgressId)
+        {
+            var courseProgress = await _unitOfWork.CourseProgressRepository.GetAsync(cp => cp.ProgressId == courseProgressId && cp.UserId == userId);
+            if (courseProgress == null)
+            {
+                throw new InvalidOperationException("CourseProgress not found for the specified CourseProgressId.");
+            }
+
+            var totalSteps = await _stepRepository.GetToTalSteps(courseProgress.CourseId);
+            var completedSteps = await _trackingProgressRepository.GetCompletedStepsCountByUserId(userId);
+
+            double completionPercentage = totalSteps > 0 ? (completedSteps / (double)totalSteps) * 100 : 0;
+
+            if (completionPercentage == 100)
+            {
+                courseProgress.IsCompleted = true;
+                await _unitOfWork.CourseProgressRepository.UpdateAsync(courseProgress);
+                await _unitOfWork.SaveChanges();
+            }
+
+            return completionPercentage;
+        }
+
 
     }
 }
