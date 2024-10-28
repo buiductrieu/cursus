@@ -60,6 +60,7 @@ namespace Cursus.Service.Services
                     CardNumber = registerInstructorDTO.CardNumber,
                     SubmitCertificate = registerInstructorDTO.SubmitCertificate,
                     TotalEarning = registerInstructorDTO.TotalEarning,
+                    TotalWithdrawn = registerInstructorDTO.TotalWithdrawn,
                     StatusInsructor = InstructorStatus.Pending
                 };
 
@@ -211,24 +212,28 @@ namespace Cursus.Service.Services
             return true;
         }
 
-        public async Task<List<InstuctorTotalEarnCourseDTO>> GetTotalAmountAsync(int instructorId)
+        public async Task<InstuctorTotalEarnCourseDTO> GetTotalAmountAsync(int instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == instructorId);
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(
+                x => x.Id == instructorId,
+                    includeProperties: "User");
+
             if (instructorInfo == null)
                 throw new KeyNotFoundException("Instructor is not found");
-            var course = await _unitOfWork.CourseRepository.GetAllAsync(c => c.InstructorInfoId == instructorId);
-            if (!course.Any() || course == null)
-                throw new KeyNotFoundException("No courses found for this instructor.");
-            var courseSummaryDTOs = _mapper.Map<List<InstuctorTotalEarnCourseDTO>>(course);
-            foreach (var item in courseSummaryDTOs)
+            var courseCount = await _unitOfWork.CourseRepository.CountAsync(c => c.InstructorInfoId == instructorId); ;
+            var wallet = await _unitOfWork.WalletRepository.GetAsync(x => x.UserId == instructorInfo.UserId);
+            var summaryDTO = new InstuctorTotalEarnCourseDTO
             {
-                item.Earnings = item.Price;
-                item.InstructorName = instructorInfo.User?.UserName;
-                item.Id = instructorInfo.Id;
-            }
+                Id = instructorInfo.Id,
+                InstructorName = instructorInfo.User?.UserName,
+                Earnings = wallet.Balance ?? 0,
+                CourseCount = courseCount
+            };
 
-            return courseSummaryDTOs;
+            return summaryDTO;
         }
+
+
 
         public Task<IEnumerable<InstructorInfo>> GetAllInstructors()
         {

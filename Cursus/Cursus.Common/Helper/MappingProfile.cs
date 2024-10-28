@@ -174,12 +174,10 @@ namespace Cursus.Common.Helper
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
 				.ReverseMap();
 
-            CreateMap<Course, InstuctorTotalEarnCourseDTO>()
-            .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-            .ForMember(dest => dest.Earnings, opt => opt.Ignore())
-            .ForMember(dest => dest.InstructorName, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<InstructorInfo, InstuctorTotalEarnCourseDTO>()
+                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Earnings, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseCount, opt => opt.MapFrom(src => src.Courses.Count));
 
             //Bookmark Mapping
             CreateMap<BookmarkCreateDTO, Bookmark>();

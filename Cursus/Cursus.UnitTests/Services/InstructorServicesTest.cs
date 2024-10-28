@@ -79,25 +79,6 @@ namespace Cursus.UnitTests.Services
         }
 
         [Test]
-        public async Task GetInstructorCoursesAsync_WithCourses_ReturnsCourseList()
-        {
-            // Arrange
-            int instructorId = 123;
-
-            var instructorInfo = TestDataHelper.GetInstructorInfo();
-            var courses = TestDataHelper.GetCourses();
-            _instructorInfoRepositoryMock.Setup(r => r.GetAsync(It.IsAny<Expression<Func<InstructorInfo, bool>>>(), null))
-                .ReturnsAsync(instructorInfo);
-            _courseMock.Setup(r => r.GetAllAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-                .ReturnsAsync(courses);
-            _mapperMock.Setup(m => m.Map<List<InstuctorTotalEarnCourseDTO>>(courses))
-                .Returns(TestDataHelper.GetInstructorTotalEarnCourseDTOs());
-            var result = await _instructorService.GetTotalAmountAsync(instructorId);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
-        }
-
-        [Test]
         public async Task GetInstructorCoursesAsync_NoCourses_ThrowsKeyNotFoundException()
         {
             int instructorId = 123;
@@ -299,26 +280,19 @@ namespace Cursus.UnitTests.Services
                 {
                     Id = 1,
                     UserId = "test-instructor-id",
-                    User = new ApplicationUser { UserName = "John Doe" }
+                    User = new ApplicationUser { UserName = "John Doe" },
+                    TotalEarning = 300,
+                    TotalWithdrawn = 50
                 };
             }
 
             public static List<Course> GetCourses()
             {
                 return new List<Course>
-            {
-                new Course { Id = 1, Name = "Course 1", Price = 100.00 },
-                new Course { Id = 2, Name = "Course 2", Price = 200.00 }
-            };
-            }
-
-            public static List<InstuctorTotalEarnCourseDTO> GetInstructorTotalEarnCourseDTOs()
-            {
-                return new List<InstuctorTotalEarnCourseDTO>
-            {
-                new InstuctorTotalEarnCourseDTO { CourseName = "Course 1", Price = 100.00, Earnings = 100.00, InstructorName = "John Doe" },
-                new InstuctorTotalEarnCourseDTO { CourseName = "Course 2", Price = 200.00, Earnings = 200.00, InstructorName = "John Doe" }
-            };
+        {
+            new Course { Id = 1, Name = "Course 1", Price = 100.00 },
+            new Course { Id = 2, Name = "Course 2", Price = 200.00 }
+        };
             }
         }
     }

@@ -35,6 +35,8 @@ namespace Cursus.Data.Entities
         public string Description { get; set; } = string.Empty;
 
         public List<TransactionHistory> TransactionHistories { get; set; } = new List<TransactionHistory>();
+
+        public PayoutRequest PayoutRequest { get; set; }
     }
     
 }
