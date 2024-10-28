@@ -20,16 +20,21 @@ namespace Cursus.Data.Entities
 
         [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
-
         public ApplicationUser? User { get; set; }
-        [ForeignKey("Order")]
-        public int OrderId { get; set; }
-        public Order? Order { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public double? Amount { get; set; }
+
         public string PaymentMethod { get; set; } = string.Empty;
+        
         public TransactionStatus Status { get; set; }
-        public string Token { get; set; } = string.Empty;
+
+        public string? Token { get; set; }
+
+        public string Description { get; set; } = string.Empty;
+
+        public List<TransactionHistory> TransactionHistories { get; set; } = new List<TransactionHistory>();
     }
     
 }

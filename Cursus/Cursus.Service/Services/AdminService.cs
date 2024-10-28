@@ -1,13 +1,8 @@
 ﻿using Cursus.Data.Entities;
-using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Service.Services
 {
@@ -16,12 +11,39 @@ namespace Cursus.Service.Services
         private readonly IAdminRepository _adminRepository;
         private readonly IInstructorInfoRepository _instructorInfoRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AdminService(IAdminRepository adminRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager)
+        public AdminService(IAdminRepository adminRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
         {
             _adminRepository = adminRepository;
             _instructorInfoRepository = instructorInfoRepository;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<bool> AcceptPayout(int transactionId)
+        {
+            var transaction = await _unitOfWork.TransactionRepository.GetAsync(t => t.TransactionId == transactionId);
+
+            if (transaction == null)
+            {
+                throw new KeyNotFoundException("Transaction not found");
+            }
+
+            if (!transaction.Description.Contains("payout"))
+            {
+                throw new BadHttpRequestException("Can not confirm this transaction!");
+            }
+
+            transaction.Status = Data.Enums.TransactionStatus.Completed;
+
+            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == transaction.UserId);
+
+            instructorWallet.Balance -= transaction.Amount;
+
+            await _unitOfWork.SaveChanges();
+
+            return true;
         }
 
         public async Task<bool> AdminComments(string userId, string comment)
@@ -34,11 +56,12 @@ namespace Cursus.Service.Services
             return  await _adminRepository.GetAllAsync();
         }
 
-        public async Task<Dictionary<string, object>> GetInformationInstructor(int instructorId)
+        public async Task<Dictionary<string, object>?> GetInformationInstructor(int instructorId)
         {
+            var userId = _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == instructorId).Result.UserId; // Lấy id người dùng
+            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == userId);
             var instructor = await _adminRepository.GetInformationInstructorAsync(instructorId);
             var details = new Dictionary<string, object>();
-            var allInstructors = await _instructorInfoRepository.GettAllAsync();
 
             // Kiểm tra thông tin instructor
             if (string.IsNullOrEmpty(instructor.UserName))
@@ -53,9 +76,7 @@ namespace Cursus.Service.Services
                 details.Add("PhoneNumber", instructor.PhoneNumber ?? string.Empty);
                 details.Add("AdminComment", instructor.AdminComment ?? string.Empty);
             }
-            var totalEarning = allInstructors
-                     .Where(i => i.Id == instructorId)
-                     .Sum(i => i.TotalEarning);
+            var totalEarning = instructorWallet?.Balance ?? 0; // Nếu không có ví, đặt mặc định là 0
             details.Add("TotalEarning", totalEarning);
             var totalCourses = await _instructorInfoRepository.TotalCourse(instructorId); // Lấy tổng số khóa học
             details.Add("TotalCourses", totalCourses);

@@ -3,9 +3,6 @@ using Cursus.Data.Enums;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
@@ -38,15 +35,17 @@ namespace Cursus.Repository.Repository
         }
 
 
-        public async Task<Transaction?> GetPendingTransaction(int orderId)
+        public async Task<Transaction?> GetPendingTransaction(int transactionId)
         {
             return await _db.Transactions
-                .FirstOrDefaultAsync(t => t.OrderId == orderId && t.Status == TransactionStatus.Pending);
+                .FirstOrDefaultAsync(t => t.TransactionId == transactionId && t.Status == TransactionStatus.Pending);
         }
 
-        public Task<bool> IsOrderCompleted(int orderId)
+        public Task<bool> IsOrderCompleted(int transactionId)
         {
-            return _db.Transactions.AnyAsync(t => t.OrderId == orderId && t.Status == TransactionStatus.Completed);
+            return _db.Transactions.AnyAsync(t => t.TransactionId == transactionId && t.Status == TransactionStatus.Completed);
         }
+
+        
     }
 }

@@ -12,7 +12,7 @@ using NUnit.Framework.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
-namespace Cursus.UnitTest.Services
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class Tests
@@ -24,6 +24,7 @@ namespace Cursus.UnitTest.Services
         private Mock<IMapper> _mapperMock;
         private Mock<ICourseRepository> _courseMock;
         private Mock<IEmailService> _mailRepositoryMock;
+        private Mock<IWalletService> _walletRepositoryMock;
 
         [SetUp]
         public void Setup()
@@ -36,7 +37,7 @@ namespace Cursus.UnitTest.Services
             _mapperMock = new Mock<IMapper>();
             _courseMock = new Mock<ICourseRepository>();
             _mailRepositoryMock = new Mock<IEmailService>();
-
+            _walletRepositoryMock = new Mock<IWalletService>();
             _unitOfWorkMock.Setup(u => u.InstructorInfoRepository).Returns(_instructorInfoRepositoryMock.Object);
             _unitOfWorkMock.Setup(u => u.CourseRepository).Returns(_courseMock.Object);
 
@@ -44,7 +45,8 @@ namespace Cursus.UnitTest.Services
                     _userManagerMock.Object,
                     _unitOfWorkMock.Object,
                     _mailRepositoryMock.Object,
-                    _mapperMock.Object
+                    _mapperMock.Object,
+                    _walletRepositoryMock.Object
                 );
             _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);

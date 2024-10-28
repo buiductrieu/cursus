@@ -1,4 +1,5 @@
 ﻿using Cursus.RepositoryContract.Interfaces;
+using Demo_PayPal.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace Cursus.Service.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<TransactionMonitoringService> _logger;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30);
+        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(30); 
 
         public TransactionMonitoringService(IServiceScopeFactory scopeFactory, ILogger<TransactionMonitoringService> logger)
         {
@@ -28,11 +29,12 @@ namespace Cursus.Service.Services
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
+                    var payPalClient = scope.ServiceProvider.GetRequiredService<PayPalClient>(); 
                     _logger.LogInformation("Starting to check pending transactions at {Time}", DateTime.Now);
 
                     try
                     {
+                        // Get pending transactions from the repository
                         var pendingTransactions = await unitOfWork.TransactionRepository.GetPendingTransactions();
 
                         if (!pendingTransactions.Any())
@@ -43,19 +45,24 @@ namespace Cursus.Service.Services
                         foreach (var transaction in pendingTransactions)
                         {
                            
-
                             if (transaction.DateCreated <= DateTime.Now.AddMinutes(-10))
                             {
-                                _logger.LogInformation("Transaction {TransactionId} has expired. Updating status to Failed.", transaction.TransactionId);
+                                _logger.LogInformation($"Transaction {transaction.TransactionId} exceeded the allowed time. Marking it as Failed.");
 
-                                // Update status of the transaction and order
+                               
                                 await unitOfWork.TransactionRepository.UpdateTransactionStatus(transaction.TransactionId, Data.Enums.TransactionStatus.Failed);
-                                await unitOfWork.OrderRepository.UpdateOrderStatus(transaction.OrderId, Data.Entities.OrderStatus.Failed);
-                                await unitOfWork.SaveChanges();
 
-                                _logger.LogInformation("Transaction {TransactionId} and Order {OrderId} have been marked as Failed", transaction.TransactionId, transaction.OrderId);
+                               
+                                var order = await unitOfWork.OrderRepository.GetAsync(o => o.TransactionId == transaction.TransactionId);
+                                if (order != null)
+                                {
+                                    await unitOfWork.OrderRepository.UpdateOrderStatus(order.OrderId, Data.Entities.OrderStatus.Failed);
+                                    _logger.LogInformation($"Order {order.OrderId} associated with transaction {transaction.TransactionId} has been marked as Failed.");
+                                }
+
+                               
+                                await unitOfWork.SaveChanges();
                             }
-                            
                         }
                     }
                     catch (Exception ex)
@@ -64,6 +71,7 @@ namespace Cursus.Service.Services
                     }
                 }
 
+               
                 await Task.Delay(_checkInterval, stoppingToken);
             }
         }

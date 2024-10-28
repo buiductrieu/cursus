@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cursus.Repository.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,5 +21,8 @@ namespace Cursus.Data.Entities
         public DateTime DateCancel { get; set; } = DateTime.UtcNow;
 
         public Course Course { get; set; }
+
+        public int Status { get; set; } 
     }
+
 }

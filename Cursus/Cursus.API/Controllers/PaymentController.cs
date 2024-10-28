@@ -29,10 +29,10 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreatePayment([FromBody] CreatePaymentRequest request)
+        public async Task<ActionResult<APIResponse>> CreatePayment([FromQuery] CreatePaymentRequest request)
         {
             // Create payment and retrieve approval URL
-            var approvalUrl = await _paymentService.CreatePayment(
+            var approvalUrl = await _paymentService.CreatePaymentOrder(
                 request.OrderId);
 
             // Build successful response
@@ -52,19 +52,31 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CapturePayment([FromBody] CapturePaymentRequest request)
+        public async Task<ActionResult<APIResponse>> CapturePayment([FromQuery] CapturePaymentRequest request)
         {
             // Capture the payment and retrieve transaction details
             var transaction = await _paymentService.CapturePayment(
                 request.Token,
-                request.PayId,
-                request.OrderId
+                request.PayId
                 );
 
-            // Build successful response
-            _response.IsSuccess = true;
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = new { Message = "Payment successful", Transaction = transaction };
+            // Build successful response          
+            if (transaction.Status == Cursus.Data.Enums.TransactionStatus.Completed)
+            {
+                
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = new { Message = "Payment successful", Transaction = transaction };
+                return Ok(_response);
+            }
+            else if (transaction.Status == Cursus.Data.Enums.TransactionStatus.Failed)
+            {
+                
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = new { Message = "Transaction failed, payment was canceled.", Transaction = transaction };
+                return Ok(_response);
+            }
 
             return Ok(_response);
         }

@@ -1,4 +1,6 @@
-﻿namespace Cursus.Data.DTO
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace Cursus.Data.DTO
 {
 	public class OrderDTO
 	{
@@ -8,5 +10,6 @@
 		public double PaidAmount { get; set; }
 		public DateTime DateCreated { get; set; }
 		public string Status { get; set; }
+		public string TransactionId { get; set; }
 	}
 }

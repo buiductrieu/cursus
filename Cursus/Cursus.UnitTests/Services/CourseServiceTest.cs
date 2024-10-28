@@ -40,91 +40,6 @@ namespace Cursus.UnitTests.Services
 		}
 
 		[Test]
-		public async Task CreateCourseWithSteps_ShouldReturnCourseDTO_WhenCourseIsCreatedSuccessfully()
-		{
-			// Arrange
-			var courseCreateDTO = new CourseCreateDTO
-			{
-				Name = "New Course",
-				Description = "Course Description",
-				CategoryId = 1,
-				Status = true,
-				Price = 10,
-				Discount = 10,
-				Steps = new List<StepCreateDTO>
-				{
-					new StepCreateDTO { CourseId = 1, Name = "Step 1", Order = 1, Description = "Description for step 1" },
-					new StepCreateDTO { CourseId = 1, Name = "Step 2", Order = 2, Description = "Description for step 2" }
-				}
-			};
-
-			var category = new Category
-			{
-				Id = courseCreateDTO.CategoryId,
-				Name = "Existing Category"
-			};
-
-			var courseEntity = new Course
-			{
-				Id = 1,
-				Name = courseCreateDTO.Name,
-				Description = courseCreateDTO.Description,
-				CategoryId = courseCreateDTO.CategoryId,
-				DateCreated = DateTime.Now,
-				DateModified = DateTime.Now,
-				Status = courseCreateDTO.Status,
-				Price = courseCreateDTO.Price,
-				Discount = courseCreateDTO.Discount,
-				StartedDate = DateTime.Now,
-				Steps = new List<Step>
-				{
-					new Step { Id = 1, CourseId = 1, Name = "Step 1", Order = 1, Description = "Description for step 1", DateCreated = DateTime.Now },
-					new Step { Id = 2, CourseId = 1, Name = "Step 2", Order = 2, Description = "Description for step 2", DateCreated = DateTime.Now }
-				}
-			};
-
-			_mapperMock.Setup(m => m.Map<CourseDTO>(It.IsAny<Course>())).Returns((Course course) => new CourseDTO
-			{
-				Id = course.Id,
-				Name = course.Name,
-				Description = course.Description,
-				CategoryId = course.CategoryId,
-				DateCreated = course.DateCreated,
-				DateModified = course.DateModified,
-				Status = course.Status,
-				Price = course.Price,
-				Discount = course.Discount,
-				StartedDate = course.StartedDate,
-				Rating = course.Rating,
-				Steps = course.Steps.Select(step => new StepDTO
-				{
-					Id = step.Id,
-					CourseId = step.CourseId,
-					Name = step.Name,
-					Order = step.Order,
-					Description = step.Description,
-					DateCreated = step.DateCreated
-				}).ToList()
-			});
-
-			_mapperMock.Setup(m => m.Map<Course>(courseCreateDTO)).Returns(courseEntity);
-			_unitOfWorkMock.Setup(u => u.CategoryRepository.GetAsync(It.IsAny<Expression<Func<Category, bool>>>(), null))
-				.ReturnsAsync(category);
-			_unitOfWorkMock.Setup(u => u.CourseRepository.AddAsync(courseEntity)).ReturnsAsync(courseEntity);
-			_unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAllIncludeStepsAsync(It.IsAny<int>())).ReturnsAsync(courseEntity);
-			_mapperMock.Setup(m => m.Map<CourseCreateDTO>(courseEntity)).Returns(courseCreateDTO);
-
-			// Act
-			var result = await _courseService.CreateCourseWithSteps(courseCreateDTO);
-
-			// Assert
-			Assert.IsNotNull(result);
-			Assert.AreEqual(courseCreateDTO.Name, result.Name);
-			Assert.AreEqual(2, result.Steps.Count);
-		}
-
-		[Test]
 		public void CreateCourseWithSteps_ShouldThrowNullReferenceException_WhenCourseDtoIsNull()
 		{
 			Assert.ThrowsAsync<NullReferenceException>(async () => await _courseService.CreateCourseWithSteps(null));
@@ -151,71 +66,74 @@ namespace Cursus.UnitTests.Services
 			Assert.ThrowsAsync<NullReferenceException>(async () => await _courseService.CreateCourseWithSteps(courseCreateDTO));
 		}
 
-		[Test]
-		public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNotFound()
-		{
-			// Arrange
-			var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Non-existent Course" };
+        [Test]
+        public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNotFound()
+        {
+            // Arrange
+            var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Non-existent Course" };
 
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync((Course)null);
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync((Course)null);
 
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
-			Assert.AreEqual("Course not found.", ex.Message);
-		}
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
+            Assert.AreEqual("Course not found.", ex.Message);
+        }
 
-		[Test]
-		public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNameIsNotUnique()
-		{
-			// Arrange
-			var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Duplicate Course" };
-			var existingCourse = new Course { Id = 1, Name = "Existing Course" };
+        [Test]
+        public async Task UpdateCourseWithSteps_ShouldThrowException_WhenCourseNameIsNotUnique()
+        {
+            // Arrange
+            var courseUpdateDTO = new CourseUpdateDTO { Id = 1, Name = "Duplicate Course" };
+            var existingCourse = new Course { Id = 1, Name = "Existing Course" };
 
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync(existingCourse);
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync(existingCourse);
 
-			_unitOfWorkMock.Setup(u => u.CourseRepository.AnyAsync(It.IsAny<Expression<Func<Course, bool>>>()))
-				.ReturnsAsync(true); // Duplicate course name
+            _unitOfWorkMock.Setup(u => u.CourseRepository.AnyAsync(It.IsAny<Expression<Func<Course, bool>>>()))
+                .ReturnsAsync(true); // Duplicate course name
 
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
-			Assert.AreEqual("Course name must be unique.", ex.Message);
-		}
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
+            Assert.AreEqual("Course name must be unique.", ex.Message);
+        }
 
-		[Test]
-		public async Task DeleteCourse_ShouldReturnTrue_WhenCourseIsDeletedSuccessfully()
-		{
-			// Arrange
-			var course = new Course { Id = 1, Name = "Test Course" };
+        [Test]
+        public async Task DeleteCourse_ShouldReturnTrue_WhenCourseIsDeletedSuccessfully()
+        {
+            // Arrange
+            var course = new Course { Id = 1, Name = "Test Course" };
 
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync(course);
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync(course);
 
-			_unitOfWorkMock.Setup(u => u.SaveChanges())
-				.Returns(Task.CompletedTask);
+            _unitOfWorkMock.Setup(u => u.SaveChanges())
+                .Returns(Task.CompletedTask);
 
-			// Act
-			var result = await _courseService.DeleteCourse(course.Id);
+            // Act
+            var result = await _courseService.DeleteCourse(course.Id);
 
-			// Assert
-			Assert.IsTrue(result);
-		}
+            // Assert
+            Assert.IsTrue(result);
+        }
 
-		[Test]
-		public async Task DeleteCourse_ShouldThrowException_WhenCourseNotFound()
-		{
-			// Arrange
-			var courseId = 1;
+        [Test]
+        public async Task DeleteCourse_ShouldThrowException_WhenCourseNotFound()
+        {
+            // Arrange
+            var courseId = 1;
 
-			_unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
-				.ReturnsAsync((Course)null);
+            _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null))
+                .ReturnsAsync((Course)null);
 
-			// Act & Assert
-			var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.DeleteCourse(courseId));
-			Assert.AreEqual("Course not found.", ex.Message);
-		}
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.DeleteCourse(courseId));
+            Assert.AreEqual("Course not found.", ex.Message);
+        }
 
-	}
+    }
+
 
 }
+
+

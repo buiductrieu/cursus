@@ -3,11 +3,6 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cursus.Service.Services
 {
@@ -22,6 +17,13 @@ namespace Cursus.Service.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userService = userService;
+        }
+
+        public async Task<IEnumerable<TransactionDTO>> GetAllPendingPayOutRequest()
+        {
+            var transactions = await _unitOfWork.TransactionRepository.GetAllAsync(t => t.Status == Data.Enums.TransactionStatus.Pending && t.Description.Contains("payout")) ?? throw new KeyNotFoundException ("Payout request is empty");
+
+            return _mapper.Map<IEnumerable<TransactionDTO>>(transactions);
         }
 
         public async Task<IEnumerable<TransactionDTO>> GetListTransaction(int page = 1, int pageSize = 20)
