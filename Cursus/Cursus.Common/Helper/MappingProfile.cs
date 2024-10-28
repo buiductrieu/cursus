@@ -215,7 +215,19 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.NewBalance, opt => opt.MapFrom(src => src.NewBalance))
                 .ForMember(dest => dest.DateLogged, opt => opt.MapFrom(src => src.DateLogged))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-                
+
+
+            // Tracking Mapping 
+            CreateMap<TrackingProgress, TrackingProgressDTO>()
+         .ForMember(dest => dest.CourseProgressId, opt => opt.MapFrom(src => src.ProgressId))
+         .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+         .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
+
+            CreateMap<TrackingProgressDTO, TrackingProgress>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProgressId, opt => opt.MapFrom(src => src.CourseProgressId))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
 
         }
     }

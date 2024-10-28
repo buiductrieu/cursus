@@ -45,6 +45,9 @@ namespace Cursus.Data.Models
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
         public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
         public virtual DbSet<WalletHistory> WalletHistories { get; set; } = null!;
+
+        public virtual DbSet<TrackingProgress> TrackingProgresses { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -100,6 +103,17 @@ namespace Cursus.Data.Models
                 .WithMany()
                 .HasForeignKey(wh => wh.WalletId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<TrackingProgress>()
+            .HasOne(tp => tp.CourseProgress)
+            .WithMany()
+            .HasForeignKey(tp => tp.ProgressId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TrackingProgress>()
+                .HasOne(tp => tp.Step)
+                .WithMany()
+                .HasForeignKey(tp => tp.StepId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
