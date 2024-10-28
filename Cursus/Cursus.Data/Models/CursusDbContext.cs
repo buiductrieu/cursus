@@ -44,7 +44,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
         public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
-
+        public virtual DbSet<WalletHistory> WalletHistories { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -77,6 +77,9 @@ namespace Cursus.Data.Models
 
             modelBuilder.Entity<Transaction>()
             .ToTable(tb => tb.HasTrigger("trg_Transaction_Log"));
+            
+            modelBuilder.Entity<Wallet>()
+            .ToTable(tb => tb.HasTrigger("trg_Wallet_BalanceChange"));
 
             modelBuilder.Entity<PlatformWallet>().HasData(
                 new
@@ -92,6 +95,11 @@ namespace Cursus.Data.Models
                 .HasForeignKey(t => t.TransactionId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<WalletHistory>()
+                .HasOne(wh => wh.Wallet)
+                .WithMany()
+                .HasForeignKey(wh => wh.WalletId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

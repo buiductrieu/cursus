@@ -212,7 +212,16 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) 
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore()) 
-                .ReverseMap(); 
+                .ReverseMap();
+
+            // WalletHistory Mapping
+            CreateMap<WalletHistory, WalletHistoryDTO>()
+                .ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
+                .ForMember(dest => dest.AmountChanged, opt => opt.MapFrom(src => src.AmountChanged))
+                .ForMember(dest => dest.NewBalance, opt => opt.MapFrom(src => src.NewBalance))
+                .ForMember(dest => dest.DateLogged, opt => opt.MapFrom(src => src.DateLogged))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+                
 
         }
     }
