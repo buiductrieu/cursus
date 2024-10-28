@@ -11,8 +11,10 @@ namespace Cursus.Data.DTO.Payment
     {
         [Required(ErrorMessage = "Token is required.")]
         [StringLength(100, ErrorMessage = "Token length can't be more than 100 characters.")]
-        public string Token { get; set; }     
-        public string? PayId { get; set; }
+        public string Token { get; set; }
+		[Required(ErrorMessage = "PayId is required.")]
+
+		public string? PayId { get; set; }
         
     }
 }

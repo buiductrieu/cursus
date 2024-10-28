@@ -49,14 +49,12 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
 
 
-			//Course mapper
-			CreateMap<CourseCreateDTO, Course>()
-			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
-			   ;
+            //Course mapper
+            CreateMap<CourseCreateDTO, Course>()
+               .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
+               .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
 
             CreateMap<Course, CourseDTO>()
@@ -65,12 +63,9 @@ namespace Cursus.Common.Helper
 
             CreateMap<CourseDTO, CourseUpdateDTO>()
                .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
-               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => src.StartedDate))
-               .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
-               .ForMember(dest => dest.DateModified, opt => opt.Ignore()); // Nếu DateModified không cần từ CourseDTO
+               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
-            CreateMap<CourseUpdateDTO, CourseDTO>()
+            CreateMap<CourseUpdateDTO, Course>()
               .ForMember(dest => dest.Rating, opt => opt.Ignore()); // Nếu không cần Rating trong CourseUpdateDTO
 
             // Step Mapping
@@ -78,10 +73,9 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
             CreateMap<StepUpdateDTO, Step>()
-                .ForMember(dest => dest.DateCreated, opt => opt.Ignore())
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore());
 
-            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
+              // Để có thể lấy lại thông tin nếu cần
             CreateMap<Step, StepDTO>().ReverseMap();
 
             // CreateReasonMapper
