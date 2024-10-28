@@ -209,27 +209,28 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO)
+        public async Task<CourseDTO> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
         {
-            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
+            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseUpdateDTO.Id);
 
             if (existingCourse == null)
                 throw new KeyNotFoundException("Course not found.");
 
-            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name && c.Id != courseDTO.Id);
+            bool UniqueName = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseUpdateDTO.Name);
 
-            if (courseExists)
+            if (UniqueName)
                 throw new BadHttpRequestException("Course name must be unique.");
 
-            if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new BadHttpRequestException("Steps cannot be empty.");
             existingCourse.DateModified = DateTime.UtcNow;
             existingCourse.IsApprove = ApproveStatus.Pending;
-            _mapper.Map(courseDTO, existingCourse);
-            
+            _mapper.Map(courseUpdateDTO, existingCourse);
+
+            await _unitOfWork.CourseRepository.UpdateAsync(existingCourse);
             await _unitOfWork.SaveChanges();
 
-            var updatedCourseDTO = _mapper.Map<CourseDTO>(existingCourse);
+			var courseDB = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseUpdateDTO.Id);
+
+			var updatedCourseDTO = _mapper.Map<CourseDTO>(courseDB);
             return updatedCourseDTO;
         }
 

@@ -7,6 +7,7 @@ namespace Cursus.RepositoryContract.Interfaces
 		Task<Step> GetByIdAsync(int id);
 		Task<Step> GetByCoursId(int id);
         Task<IEnumerable<Step>> GetStepsByCoursId(int courseId);
+        Task<double> GetToTalSteps(int couressId);
 
     }
 }
