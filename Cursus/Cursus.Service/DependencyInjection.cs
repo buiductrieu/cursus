@@ -40,6 +40,7 @@ namespace Cursus.Service
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IPaymentService,PaymentService>();
             services.AddTransient<IWalletService, WalletService>();
+            services.AddTransient<IPayoutRequestService, PayoutRequestService>();
             return services;
         }
     }

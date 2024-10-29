@@ -210,8 +210,15 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) 
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore()) 
-                .ReverseMap(); 
+                .ReverseMap();
 
+
+            CreateMap<PayoutRequest, PayoutRequestDisplayDTO>()
+                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
         }
     }
 }
