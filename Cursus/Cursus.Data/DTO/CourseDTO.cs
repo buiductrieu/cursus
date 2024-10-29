@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Cursus.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cursus.Data.DTO
 {
@@ -18,5 +19,7 @@ namespace Cursus.Data.DTO
 		public DateTime StartedDate { get; set; }
 		public List<StepDTO> Steps { get; set; }
         public double Rating { get; set; }
+
+		public ApproveStatus IsApprove { get; set; }
 	}
 }

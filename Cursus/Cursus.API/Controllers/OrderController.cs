@@ -38,7 +38,7 @@ namespace Cursus.API.Controllers
 
 		/// <summary>
 		/// Confirm purchase after payment
-		/// </summary
+		/// </summary>
 		/// <param name="userId"></param>
 		/// <param name="orderId"></param>
 		/// <returns></returns>

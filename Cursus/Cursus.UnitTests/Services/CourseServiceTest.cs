@@ -76,7 +76,7 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync((Course)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
             Assert.AreEqual("Course not found.", ex.Message);
         }
 
@@ -94,7 +94,7 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(true); // Duplicate course name
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourseWithSteps(courseUpdateDTO));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
             Assert.AreEqual("Course name must be unique.", ex.Message);
         }
 
