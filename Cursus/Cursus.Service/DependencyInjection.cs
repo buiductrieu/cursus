@@ -1,4 +1,4 @@
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Data.Models;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
@@ -40,6 +40,7 @@ namespace Cursus.Service
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IPaymentService,PaymentService>();
             services.AddTransient<IWalletService, WalletService>();
+            services.AddTransient<IPayoutRequestService, PayoutRequestService>();
             services.AddTransient<IWalletHistoryService, WalletHistoryService>();
             return services;
         }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.DTO.Category;
 using Cursus.Data.Entities;
@@ -227,6 +227,13 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
 
+
+            CreateMap<PayoutRequest, PayoutRequestDisplayDTO>()
+                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
         }
     }
 }
