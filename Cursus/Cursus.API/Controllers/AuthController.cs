@@ -176,8 +176,31 @@ namespace Cursus.API.Controllers
             }
         }
 
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequestDTO model)
+        {
+            await _authService.ForgetPassword(model.Email);
+            return Ok("Password reset link has been sent to your email.");
+        }
 
-        
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(string email, string token, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return BadRequest("User not found");
+
+            var resetResult = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            if (resetResult.Succeeded)
+            {
+                return Ok("Password reset successful.");
+            }
+            else
+            {
+                return BadRequest("Invalid token or email.");
+            }
+        }
+
+
     }
 
 }

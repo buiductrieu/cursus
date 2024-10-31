@@ -16,5 +16,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<bool> ConfirmEmail(string username, string token);
         Task<RefreshToken> GetRefreshTokenAsync(ApplicationUser user);
         Task<LoginResponseDTO> RefreshTokenAsync(string token);
+        Task<bool> ForgetPassword(string email);
+        Task<bool> ResetPasswordAsync(string email, string token, string newPassword);
     }
 }
