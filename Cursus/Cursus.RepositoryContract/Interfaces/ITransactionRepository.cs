@@ -24,6 +24,5 @@ namespace Cursus.RepositoryContract.Interfaces
        
 
 
-
     }
 }

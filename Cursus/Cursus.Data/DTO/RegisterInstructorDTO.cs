@@ -10,8 +10,8 @@ namespace Cursus.Data.DTO
 {
     public class RegisterInstructorDTO
     {
-        [Required(ErrorMessage = "Full Name is required")]
-        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "UserName must be a valid email address")]
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress]
         public string? UserName { get; set; }
         [Required(ErrorMessage = "Password is required")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",

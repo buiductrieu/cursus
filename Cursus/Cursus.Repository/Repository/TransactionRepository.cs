@@ -43,9 +43,8 @@ namespace Cursus.Repository.Repository
 
         public Task<bool> IsOrderCompleted(int transactionId)
         {
-            return _db.Transactions.AnyAsync(t => t.TransactionId == transactionId && t.Status == TransactionStatus.Completed);
+            return  _db.Transactions.AnyAsync(t => t.TransactionId == transactionId && t.Status == TransactionStatus.Completed);
         }
 
-        
     }
 }

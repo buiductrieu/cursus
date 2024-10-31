@@ -214,6 +214,22 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore()) 
                 .ReverseMap(); 
 
+            //ArchivedTransaction Mapping
+            CreateMap<ArchivedTransaction, ArchivedTransactionDTO>()
+                .ForMember(dest => dest.DateArchived, opt => opt.MapFrom(src => DateTime.Now))
+                .ReverseMap();
+
+            CreateMap<Transaction, ArchivedTransaction>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => src.DateCreated))
+                .ForMember(dest => dest.DateArchive, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
         }
     }
 }

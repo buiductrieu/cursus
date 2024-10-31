@@ -1,10 +1,7 @@
 ﻿using Cursus.Common.Helper;
-using Cursus.Data.Models;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Demo_PayPal.Service;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cursus.Service
@@ -40,6 +37,7 @@ namespace Cursus.Service
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IPaymentService,PaymentService>();
             services.AddTransient<IWalletService, WalletService>();
+            services.AddTransient<IArchivedTransactionService, ArchivedTransactionService>();
             return services;
         }
     }

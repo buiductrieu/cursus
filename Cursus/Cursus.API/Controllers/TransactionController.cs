@@ -6,18 +6,22 @@
     using System.Threading.Tasks;
     using Cursus.ServiceContract.Interfaces;
     using Cursus.Data.DTO.Payment;
+    using Cursus.Data.DTO;
 
     [Route("api/[controller]")]
     [ApiController]
+    
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
+        private readonly IArchivedTransactionService _archivedTransactionService;
         private readonly APIResponse _response;
 
-        public TransactionController(ITransactionService transactionService, APIResponse response)
+        public TransactionController(ITransactionService transactionService, APIResponse response, IArchivedTransactionService archivedTransactionService)
         {
             _transactionService = transactionService;
             _response = response;
+            _archivedTransactionService = archivedTransactionService;
         }
 
         [HttpGet("all")]
@@ -56,6 +60,21 @@
         public async Task<IActionResult> GetPendingPayoutRequest()
         {
             var transaction = await _transactionService.GetAllPendingPayOutRequest();
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transaction;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Archive transaction
+        /// </summary>
+        /// <param name="transactionId"></param>
+        /// <returns></returns>
+        [HttpGet("archive-transaction/{transactionId}")]
+        public async Task<IActionResult> ArchiveTransaction (int transactionId)
+        {
+            var transaction = await _archivedTransactionService.ArchiveTransaction(transactionId);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = transaction;

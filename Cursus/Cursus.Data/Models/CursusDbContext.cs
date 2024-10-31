@@ -44,6 +44,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
         public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
+        public virtual DbSet<ArchivedTransaction> ArchivedTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,13 +87,7 @@ namespace Cursus.Data.Models
                 }
             );
 
-            modelBuilder.Entity<TransactionHistory>()
-                .HasOne(th => th.Transaction)
-                .WithMany(t => t.TransactionHistories)
-                .HasForeignKey(t => t.TransactionId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
