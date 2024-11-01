@@ -234,6 +234,8 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
                 .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
-        }
+
+        
+    }
     }
 }

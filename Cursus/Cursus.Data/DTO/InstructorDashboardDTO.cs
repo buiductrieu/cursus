@@ -8,5 +8,10 @@ namespace Cursus.Data.DTO
 {
     public class InstructorDashboardDTO
     {
+        public double TotalPotentialEarnings { get; set; }
+        public int TotalCourses { get; set; }
+
+        public double TotalEarnings { get; set; }
+
     }
 }
