@@ -271,7 +271,7 @@ namespace Cursus.API.Controllers
         [HttpPost("instructor/payout")]
         public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] PayoutRequestDTO payoutRequest)
         {
-            if (string.IsNullOrEmpty(payoutRequest.UserId) || payoutRequest.Amount <= 0)
+            if (string.IsNullOrEmpty(payoutRequest.InstructorId) || payoutRequest.Amount <= 0)
             {
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -280,7 +280,7 @@ namespace Cursus.API.Controllers
             }
 
             // Thực hiện yêu cầu rút tiền
-            await _walletService.CreatePayout(payoutRequest.UserId, payoutRequest.Amount);
+            await _walletService.CreatePayout(payoutRequest.InstructorId, payoutRequest.Amount);
 
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
