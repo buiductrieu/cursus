@@ -228,7 +228,7 @@ namespace Cursus.Common.Helper
 
 
             CreateMap<PayoutRequest, PayoutRequestDisplayDTO>()
-                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
+               // .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
                 .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
@@ -245,6 +245,21 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.TotalPotentialEarnings, opt => opt.MapFrom(src => src.Price)) 
    //             .ForMember(dest => dest.TotalEarnings, opt => opt.MapFrom(src => src.Earnings))
                 .ForMember(dest => dest.TotalCourses, opt => opt.MapFrom(src => src.Status)); 
+
+            CreateMap<PayoutRequest, PayoutAcceptDTO>()
+    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+    .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus))
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            CreateMap<PayoutRequest, PayoutDenyDTO>()
+.ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+.ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus))
+.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+
         }
     }
 }
