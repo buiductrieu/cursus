@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cursus.Data.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,8 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface IInstructorDashboardRepository
     {
+        Task<InstructorDashboardDTO> GetInstructorDashboardAsync(int instructorId);
+        Task<List<CourseEarningsDTO>> GetCourseEarningsAsync(int instructorId);
     }
+
 }

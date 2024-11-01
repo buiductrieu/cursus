@@ -52,6 +52,5 @@ namespace Cursus.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count());
         }
-
     }
 }

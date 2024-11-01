@@ -233,6 +233,18 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
                 .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
+
+            CreateMap<Course, CourseEarningsDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ? "Active" : "Deactive"))
+                .ForMember(dest => dest.ShortSummary, opt => opt.MapFrom(src => src.Description.Length > 100 ? src.Description.Substring(0, 100) : src.Description))
+   //             .ForMember(dest => dest.Earnings, opt => opt.MapFrom(src => src.Earnings))
+  //              .ForMember(dest => dest.PotentialEarnings, opt => opt.MapFrom(src => src.PotentialEarnings))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+
+            CreateMap<Course, InstructorDashboardDTO>()
+                .ForMember(dest => dest.TotalPotentialEarnings, opt => opt.MapFrom(src => src.Price)) 
+   //             .ForMember(dest => dest.TotalEarnings, opt => opt.MapFrom(src => src.Earnings))
+                .ForMember(dest => dest.TotalCourses, opt => opt.MapFrom(src => src.Status)); 
         }
     }
 }

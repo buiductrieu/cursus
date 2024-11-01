@@ -20,7 +20,7 @@ namespace Cursus.UnitTests.Services
         private Mock<IStepRepository> _mockStepRepository;
         private Mock<ITrackingProgressRepository> _mockTrackingProgressRepository;
         private StepService _stepService;
-
+        private Mock<ITrackingProgressRepository> _trackingStepRepository;
         [SetUp]
         public void SetUp()
         {
