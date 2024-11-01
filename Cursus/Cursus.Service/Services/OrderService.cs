@@ -116,6 +116,11 @@ namespace Cursus.Service.Services
 				{
 					throw new KeyNotFoundException("Instructor is not approve, approve instructor first");
 				}
+					var earnings = order.PaidAmount * 70 / 100;
+					
+					var instructor = await _unitOfWork.InstructorInfoRepository.GetAsync(i=>i.Id == cartItem.Course.InstructorInfo.Id);
+
+					instructor.TotalEarning += earnings;
 
 					instructorWallet.Balance += order.PaidAmount * 70 / 100;
 

@@ -28,7 +28,15 @@ namespace Cursus.Repository.Repository
                 .ToListAsync();
 
             var totalPotentialEarnings = courses.Sum(course => course.Price);
-            var totalEarnings = courses.Sum(course => course.InstructorInfo.TotalEarning); 
+            var instructorInfo = await _context.InstructorInfos
+            .Where(p => p.Id == instructorId)
+            .Select(i => new
+            {
+             i.TotalEarning
+            })
+            .FirstOrDefaultAsync();
+
+            var totalEarnings = instructorInfo?.TotalEarning ?? 0;
 
             return new InstructorDashboardDTO
             {
