@@ -45,7 +45,7 @@ public class CertificateService : ICertificateService
     //Function Private
     private byte[] GenerateCertificatePDF(string name, string courseName, string date, string completionTitle)
     {
-        _logger.LogInformation($"{courseName}/hhhhh");
+       
         var document = Document.Create(container =>
         {
             container.Page(page =>
@@ -205,7 +205,7 @@ public class CertificateService : ICertificateService
         }
         string date = DateTime.Now.ToString("dd/MM/yyyy");
         string   completionTitle = "Outstanding achievement in completing the course!";
-        _logger.LogInformation($"{course.Name}");
+        
         byte[] pdfData = GenerateCertificatePDF(user.UserName, course.Name, date, completionTitle);
         Task.Run(() => _emailSender.SendEmailCertificateCompletion(user, GetDownloadLink(userId, courseId)));
 
@@ -243,12 +243,8 @@ public class CertificateService : ICertificateService
     }
     public async Task<byte[]> GetCertificatePdfByUserAndCourseAsync(int courseId, string userId)
     {
-        if (userId == null || courseId == null)
-        {
-            throw new ArgumentException("UserId or CourseId is not null");
-        }
 
-        var certificate = await _unitOfWork.CertificateRepository.GetAsync(c => c.UserId == userId && courseId == courseId);
+        var certificate = await _unitOfWork.CertificateRepository.GetAsync(c => c.UserId == userId && c.CourseId == courseId);
         if (certificate == null || certificate.PdfData == null)
         {
             throw new KeyNotFoundException("Certificate not found or has no PDF data.");
