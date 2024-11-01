@@ -29,6 +29,11 @@ namespace Cursus.API.Controllers
             }
             return Ok(dashboardData);
         }
+        /// <summary>
+        /// GetCourseEarnings
+        /// </summary>
+        /// <param name="instructorId"></param>
+        /// <returns></returns>
         [HttpGet("earnings/{instructorId}")]
         public async Task<IActionResult> GetCourseEarnings(int instructorId)
         {
