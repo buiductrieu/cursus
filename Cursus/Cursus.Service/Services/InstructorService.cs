@@ -87,14 +87,14 @@ namespace Cursus.Service.Services
             return result;
         }
 
-        public async Task<bool> ApproveInstructorAsync(string instructorId)
+        public async Task<bool> ApproveInstructorAsync(int instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
             if (instructorInfo.StatusInsructor == InstructorStatus.Approved) throw new InvalidOperationException("Instructor already Approved.");
             instructorInfo.StatusInsructor = InstructorStatus.Approved;
             await _unitOfWork.InstructorInfoRepository.UpdateAsync(instructorInfo);
-            await _walletService.CreateWallet(instructorId);
+            await _walletService.CreateWallet(instructorInfo.UserId);
             await _unitOfWork.SaveChanges();
 
             var user = await _userManager.FindByIdAsync(instructorInfo.UserId);
@@ -151,9 +151,9 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<bool> RejectInstructorAsync(string instructorId)
+        public async Task<bool> RejectInstructorAsync(int instructorId)
         {
-            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == instructorId);
+            var instructorInfo = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.Id == instructorId);
             if (instructorInfo == null) throw new KeyNotFoundException("Instuctor not found");
             if (instructorInfo.StatusInsructor == InstructorStatus.Rejected) throw new InvalidOperationException("Instructor already Rejected.");
             instructorInfo.StatusInsructor = InstructorStatus.Rejected;

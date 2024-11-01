@@ -103,7 +103,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("approve")]
-        public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] string instructorId)
+        public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.ApproveInstructorAsync(instructorId);
             if (result)
@@ -126,7 +126,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("reject")]
-        public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] string instructorId)
+        public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.RejectInstructorAsync(instructorId);
             if (result)
