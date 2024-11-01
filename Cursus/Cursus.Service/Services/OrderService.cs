@@ -67,8 +67,21 @@ namespace Cursus.Service.Services
 			var OrderDTO = _mapper.Map<OrderDTO>(order);
 			return OrderDTO;
 		}
+        public async Task<List<OrderDTO>> GetOrderHistoryAsync(string userId)
+        {
+            {
+                var orders = await _unitOfWork.OrderRepository.GetOrderHistory(userId);
 
-		public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
+                if (orders == null || !orders.Any())
+                {
+                    throw new KeyNotFoundException("Order not found.");
+                }
+
+                var orderDTOs = _mapper.Map<List<OrderDTO>>(orders);
+                return orderDTOs;
+            }
+        }
+        public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
 		{
 			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Cart.UserId == userId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
 
