@@ -1,4 +1,5 @@
-﻿using Cursus.Common.Helper;
+﻿using Azure;
+using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
@@ -289,7 +290,11 @@ namespace Cursus.API.Controllers
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseUpdateStatusDTO"></param>
+        /// <returns></returns>
         [HttpPut("UpdateStatus")]
         public async Task<ActionResult<APIResponse>> UpdateCourseStatus([FromBody] CourseUpdateStatusDTO courseUpdateStatusDTO)
         {
@@ -300,6 +305,29 @@ namespace Cursus.API.Controllers
             _response.ErrorMessages = result.ErrorMessages;
 
             return StatusCode((int)_response.StatusCode, _response);
+        }
+
+
+        [HttpPost("calculate-earnings")]
+        public async Task<ActionResult<APIResponse>> CalculatePotential([FromBody] CalculateEarningRequestDTO request)
+        {
+            var earnings = await _courseService.CaculatePotentialEarnings(request.CourseId, request.Months);
+            if (earnings == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.ErrorMessages.Add("Course ID must be greater than 0.");
+                return _response;
+            }
+            if (request.Months <= 0)
+            {
+                request.Months = 1; // Đặt giá trị mặc định cho months là 1 nếu người dùng nhập 0 hoặc âm
+            }
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = earnings;
+            return _response;
+
         }
 
     }
