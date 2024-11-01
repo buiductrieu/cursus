@@ -18,6 +18,7 @@ namespace Cursus.UnitTests.Services
         private Mock<IUnitOfWork> _mockUnitOfWork;
         private Mock<IMapper> _mockMapper;
         private Mock<IStepRepository> _mockStepRepository;
+        private Mock<ITrackingProgressRepository> _mockTrackingProgressRepository;
         private StepService _stepService;
 
         [SetUp]
@@ -26,7 +27,14 @@ namespace Cursus.UnitTests.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockMapper = new Mock<IMapper>();
             _mockStepRepository = new Mock<IStepRepository>();
-            _stepService = new StepService(_mockStepRepository.Object, _mockMapper.Object, _mockUnitOfWork.Object);
+            _mockTrackingProgressRepository = new Mock<ITrackingProgressRepository>();
+
+            _stepService = new StepService(
+                _mockStepRepository.Object,
+                _mockMapper.Object,
+                _mockUnitOfWork.Object,
+                _mockTrackingProgressRepository.Object
+            );
         }
 
         [TearDown]
