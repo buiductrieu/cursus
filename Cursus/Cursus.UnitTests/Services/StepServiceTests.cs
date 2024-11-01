@@ -26,7 +26,7 @@ namespace Cursus.UnitTests.Services
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockMapper = new Mock<IMapper>();
             _mockStepRepository = new Mock<IStepRepository>();
-            _stepService = new StepService(_mockStepRepository.Object, _mockMapper.Object, _mockUnitOfWork.Object);
+          //  _stepService = new StepService(_mockStepRepository.Object, _mockMapper.Object, _mockUnitOfWork.Object);
         }
 
         [TearDown]

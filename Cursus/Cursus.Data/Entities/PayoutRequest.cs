@@ -11,9 +11,7 @@ namespace Cursus.Data.Entities
     public class PayoutRequest
     {
         public int Id { get; set; }
-        [ForeignKey("InstructorInfo")]
         public int InstructorId { get; set; }
-        public InstructorInfo Instructor { get; set; }
         
         public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }
