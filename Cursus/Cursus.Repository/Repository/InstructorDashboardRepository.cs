@@ -37,6 +37,21 @@ namespace Cursus.Repository.Repository
                 TotalEarnings = totalEarnings
             };
         }
+        public async Task<List<CourseEarningsDTO>> GetCourseEarningsAsync(int instructorId)
+        {
+            var courses = await _context.Courses
+                .Include(course => course.InstructorInfo)
+                .Where(course => course.InstructorInfo.Id == instructorId && course.Status)
+                .ToListAsync();
 
+            return courses.Select(course => new CourseEarningsDTO
+            {
+                Status = course.Status ? "Active" : "Deactive",
+                ShortSummary = course.Description.Length > 100 ? course.Description.Substring(0, 100) : course.Description,
+ //             Earnings = course.Earnings,
+ //             PotentialEarnings = course.PotentialEarnings,
+                Price = course.Price
+            }).ToList();
+        }
     }
 }

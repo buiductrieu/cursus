@@ -10,6 +10,9 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IInstructorDashboardService
     {
         Task<InstructorDashboardDTO> GetInstructorDashboardAsync(int instructorId);
+
+        Task<List<CourseEarningsDTO>> GetCourseEarningsAsync(int instructorId);
+
     }
 
 }
