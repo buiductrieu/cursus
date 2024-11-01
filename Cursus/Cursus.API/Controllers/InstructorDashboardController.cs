@@ -14,7 +14,11 @@ namespace Cursus.API.Controllers
         {
             _instructorDashboardService = instructorDashboardService;
         }
-
+        /// <summary>
+        /// GetInstructorDashboard
+        /// </summary>
+        /// <param name="instructorId"></param>
+        /// <returns></returns>
         [HttpGet("{instructorId}")]
         public async Task<IActionResult> GetInstructorDashboard(int instructorId)
         {
