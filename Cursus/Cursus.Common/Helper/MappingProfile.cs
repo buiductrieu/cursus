@@ -180,7 +180,6 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.CourseCount, opt => opt.MapFrom(src => src.Courses.Count));
 
             //Bookmark Mapping
-            CreateMap<BookmarkCreateDTO, Bookmark>();
 
             CreateMap<Bookmark, BookmarkDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
