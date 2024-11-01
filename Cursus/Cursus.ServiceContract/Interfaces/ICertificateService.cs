@@ -11,9 +11,6 @@ namespace Cursus.ServiceContract.Interfaces
     {
         public Task<byte[]> CreateCertificate(int courseId, string userId);
         public Task<byte[]> GetCertificatePdfByIdAsync(int certificateId);
-
-        public Task<byte[]> GetCertificatePDFByUserIdAsync(string userId, int courseId);
-
         public Task<byte[]> ExportCertificatesToExcel();
         public Task<byte[]> ExportCertificatesUserToExcel(string id);
         public Task<byte[]> GetCertificatePdfByUserAndCourseAsync(int courseId, string userId);
