@@ -37,6 +37,7 @@ namespace Cursus.Repository
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<IWalletRepository, WalletRepositoy>();
             services.AddTransient<IPlatformWalletRepository, PlatformWalletRepository>();
+            services.AddTransient<ICertificateRepository, CertificateRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

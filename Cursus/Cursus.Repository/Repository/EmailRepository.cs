@@ -88,5 +88,30 @@ namespace Cursus.Repository.Repository
 			request.Body = body;
 			SendEmail(request);
 		}
-	}
+
+
+        public void SendCertificateEmail(EmailRequestDTO request, string certificateDownloadUrl)
+        {
+            var body = $@"
+<h1>Congratulations on Completing Your Course!</h1>
+<p>Dear {request.toEmail},</p>
+<p>We are excited to inform you that you have successfully completed your course and earned a certificate of completion!</p>
+
+<h3>Certificate Download:</h3>
+<p>You can download your certificate by clicking the link below:</p>
+<p><a href='{certificateDownloadUrl}' target='_blank'>Download Your Certificate</a></p>
+
+<p>Thank you for learning with us! We wish you all the best in your future studies.</p>
+
+<p>Warm regards,</p>
+<p><strong>Cursus</strong></p>";
+
+            request.Body = body;
+            SendEmail(request); 
+        }
+
+
+
+
+    }
 }

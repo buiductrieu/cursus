@@ -50,5 +50,20 @@ namespace Cursus.Service.Services
 
 			_emailRepository.SendEmailSuccessfullyPurchasedCourse(request, order);
 		}
-	}
+
+        public void SendEmailCertificateCompletion(ApplicationUser user, string  url)
+        {
+
+            EmailRequestDTO request = new EmailRequestDTO
+            {
+                Subject = "Cursus Email Successfully with certificate",
+                Body = "",
+                toEmail = user.Email
+            };
+
+            _emailRepository.SendCertificateEmail(request,url );
+        }
+
+
+    }
 }

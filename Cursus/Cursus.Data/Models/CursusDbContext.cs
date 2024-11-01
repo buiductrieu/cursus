@@ -44,6 +44,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
         public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
