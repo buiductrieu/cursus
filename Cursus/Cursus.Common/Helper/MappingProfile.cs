@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Cursus.Data.DTO;
 using Cursus.Data.DTO.Category;
 using Cursus.Data.Entities;
@@ -49,14 +49,12 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Courses, opt => opt.Ignore());
 
 
-			//Course mapper
-			CreateMap<CourseCreateDTO, Course>()
-			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
-			   .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
-			   .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
-			   ;
+            //Course mapper
+            CreateMap<CourseCreateDTO, Course>()
+               .ForMember(dest => dest.InstructorInfoId, opt => opt.MapFrom(src => src.InstructorInfoId))
+               .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => DateTime.UtcNow.Date))
+               .ForMember(dest => dest.DateModified, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
 
             CreateMap<Course, CourseDTO>()
@@ -65,12 +63,9 @@ namespace Cursus.Common.Helper
 
             CreateMap<CourseDTO, CourseUpdateDTO>()
                .ForMember(dest => dest.Discount, opt => opt.MapFrom(src => src.Discount))
-               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-               .ForMember(dest => dest.StartedDate, opt => opt.MapFrom(src => src.StartedDate))
-               .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
-               .ForMember(dest => dest.DateModified, opt => opt.Ignore()); // Nếu DateModified không cần từ CourseDTO
+               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
-            CreateMap<CourseUpdateDTO, CourseDTO>()
+            CreateMap<CourseUpdateDTO, Course>()
               .ForMember(dest => dest.Rating, opt => opt.Ignore()); // Nếu không cần Rating trong CourseUpdateDTO
 
             // Step Mapping
@@ -78,10 +73,9 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow.Date));
 
             CreateMap<StepUpdateDTO, Step>()
-                .ForMember(dest => dest.DateCreated, opt => opt.Ignore())
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); // Chỉ định ID của Step để cập nhật
+                .ForMember(dest => dest.DateCreated, opt => opt.Ignore());
 
-            CreateMap<Step, StepUpdateDTO>().ReverseMap();  // Để có thể lấy lại thông tin nếu cần
+              // Để có thể lấy lại thông tin nếu cần
             CreateMap<Step, StepDTO>().ReverseMap();
 
             // CreateReasonMapper
@@ -180,12 +174,10 @@ namespace Cursus.Common.Helper
 				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
 				.ReverseMap();
 
-            CreateMap<Course, InstuctorTotalEarnCourseDTO>()
-            .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-            .ForMember(dest => dest.Earnings, opt => opt.Ignore())
-            .ForMember(dest => dest.InstructorName, opt => opt.Ignore())
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<InstructorInfo, InstuctorTotalEarnCourseDTO>()
+                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Earnings, opt => opt.Ignore())
+                .ForMember(dest => dest.CourseCount, opt => opt.MapFrom(src => src.Courses.Count));
 
             //Bookmark Mapping
             CreateMap<BookmarkCreateDTO, Bookmark>();
@@ -212,8 +204,36 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) 
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore()) 
-                .ReverseMap(); 
+                .ReverseMap();
 
+            // WalletHistory Mapping
+            CreateMap<WalletHistory, WalletHistoryDTO>()
+                .ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
+                .ForMember(dest => dest.AmountChanged, opt => opt.MapFrom(src => src.AmountChanged))
+                .ForMember(dest => dest.NewBalance, opt => opt.MapFrom(src => src.NewBalance))
+                .ForMember(dest => dest.DateLogged, opt => opt.MapFrom(src => src.DateLogged))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
+
+            // Tracking Mapping 
+            CreateMap<TrackingProgress, TrackingProgressDTO>()
+         .ForMember(dest => dest.CourseProgressId, opt => opt.MapFrom(src => src.ProgressId))
+         .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+         .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
+
+            CreateMap<TrackingProgressDTO, TrackingProgress>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProgressId, opt => opt.MapFrom(src => src.CourseProgressId))
+                .ForMember(dest => dest.StepId, opt => opt.MapFrom(src => src.StepId))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
+
+
+            CreateMap<PayoutRequest, PayoutRequestDisplayDTO>()
+                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
+                .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
         }
     }
 }

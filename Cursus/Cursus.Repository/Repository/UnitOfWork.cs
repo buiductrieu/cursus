@@ -31,10 +31,11 @@ namespace Cursus.Repository.Repository
         public IBookmarkRepository BookmarkRepository { get; }
         public IReasonRepository ReasonRepository{ get; }
         public IWalletRepository WalletRepository { get;}
-
         public IPlatformWalletRepository PlatformWalletRepository { get; }
+        public IPayoutRequestRepository PayoutRequestRepository { get; }
+        public IWalletHistoryRepository WalletHistoryRepository { get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository, IReasonRepository reasonRepository, IWalletRepository walletRepository, IPlatformWalletRepository platformWalletRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository, IReasonRepository reasonRepository, IWalletRepository walletRepository, IPlatformWalletRepository platformWalletRepository, IPayoutRequestRepository payoutRequestRepository ,IWalletHistoryRepository walletHistoryRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -60,6 +61,8 @@ namespace Cursus.Repository.Repository
             ReasonRepository = reasonRepository;
             WalletRepository = walletRepository;
             PlatformWalletRepository = platformWalletRepository;
+            PayoutRequestRepository = payoutRequestRepository;
+            WalletHistoryRepository = walletHistoryRepository;
         }
 
 

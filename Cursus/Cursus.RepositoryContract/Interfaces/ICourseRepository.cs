@@ -15,5 +15,6 @@ namespace Cursus.RepositoryContract.Interfaces
 		Task UpdateCourseRating(int courseId);
 		Task ApproveCourse(int courseid, bool choice);
 
+		Task<int> CountAsync(Expression<Func<Course, bool>> predicate);
     }
 }

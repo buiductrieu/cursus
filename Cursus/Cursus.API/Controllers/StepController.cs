@@ -171,7 +171,78 @@ namespace Cursus.API.Controllers
 
             return Ok(response);
         }
+        /// <summary>
+        /// Start new step for student
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="stepId"></param>
+        /// <returns></returns>
+        [HttpPost("start-step")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> StartStepAsync(string userId, int stepId)
+        {
+            if (string.IsNullOrEmpty(userId) || stepId <= 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid user ID or step ID.");
+                return BadRequest(_response);
+            }
 
+            var trackingProgress = await _stepService.StartStepAsync(userId, stepId);
+
+            if (trackingProgress == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Failed to start step.");
+                return BadRequest(_response);
+            }
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = trackingProgress;
+
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Tracking progress for student
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="coureseProgressId"></param>
+        /// <returns></returns>
+        [HttpGet("progress-percentage")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetPercentageTrackingProgress(string userId, int coureseProgressId)
+        {
+            if (string.IsNullOrEmpty(userId) || coureseProgressId <= 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Invalid user ID or course progress ID.");
+                return BadRequest(_response);
+            }
+
+            var percentage = await _stepService.GetPercentageTrackingProgress(userId, coureseProgressId);
+
+            // Kiểm tra nếu percentage là null hoặc không hợp lệ
+            if (percentage < 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Failed to retrieve progress percentage.");
+                return BadRequest(_response);
+            }
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = percentage;
+
+            return Ok(_response);
+        }
 
     }
 }

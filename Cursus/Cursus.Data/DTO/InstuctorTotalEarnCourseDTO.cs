@@ -11,8 +11,6 @@ public class InstuctorTotalEarnCourseDTO
     public int Id { get; set; }
     public string InstructorName { get; set; }
     public double Earnings { get; set; }
-    public string CourseName { get; set; }
-
-    public double Price { get; set; }
+    public int CourseCount { get; set; }
          
 }

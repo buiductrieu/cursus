@@ -194,7 +194,7 @@ namespace Cursus.API.Controllers
                 // Gọi service để lấy thông tin các khóa học của giảng viên
                 var courseSummary = await _instructorService.GetTotalAmountAsync(instructorId);
 
-                if (courseSummary == null || !courseSummary.Any())
+                if (courseSummary == null )
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -269,14 +269,25 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost("instructor/payout")]
-        public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] string userId, double amount)
+        public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] PayoutRequestDTO payoutRequest)
         {
-            await _walletService.CreatePayout(userId, amount);
+            if (string.IsNullOrEmpty(payoutRequest.UserId) || payoutRequest.Amount <= 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = "Invalid userId or amount.";
+                return BadRequest(_response);
+            }
+
+            // Thực hiện yêu cầu rút tiền
+            await _walletService.CreatePayout(payoutRequest.UserId, payoutRequest.Amount);
+
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = "Payout request created successfully";
             return Ok(_response);
         }
+
 
     }
 }

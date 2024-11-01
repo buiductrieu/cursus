@@ -147,7 +147,7 @@ namespace Cursus.API.Controllers
         /// <param name="transactionId"></param>
         /// <returns></returns>
         [HttpPost("accept-payout")]
-        public async Task<IActionResult> AcceptPayout([FromBody]int transactionId)
+        public async Task<IActionResult> AcceptPayout([FromQuery] int transactionId)
         {
             await _adminService.AcceptPayout(transactionId);
             _response.IsSuccess = true;

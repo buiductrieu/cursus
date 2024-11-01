@@ -120,6 +120,8 @@ namespace Cursus.Service.Services
 					instructorWallet.Balance += order.PaidAmount * 70 / 100;
 
 					(await _unitOfWork.PlatformWalletRepository.GetPlatformWallet()).Balance += order.PaidAmount * 30 / 100;
+
+					cartItem.Course.InstructorInfo.TotalEarning = instructorWallet.Balance ?? 0;
 				
 			}
 
