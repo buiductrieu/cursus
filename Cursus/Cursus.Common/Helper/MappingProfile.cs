@@ -228,7 +228,7 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
                 .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
         }
     }

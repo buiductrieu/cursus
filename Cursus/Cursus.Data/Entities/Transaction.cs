@@ -7,6 +7,7 @@ namespace Cursus.Data.Entities
     public class Transaction
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TransactionId { get; set; }
 
         [ForeignKey("ApplicationUser")]

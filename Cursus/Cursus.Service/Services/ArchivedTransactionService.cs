@@ -36,5 +36,49 @@ namespace Cursus.Service.Services
 
             return _mapper.Map<ArchivedTransactionDTO>(archivedTransaction);
         }
+
+        public async Task<IEnumerable<ArchivedTransactionDTO>> GetAllArchivedTransactions()
+        {
+            var archivedTransactions = await _unitOfWork.ArchivedTransactionRepository.GetAllAsync();
+
+            if (archivedTransactions == null)
+            {
+                throw new KeyNotFoundException("Transactions not found");
+            }
+
+            return _mapper.Map<IEnumerable<ArchivedTransactionDTO>>(archivedTransactions); 
+        }
+
+        public async Task<ArchivedTransactionDTO> GetArchivedTransaction(int transactionId)
+        {
+            var archivedTransaction = await _unitOfWork.ArchivedTransactionRepository.GetAsync(t => t.Id == transactionId);
+
+            if (archivedTransaction == null)
+            {
+                throw new KeyNotFoundException("Transactions not found");
+            }
+
+            return _mapper.Map<ArchivedTransactionDTO>(archivedTransaction);
+        }
+
+        public async Task<ArchivedTransactionDTO> UnarchiveTransaction(int transactionId)
+        {
+            var archivedTransaction = await _unitOfWork.ArchivedTransactionRepository.GetAsync(t => t.Id == transactionId);
+
+            if (archivedTransaction == null)
+            {
+                throw new KeyNotFoundException("Transactions not found");
+            }
+
+            var transaction = _mapper.Map<Transaction>(archivedTransaction);
+
+            await _unitOfWork.ArchivedTransactionRepository.DeleteAsync(archivedTransaction);
+
+            await _unitOfWork.TransactionRepository.AddAsync(transaction);
+
+            await _unitOfWork.SaveChanges();
+
+            return _mapper.Map<ArchivedTransactionDTO>(archivedTransaction);
+        }
     }
 }

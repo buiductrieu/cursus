@@ -46,5 +46,13 @@ namespace Cursus.Repository.Repository
             return  _db.Transactions.AnyAsync(t => t.TransactionId == transactionId && t.Status == TransactionStatus.Completed);
         }
 
+        public async Task<int> GetNextTransactionId()
+        {
+            var quantityTransaction = await _db.Transactions.CountAsync();
+
+            var quantityArchivedTransaction = await _db.ArchivedTransactions.CountAsync();
+
+            return quantityTransaction + quantityArchivedTransaction + 1;
+        }
     }
 }
