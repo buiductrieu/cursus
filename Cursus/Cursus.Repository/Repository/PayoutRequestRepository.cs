@@ -34,5 +34,9 @@ namespace Cursus.Repository.Repository
         {
             return await _db.PayoutRequests.Where(x => x.PayoutRequestStatus == Data.Enums.PayoutRequestStatus.Rejected).ToListAsync();
         }
+        public async Task<PayoutRequest> GetPayoutByID(int id)
+        {
+            return await GetAsync(filter: b => b.Id == id,includeProperties: "Transaction");
+        }
     }
 }

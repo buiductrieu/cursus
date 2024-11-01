@@ -12,6 +12,7 @@ namespace Cursus.RepositoryContract.Interfaces
         Task<IEnumerable<PayoutRequest>> GetPendingPayoutAsync();
         Task<IEnumerable<PayoutRequest>> GetApprovedPayoutAsync();
         Task<IEnumerable<PayoutRequest>> GetRejectedPayoutAsync();
+        Task<PayoutRequest> GetPayoutByID(int id);
 
     }
 }
