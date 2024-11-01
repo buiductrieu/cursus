@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
-    internal interface IInstructorDashboardRepository
+    public interface IInstructorDashboardRepository
     {
     }
 }

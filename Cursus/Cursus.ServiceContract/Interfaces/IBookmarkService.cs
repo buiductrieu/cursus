@@ -10,6 +10,6 @@ namespace Cursus.ServiceContract.Interfaces
 
         Task<CourseDTO> GetCourseDetailsAsync(int courseId);
 
-        Task CreateBookmarkAsync(BookmarkCreateDTO bookmarkCreateDTO);
+        Task CreateBookmarkAsync(string userId, int courseId);
     }
 }
