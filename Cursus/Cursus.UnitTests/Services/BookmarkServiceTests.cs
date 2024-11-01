@@ -52,6 +52,7 @@ namespace Cursus.UnitTests.Services
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.Count());
         }
+<<<<<<< Updated upstream
 
         [Test]
         public async Task GetCourseDetailsAsync_ShouldReturnCourseDetails_WhenCourseExists()
@@ -130,5 +131,7 @@ namespace Cursus.UnitTests.Services
             _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
         }
 
+=======
+>>>>>>> Stashed changes
     }
 }
