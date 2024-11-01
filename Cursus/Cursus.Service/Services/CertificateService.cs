@@ -220,11 +220,6 @@ public class CertificateService : ICertificateService
        
         await _unitOfWork.CertificateRepository.AddAsync(certificate);
         await _unitOfWork.SaveChanges();
-
-       
-       
-
-
         return pdfData;
     }
 
@@ -251,25 +246,6 @@ public class CertificateService : ICertificateService
         }
         return certificate.PdfData;
     }
-
-    public async Task<byte[]> GetCertificatePDFByUserIdAsync(string userId, int courseId) 
-    {
-        if (userId == null || courseId == null) {
-            throw new ArgumentException("UserId or CourseId is not null");
-        }
-        var certificate = await _unitOfWork.CertificateRepository.GetAsync(
-       c => c.UserId == userId && c.CourseId == courseId);
-
-        if (certificate == null)
-        {
-            throw new ArgumentException("Certificate not found for this user and course.");
-        }
-
-       
-        return certificate.PdfData;
-
-    }
-   
 
     public async Task<byte[]> ExportCertificatesToExcel()
     {       
