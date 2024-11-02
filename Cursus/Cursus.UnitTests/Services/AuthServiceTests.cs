@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
+using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -32,13 +33,15 @@ namespace Cursus.UnitTests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _mapperMock = new Mock<IMapper>();
             _roleManagerMock = new Mock<RoleManager<IdentityRole>>(Mock.Of<IRoleStore<IdentityRole>>(), null, null, null, null);
+            var emailServiceMock = new Mock<IEmailService>();
 
             _authService = new AuthService(
                 _userManagerMock.Object,
                 _configurationMock.Object,
                 _unitOfWorkMock.Object,
                 _mapperMock.Object,
-                _roleManagerMock.Object
+                _roleManagerMock.Object,
+                emailServiceMock.Object
             );
         }
 

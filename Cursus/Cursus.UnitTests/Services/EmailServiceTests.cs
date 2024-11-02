@@ -5,6 +5,7 @@ using Cursus.Service.Services;
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace Cursus.UnitTests.Services
 {
@@ -13,18 +14,22 @@ namespace Cursus.UnitTests.Services
     {
         private Mock<IEmailRepository> _mockEmailRepository;
         private EmailService _emailService;
+        private Mock<IConfiguration> _mockConfiguration;
+
 
         [SetUp]
         public void SetUp()
         {
             _mockEmailRepository = new Mock<IEmailRepository>();
-            _emailService = new EmailService(_mockEmailRepository.Object);
+            _mockConfiguration = new Mock<IConfiguration>();
+            _emailService = new EmailService(_mockEmailRepository.Object, _mockConfiguration.Object);
         }
 
         [TearDown]
         public void TearDown()
         {
             _mockEmailRepository = null;
+            _mockConfiguration = null;
             _emailService = null;
         }
 
