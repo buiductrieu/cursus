@@ -35,6 +35,7 @@ namespace Demo_PayPal.Service
         {
             var transaction = new Transaction()
             {
+                TransactionId = await _unitOfWork.TransactionRepository.GetNextTransactionId(),
                 UserId = userId,
                 PaymentMethod = paymentMethod,
                 DateCreated = DateTime.Now,

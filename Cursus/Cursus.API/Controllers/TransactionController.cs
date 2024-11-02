@@ -6,21 +6,31 @@
     using System.Threading.Tasks;
     using Cursus.ServiceContract.Interfaces;
     using Cursus.Data.DTO.Payment;
+    using Cursus.Data.DTO;
 
     [Route("api/[controller]")]
     [ApiController]
+    
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
+        private readonly IArchivedTransactionService _archivedTransactionService;
         private readonly APIResponse _response;
 
-        public TransactionController(ITransactionService transactionService, APIResponse response)
+        public TransactionController(ITransactionService transactionService, APIResponse response, IArchivedTransactionService archivedTransactionService)
         {
             _transactionService = transactionService;
             _response = response;
+            _archivedTransactionService = archivedTransactionService;
         }
 
-        [HttpGet("all")]
+        /// <summary>
+        /// Get all transactions
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("transaction")]
         public async Task<IActionResult> GetAllTransactions(int page = 1, int pageSize = 20)
         {
             var transactions = await _transactionService.GetListTransaction(page, pageSize);
@@ -56,6 +66,50 @@
         public async Task<IActionResult> GetPendingPayoutRequest()
         {
             var transaction = await _transactionService.GetAllPendingPayOutRequest();
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transaction;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Archive transaction
+        /// </summary>
+        /// <param name="transactionId"></param>
+        /// <returns></returns>
+        [HttpGet("archive-transaction/{transactionId}")]
+        public async Task<IActionResult> ArchiveTransaction (int transactionId)
+        {
+            var transaction = await _archivedTransactionService.ArchiveTransaction(transactionId);
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transaction;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Get all archived transaction
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("archive-transaction")]
+        public async Task<IActionResult> GetAllArchivedTransactions()
+        {
+            var transactions = await _archivedTransactionService.GetAllArchivedTransactions();
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = transactions;
+            return Ok(_response);
+        }
+
+        /// <summary>
+        /// Unarchive transaction
+        /// </summary>
+        /// <param name="transactionId"></param>
+        /// <returns></returns>
+        [HttpGet("unarchive-transaction/{transactionId}")]
+        public async Task<IActionResult> UnarchiveTransaction(int transactionId)
+        {
+            var transaction = await _archivedTransactionService.UnarchiveTransaction(transactionId);
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = transaction;
