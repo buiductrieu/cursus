@@ -75,7 +75,7 @@ namespace Cursus.UnitTests.Services
             var result = await _service.GetCourseCommentsAsync(courseId);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             _mapperMock.Verify(m => m.Map<IEnumerable<CourseCommentDTO>>(comments), Times.Once);
         }
 
@@ -136,7 +136,8 @@ namespace Cursus.UnitTests.Services
             var result = await _service.DeleteComment(commentId);
 
             // Assert
-            Assert.AreEqual(courseCommentDTO, result);
+            //Assert.AreEqual(courseCommentDTO, result);
+            Assert.That(result, Is.EqualTo(courseCommentDTO));
         }
 
         [TearDown]

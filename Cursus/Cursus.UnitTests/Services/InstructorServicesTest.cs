@@ -143,8 +143,9 @@ namespace Cursus.UnitTests.Services
             _unitOfWorkMock.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
 
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(registerInstructorDTO.UserName, result.Email);
+            Assert.That(result, Is.Not.Null);
+           // Assert.AreEqual(registerInstructorDTO.UserName, result.Email);
+           Assert.That(result.Email, Is.EqualTo(registerInstructorDTO.UserName));
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
             _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Once);
         }
@@ -269,7 +270,7 @@ namespace Cursus.UnitTests.Services
             var isValid = Validator.TryValidateObject(registerInstructorDTO, context, validationResults, true);
 
             var cardNumberError = validationResults.FirstOrDefault(vr => vr.ErrorMessage.Contains("Card number must be exactly 16 digits"));
-            Assert.IsNotNull(cardNumberError);
+            Assert.That(cardNumberError, Is.Not.Null);
             Assert.That(cardNumberError.ErrorMessage, Does.Contain("Card number must be exactly 16 digits"));
         }
         public static class TestDataHelper
