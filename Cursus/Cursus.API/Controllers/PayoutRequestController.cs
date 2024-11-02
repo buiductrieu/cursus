@@ -55,5 +55,45 @@ namespace Cursus.API.Controllers
             _response.Result = rejectRequest;
             return Ok(_response);
         }
+        [HttpPut("approve/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> ApprovePayoutRequest(int id)
+        {
+            var response = await _payoutRequestService.AcceptPayout(id);
+            if (response != null)
+            {
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = response;
+                return Ok(_response);
+            }
+            else
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
+        [HttpPut("deny/{id}&{reason}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> DenyPayoutRequest(int id, string reason)
+        {
+            var response = await _payoutRequestService.DenyPayout(id,reason);
+            if (response != null)
+            {
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.Result = response;
+                return Ok(_response);
+            }
+            else
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+        }
     }
 }

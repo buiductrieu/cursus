@@ -49,14 +49,15 @@ namespace Cursus.API.Controllers
             return Ok(courseDetails);
         }
         /// <summary>
-        /// CreateBookMark
+        ///  CreateBookmark
         /// </summary>
-        /// <param name="bookmarkCreateDTO"></param>
+        /// <param name="userId"></param>
+        /// <param name="courseId"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<APIResponse>> CreateBookmark([FromBody] BookmarkCreateDTO bookmarkCreateDTO)
+        public async Task<ActionResult<APIResponse>> CreateBookmark(string userId, int courseId)
         {
-            await _bookmarkService.CreateBookmarkAsync(bookmarkCreateDTO);
+            await _bookmarkService.CreateBookmarkAsync(userId, courseId);
 
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
@@ -64,5 +65,6 @@ namespace Cursus.API.Controllers
 
             return Ok(_response);
         }
+
     }
 }

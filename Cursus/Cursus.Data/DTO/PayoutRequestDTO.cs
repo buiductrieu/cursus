@@ -10,7 +10,7 @@ namespace Cursus.Data.DTO
     public class PayoutRequestDTO
     {
         [Required]
-        public string UserId { get; set; }
+        public string InstructorId { get; set; }
 
         [Required]
         [Range(1, double.MaxValue, ErrorMessage = "The amount must be greater than zero.")]

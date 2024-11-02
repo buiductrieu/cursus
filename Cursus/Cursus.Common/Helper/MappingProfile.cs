@@ -180,7 +180,6 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.CourseCount, opt => opt.MapFrom(src => src.Courses.Count));
 
             //Bookmark Mapping
-            CreateMap<BookmarkCreateDTO, Bookmark>();
 
             CreateMap<Bookmark, BookmarkDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -229,11 +228,38 @@ namespace Cursus.Common.Helper
 
 
             CreateMap<PayoutRequest, PayoutRequestDisplayDTO>()
-                .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
+               // .ForMember(dest => dest.InstructorName, opt => opt.MapFrom(src => src.Instructor.User.UserName))
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreatedDate))
                 .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus));
+
+            CreateMap<Course, CourseEarningsDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ? "Active" : "Deactive"))
+                .ForMember(dest => dest.ShortSummary, opt => opt.MapFrom(src => src.Description.Length > 100 ? src.Description.Substring(0, 100) : src.Description))
+   //             .ForMember(dest => dest.Earnings, opt => opt.MapFrom(src => src.Earnings))
+  //              .ForMember(dest => dest.PotentialEarnings, opt => opt.MapFrom(src => src.PotentialEarnings))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+
+            CreateMap<Course, InstructorDashboardDTO>()
+                .ForMember(dest => dest.TotalPotentialEarnings, opt => opt.MapFrom(src => src.Price)) 
+   //             .ForMember(dest => dest.TotalEarnings, opt => opt.MapFrom(src => src.Earnings))
+                .ForMember(dest => dest.TotalCourses, opt => opt.MapFrom(src => src.Status)); 
+
+            CreateMap<PayoutRequest, PayoutAcceptDTO>()
+    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+    .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+    .ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus))
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            CreateMap<PayoutRequest, PayoutDenyDTO>()
+.ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Transaction.Amount))
+.ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => DateTime.Now))
+.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.PayoutRequestStatus))
+.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
+
         }
     }
 }

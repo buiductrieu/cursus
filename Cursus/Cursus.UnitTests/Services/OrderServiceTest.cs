@@ -51,5 +51,48 @@ namespace Cursus.UnitTests.Services
 			var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _orderService.UpdateUserCourseAccessAsync(orderId, userId));
 			Assert.AreEqual("Order not found or payment not completed.", ex.Message);
 		}
-	}
+        [Test]
+        public async Task GetOrderHistoryAsync_ShouldReturnOrderDTOs_WhenOrdersExist()
+        {
+            // Arrange
+            string userId = "user1";
+            var orders = new List<Order>
+            {
+                new Order { OrderId = 1, CartId = 1 },
+                new Order { OrderId = 2, CartId = 2 }
+            };
+
+            var orderDTOs = new List<OrderDTO>
+            {
+                new OrderDTO { OrderId = 1 },
+                new OrderDTO { OrderId = 2 }
+            };
+            _unitOfWorkMock.Setup(u => u.OrderRepository.GetOrderHistory(userId))
+                           .ReturnsAsync(orders);
+            _mapperMock.Setup(m => m.Map<List<OrderDTO>>(orders)).Returns(orderDTOs);
+
+            // Act
+            var result = await _orderService.GetOrderHistoryAsync(userId);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.That(result.Count, Is.EqualTo(orderDTOs.Count));
+            _unitOfWorkMock.Verify(u => u.OrderRepository.GetOrderHistory(userId), Times.Once);
+            _mapperMock.Verify(m => m.Map<List<OrderDTO>>(orders), Times.Once);
+        }
+
+        [Test]
+        public async Task GetOrderHistoryAsync_ShouldThrowKeyNotFoundException_WhenOrdersDoNotExist()
+        {
+            // Arrange
+            string userId = "user1";
+            _unitOfWorkMock.Setup(u => u.OrderRepository.GetOrderHistory(userId))
+                           .ReturnsAsync(new List<Order>());
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _orderService.GetOrderHistoryAsync(userId));
+            Assert.That(ex.Message, Is.EqualTo("Order not found."));
+            _unitOfWorkMock.Verify(u => u.OrderRepository.GetOrderHistory(userId), Times.Once);
+        }
+    }
 }

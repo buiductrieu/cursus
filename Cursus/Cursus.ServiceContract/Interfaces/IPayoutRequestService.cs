@@ -13,6 +13,9 @@ namespace Cursus.ServiceContract.Interfaces
         Task<IEnumerable<PayoutRequestDisplayDTO>> GetPendingPayoutRequest();
         Task<IEnumerable<PayoutRequestDisplayDTO>> GetApprovedPayoutRequest();
         Task<IEnumerable<PayoutRequestDisplayDTO>> GetRejectPayoutRequest();
+        Task<PayoutAcceptDTO> AcceptPayout(int id);
+        Task<PayoutDenyDTO> DenyPayout(int id, string reason);
+
 
     }
 }

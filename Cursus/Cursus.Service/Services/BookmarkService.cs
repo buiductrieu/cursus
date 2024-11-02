@@ -33,25 +33,29 @@ namespace Cursus.Service.Services
             return courseDTO;
         }
 
-        public async Task CreateBookmarkAsync(BookmarkCreateDTO bookmarkCreateDTO)
+        public async Task CreateBookmarkAsync(string userId, int courseId)
         {
-            var user = await _unitOfWork.UserRepository.ExiProfile(bookmarkCreateDTO.UserId);
+            var user = await _unitOfWork.UserRepository.ExiProfile(userId);
             if (user == null)
                 throw new KeyNotFoundException("User not found");
 
-            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == bookmarkCreateDTO.CourseId);
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseId);
             if (course == null)
                 throw new KeyNotFoundException("Course not found.");
 
-            var courseExisted = await _unitOfWork.BookmarkRepository.GetAsync(c => c.UserId == bookmarkCreateDTO.UserId && c.Course.Id == bookmarkCreateDTO.CourseId);
-
+            var courseExisted = await _unitOfWork.BookmarkRepository.GetAsync(b => b.UserId == userId && b.Course.Id == courseId);
             if (courseExisted != null)
-                throw new BadHttpRequestException("You have already bookmark this course!");
+                throw new BadHttpRequestException("You have already bookmarked this course!");
 
-            var bookmark = _mapper.Map<Bookmark>(bookmarkCreateDTO);
+            var bookmark = new Bookmark
+            {
+                UserId = userId,
+                Course = course
+            };
 
             await _unitOfWork.BookmarkRepository.AddAsync(bookmark);
-            await _unitOfWork.SaveChanges(); // Save changes through UnitOfWork
+            await _unitOfWork.SaveChanges();
         }
+
     }
 }
