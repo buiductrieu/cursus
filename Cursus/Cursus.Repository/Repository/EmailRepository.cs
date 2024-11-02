@@ -124,7 +124,6 @@ namespace Cursus.Repository.Repository
 
         public void SendEmailForgotPassword(EmailRequestDTO request, string resetLink)
         {
-            // HTML body content for the password reset email
             string body = $@"
     <!DOCTYPE html>
     <html lang='en'>

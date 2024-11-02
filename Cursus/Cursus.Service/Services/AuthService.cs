@@ -207,11 +207,17 @@ namespace Cursus.Service.Services
             _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
             await _unitOfWork.SaveChanges();
         }
-    
+
         public async Task<bool> ForgetPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null) throw new Exception("User not found");
+            if (!user.Status)
+            {
+                throw new Exception("User is banned and cannot reset the password.");
+            }
+
+            var lifespanMinutes = int.Parse(_configuration["TokenSettings:PasswordResetTokenLifespan"]);
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/reset-password?email={user.Email}&token={token}"; // nếu muốn sử an toàn trong URL thì nên mã hóa Uri.EscapeDataString(token)
@@ -219,14 +225,15 @@ namespace Cursus.Service.Services
             var emailRequest = new EmailRequestDTO
             {
                 toEmail = email,
-                Subject = "Password Reset", 
-                Body = $"Click vào link để đặt lại mật khẩu: {resetLink}" 
+                Subject = "Password Reset",
+                Body = $"Click vào link để đặt lại mật khẩu: {resetLink}"
             };
 
-            await _emailService.SendEmailAsync(user,resetLink);
+            await _emailService.SendEmailAsync(user, resetLink);
 
             return true;
         }
+
 
         public async Task<bool> ResetPasswordAsync(string email, string token, string newPassword)
         {
