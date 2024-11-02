@@ -57,7 +57,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.LoginAsync(loginRequest));
-            Assert.AreEqual("Username or password is incorrect!", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Username or password is incorrect!"));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.AreEqual(userRegisterDTO.UserName, result.Email);
+            Assert.That(result.Email, Is.EqualTo(userRegisterDTO.UserName));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.RegisterAsync(userRegisterDTO));
-            Assert.AreEqual("Username is existed", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Username is existed"));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.RegisterAsync(userRegisterDTO));
-            Assert.AreEqual("Role is not valid", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Role is not valid"));
         }
 
         [Test]
@@ -164,7 +164,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.ConfirmEmail(username, token));
-            Assert.AreEqual("User not found", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("User not found"));
         }
     }
 }

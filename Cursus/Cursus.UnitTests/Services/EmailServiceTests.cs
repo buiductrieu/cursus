@@ -62,7 +62,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.Throws<Exception>(() => _emailService.SendEmail(request));
-            Assert.AreEqual("Repository error", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Repository error"));
         }
 
         #endregion

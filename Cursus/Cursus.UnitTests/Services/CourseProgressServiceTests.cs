@@ -51,7 +51,8 @@ namespace Cursus.UnitTests.Services
             var result = await _courseProgressService.GetRegisteredCourseIdsAsync(userId);
 
             // Assert
-            Assert.AreEqual(2, result.Count());
+            //Assert.AreEqual(2, result.Count());
+            Assert.That(result.Count, Is.EqualTo(2));
             Assert.Contains(1, result.ToList());
             Assert.Contains(2, result.ToList());
         }
@@ -98,7 +99,7 @@ namespace Cursus.UnitTests.Services
             var result = await _courseProgressService.TrackingProgressAsync(userId, courseId);
 
             // Assert
-            Assert.AreEqual(50, result);
+            Assert.That(result, Is.EqualTo(50));
         }
 
 
@@ -118,7 +119,7 @@ namespace Cursus.UnitTests.Services
             var result = await _courseProgressService.TrackingProgressAsync(userId, courseId);
 
             // Assert
-            Assert.AreEqual(50, result);
+            Assert.That(result, Is.EqualTo(50));
         }
 
         #endregion
@@ -145,7 +146,7 @@ namespace Cursus.UnitTests.Services
             // Assert
             foreach (var task in tasks)
             {
-                Assert.AreEqual(50, task.Result);
+                Assert.That(task.Result, Is.EqualTo(50));
             }
         }
 

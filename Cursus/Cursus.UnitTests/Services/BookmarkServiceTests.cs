@@ -49,8 +49,9 @@ namespace Cursus.UnitTests.Services
             var result = await _bookmarkService.GetFilteredAndSortedBookmarksAsync(userId, null, null);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.That(result, Is.Not.Null);
+            //Assert.AreEqual(2, result.Count());
+            Assert.That(result.Count, Is.EqualTo(2));
         }
     }
 }

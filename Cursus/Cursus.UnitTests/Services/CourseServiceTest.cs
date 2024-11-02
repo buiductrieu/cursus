@@ -77,7 +77,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
-            Assert.AreEqual("Course not found.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Course not found."));
         }
 
         [Test]
@@ -95,7 +95,8 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _courseService.UpdateCourse(courseUpdateDTO));
-            Assert.AreEqual("Course name must be unique.", ex.Message);
+           // Assert.AreEqual("Course name must be unique.", ex.Message);
+           Assert.That(ex.Message, Is.EqualTo("Course name must be unique."));
         }
 
         [Test]
@@ -128,7 +129,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _courseService.DeleteCourse(courseId));
-            Assert.AreEqual("Course not found.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Course not found."));
         }
 
     }

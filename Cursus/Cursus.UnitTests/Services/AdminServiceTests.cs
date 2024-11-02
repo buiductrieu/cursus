@@ -43,9 +43,9 @@ namespace Cursus.UnitTests.Services
             var result = await _controller.ToggleUserStatus(userId) as ObjectResult;
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
+            Assert.That(apiResponse, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
             Assert.IsTrue(apiResponse.IsSuccess);
             Assert.That(apiResponse.Result, Is.EqualTo("User status has been updated"));
@@ -64,11 +64,11 @@ namespace Cursus.UnitTests.Services
             var result = await _controller.ToggleUserStatus(userId) as ObjectResult;
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
+            Assert.That(apiResponse, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-            Assert.IsFalse(apiResponse.IsSuccess);
+            Assert.That(apiResponse.IsSuccess, Is.False);
             Assert.That(apiResponse.ErrorMessages, Does.Contain("Failed to update user status"));
         }
 
@@ -87,9 +87,9 @@ namespace Cursus.UnitTests.Services
             //Act
             var result = await _controller.AdminComments(userId, comment) as ObjectResult;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
+            Assert.That(apiResponse, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
             Assert.IsTrue(apiResponse.IsSuccess);
             Assert.That(apiResponse.Result, Is.EqualTo("Comment is sucessful"));
@@ -106,11 +106,11 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(false);
             var result = await _controller.AdminComments(userId, comment) as ObjectResult;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
+            Assert.That(apiResponse, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-            Assert.IsFalse(apiResponse.IsSuccess);
+            Assert.That(apiResponse.IsSuccess, Is.False);
             Assert.That(apiResponse.ErrorMessages, Does.Contain("Failed to add comment"));
         }
         [Test]
@@ -136,9 +136,9 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(mockInstructorInfo);
             var result = await _controller.GetInformationInstructor(1) as ObjectResult;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
+            Assert.That(apiResponse, Is.Not.Null);
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
             Assert.IsTrue(apiResponse.IsSuccess);
             Assert.That(apiResponse.Result, Is.Not.Null);
@@ -157,10 +157,10 @@ namespace Cursus.UnitTests.Services
             var result = await _controller.GetInformationInstructor(userId) as ObjectResult;
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             var apiResponse = result.Value as APIResponse;
-            Assert.IsNotNull(apiResponse);
-            Assert.IsFalse(apiResponse.IsSuccess);
+            Assert.That(apiResponse, Is.Not.Null);
+            Assert.That(apiResponse.IsSuccess, Is.False);
             Assert.That(apiResponse.ErrorMessages, Does.Contain("Instructor not found"));
         }
 

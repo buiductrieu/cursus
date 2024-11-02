@@ -36,7 +36,7 @@ namespace Cursus.UnitTests.Services
 						   .ReturnsAsync((Cart)null);
 
 			var ex = Assert.ThrowsAsync<BadHttpRequestException>(() => _orderService.CreateOrderAsync(userId));
-			Assert.AreEqual("Cart is empty.", ex.Message);
+			Assert.That(ex.Message, Is.EqualTo("Cart is empty."));
 		}
 
 
@@ -49,7 +49,7 @@ namespace Cursus.UnitTests.Services
 						   .ReturnsAsync((Order)null);
 
 			var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _orderService.UpdateUserCourseAccessAsync(orderId, userId));
-			Assert.AreEqual("Order not found or payment not completed.", ex.Message);
+			Assert.That(ex.Message, Is.EqualTo("Order not found or payment not completed."));
 		}
 	}
 }

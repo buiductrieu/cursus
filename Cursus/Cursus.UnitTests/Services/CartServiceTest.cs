@@ -49,7 +49,8 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.GetAllCart();
 
             // Assert
-            Assert.AreEqual(2, result.Count());
+            //Assert.AreEqual(2, result.Count());
+            Assert.That(result.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -63,7 +64,8 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.GetCartByID(1);
 
             // Assert
-            Assert.AreEqual(1, result.CartId);
+            // Assert.AreEqual(1, result.CartId);
+            Assert.That(result.CartId, Is.EqualTo(1));
         }
 
         #endregion
@@ -122,7 +124,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.GetCartByID(int.MinValue);
 
             // Assert
-            Assert.AreEqual(int.MinValue, result.CartId);
+            Assert.That(result.CartId, Is.EqualTo(int.MinValue));
         }
 
         [Test]
@@ -136,7 +138,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.GetCartByID(int.MaxValue);
 
             // Assert
-            Assert.AreEqual(int.MaxValue, result.CartId);
+            Assert.That(result.CartId, Is.EqualTo(int.MaxValue));
         }
 
         #endregion
@@ -207,7 +209,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.DeleteCart(1);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         #endregion
