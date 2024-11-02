@@ -42,8 +42,21 @@ namespace Cursus.Repository.Repository
                 order.Status = newStatus;
             }
         }
+        public async Task<List<Order>> GetOrderHistory(string userId)
+        {
+            // Lấy tất cả các CartId của userId cụ thể
+            var cartIds = await _db.Cart
+                .Where(c => c.UserId == userId)
+                .Select(c => c.CartId)
+                .ToListAsync();
+
+            // Lấy danh sách các đơn hàng có CartId khớp
+            return await _db.Order
+                .Where(o => cartIds.Contains(o.CartId))
+                .ToListAsync();
+        }
 
 
-	}
+    }
 
 }

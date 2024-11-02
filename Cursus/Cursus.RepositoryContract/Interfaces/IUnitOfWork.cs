@@ -30,6 +30,10 @@ namespace Cursus.RepositoryContract.Interfaces
         IReasonRepository ReasonRepository { get; }
         IWalletRepository WalletRepository { get; }
         IPlatformWalletRepository PlatformWalletRepository { get; }
+        IPayoutRequestRepository PayoutRequestRepository { get; }
+        IWalletHistoryRepository WalletHistoryRepository { get; }
+
+        IInstructorDashboardRepository InstructorDashboardRepository { get; }
         IArchivedTransactionRepository ArchivedTransactionRepository { get; }
         Task SaveChanges();
     }

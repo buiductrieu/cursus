@@ -15,6 +15,8 @@ namespace Cursus.ServiceContract.Interfaces
         Task<bool> DeleteStep(int stepId);
         Task<IEnumerable<StepDTO>> GetStepsByCoursId(int courseId);
         Task<StepDTO> UpdateStep(StepUpdateDTO updateStepDTO);
+        Task<TrackingProgressDTO> StartStepAsync(string userId, int stepId);
+        Task<double> GetPercentageTrackingProgress(string userId, int coureseProgressId);
 
     }
 }

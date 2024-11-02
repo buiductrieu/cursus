@@ -38,7 +38,7 @@ namespace Cursus.API.Controllers
 
 		/// <summary>
 		/// Confirm purchase after payment
-		/// </summary
+		/// </summary>
 		/// <param name="userId"></param>
 		/// <param name="orderId"></param>
 		/// <returns></returns>
@@ -54,5 +54,29 @@ namespace Cursus.API.Controllers
 
 			return Ok(_response);
 		}
-	}
+		/// <summary>
+		/// View order history
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+        [HttpGet]
+        [Route("view-orderHistory")]
+        public async Task<ActionResult<APIResponse>> ViewOrderHistory(string userId)
+        {
+            var order = await _orderService.GetOrderHistoryAsync(userId);
+            if (order == null)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Order not found");
+                return BadRequest(_response);
+            }
+
+            _response.IsSuccess = true;
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.Result = order;
+
+            return Ok(_response);
+        }
+    }
 }

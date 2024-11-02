@@ -68,8 +68,8 @@ namespace Cursus.UnitTests.Services
             var result = await _transactionService.GetListTransaction(1, 10);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace Cursus.UnitTests.Services
             var result = await _transactionService.GetListTransaction(1, 10);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.IsEmpty(result);
         }
 
@@ -122,8 +122,8 @@ namespace Cursus.UnitTests.Services
             var result = await _transactionService.GetListTransactionByUserId(userId, 1, 10);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _transactionService.GetListTransactionByUserId(userId, 1, 10));
-            Assert.AreEqual("User not found.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("User not found."));
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace Cursus.UnitTests.Services
             var result = await _transactionService.GetListTransactionByUserId(userId, 1, 10);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.IsEmpty(result);
         }
 

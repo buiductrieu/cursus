@@ -1,4 +1,4 @@
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Demo_PayPal.Service;
@@ -37,6 +37,9 @@ namespace Cursus.Service
             services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IPaymentService,PaymentService>();
             services.AddTransient<IWalletService, WalletService>();
+            services.AddTransient<IPayoutRequestService, PayoutRequestService>();
+            services.AddTransient<IWalletHistoryService, WalletHistoryService>();
+            services.AddTransient<IInstructorDashboardService, InstructorDashboardService>();
             services.AddTransient<IArchivedTransactionService, ArchivedTransactionService>();
             return services;
         }

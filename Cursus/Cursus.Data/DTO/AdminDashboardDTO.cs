@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cursus.Data.DTO
 {
-    public class BookmarkCreateDTO
+    internal class AdminDashboardDTO
     {
-        public string UserId { get; set; }
-        public int CourseId { get; set; }
     }
 }

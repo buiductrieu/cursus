@@ -44,6 +44,13 @@ namespace Cursus.Data.Models
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<TransactionHistory> TransactionHistories { get; set; }
         public virtual DbSet<PlatformWallet> PlatformWallets { get; set; }
+        
+        public virtual DbSet<PayoutRequest> PayoutRequests { get; set; } = null!;
+
+        public virtual DbSet<WalletHistory> WalletHistories { get; set; } = null!;
+
+        public virtual DbSet<TrackingProgress> TrackingProgresses { get; set; } = null!;
+
         public virtual DbSet<ArchivedTransaction> ArchivedTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +85,9 @@ namespace Cursus.Data.Models
 
             modelBuilder.Entity<Transaction>()
             .ToTable(tb => tb.HasTrigger("trg_Transaction_Log"));
+            
+            modelBuilder.Entity<Wallet>()
+            .ToTable(tb => tb.HasTrigger("trg_Wallet_BalanceChange"));
 
             modelBuilder.Entity<PlatformWallet>().HasData(
                 new
@@ -86,6 +96,29 @@ namespace Cursus.Data.Models
                     Balance = 0.0
                 }
             );
+
+            modelBuilder.Entity<TransactionHistory>()
+                .HasOne(th => th.Transaction)
+                .WithMany(t => t.TransactionHistories)
+                .HasForeignKey(t => t.TransactionId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<WalletHistory>()
+                .HasOne(wh => wh.Wallet)
+                .WithMany()
+                .HasForeignKey(wh => wh.WalletId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<TrackingProgress>()
+            .HasOne(tp => tp.CourseProgress)
+            .WithMany()
+            .HasForeignKey(tp => tp.ProgressId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TrackingProgress>()
+                .HasOne(tp => tp.Step)
+                .WithMany()
+                .HasForeignKey(tp => tp.StepId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

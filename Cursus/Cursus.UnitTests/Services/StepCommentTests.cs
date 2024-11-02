@@ -39,8 +39,9 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(expectedComment, okResult.Value);
+            Assert.That(okResult, Is.Not.Null);
+            //Assert.AreEqual(expectedComment, okResult.Value);
+            Assert.That(expectedComment, Is.EqualTo(okResult.Value));
         }
 
         [Test]
@@ -71,8 +72,9 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(comments, okResult.Value);
+            Assert.That(okResult, Is.Not.Null);
+            // Assert.AreEqual(comments, okResult.Value);
+            Assert.That(comments, Is.EqualTo(okResult.Value));
         }
 
         [Test]

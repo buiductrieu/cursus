@@ -58,9 +58,10 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
             var result = await _categoryService.GetCategoriesAsync(null, null, null, 1, 2);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Items.Count);
-            Assert.AreEqual("Test Category 1", result.Items[0].Name);
+            Assert.That(result, Is.Not.Null);
+            //Assert.AreEqual(2, result.Items.Count);
+            Assert.That(result.Items.Count, Is.EqualTo(2));
+            Assert.That(result.Items[0].Name, Is.EqualTo("Test Category 1"));
         }
 
         [Test]
@@ -80,9 +81,9 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
             var result = await _categoryService.GetCategoryById(1);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Id);
-            Assert.AreEqual("Test Category", result.Name);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Test Category"));
         }
 
         [Test]
@@ -109,8 +110,8 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
             var result = await _categoryService.CreateCategory(createCategoryDTO);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual("New Category", result.Name);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Name, Is.EqualTo("New Category"));
         }
 
         [Test]
@@ -126,7 +127,7 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
             // Act & Assert: Check for BadHttpRequestException instead of a generic Exception
             var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _categoryService.CreateCategory(createCategoryDTO));
 
-            Assert.AreEqual("A category with this name already exists.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("A category with this name already exists."));
         }
         [Test]
         public async Task DeleteCategory_ShouldReturnTrue_WhenCategoryIsDeleted()
@@ -155,7 +156,7 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
 
             // Act & Assert: Check for KeyNotFoundException instead of a generic Exception
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () => await _categoryService.DeleteCategory(1));
-            Assert.AreEqual("Category not found.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Category not found."));
         }
     }
 }

@@ -209,27 +209,28 @@ namespace Cursus.Service.Services
         }
 
 
-        public async Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO)
+        public async Task<CourseDTO> UpdateCourse(CourseUpdateDTO courseUpdateDTO)
         {
-            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseDTO.Id);
+            var existingCourse = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseUpdateDTO.Id);
 
             if (existingCourse == null)
                 throw new KeyNotFoundException("Course not found.");
 
-            bool courseExists = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseDTO.Name && c.Id != courseDTO.Id);
+            bool UniqueName = await _unitOfWork.CourseRepository.AnyAsync(c => c.Name == courseUpdateDTO.Name);
 
-            if (courseExists)
+            if (UniqueName)
                 throw new BadHttpRequestException("Course name must be unique.");
 
-            if (courseDTO.Steps == null || !courseDTO.Steps.Any())
-                throw new BadHttpRequestException("Steps cannot be empty.");
             existingCourse.DateModified = DateTime.UtcNow;
             existingCourse.IsApprove = ApproveStatus.Pending;
-            _mapper.Map(courseDTO, existingCourse);
-            
+            _mapper.Map(courseUpdateDTO, existingCourse);
+
+            await _unitOfWork.CourseRepository.UpdateAsync(existingCourse);
             await _unitOfWork.SaveChanges();
 
-            var updatedCourseDTO = _mapper.Map<CourseDTO>(existingCourse);
+			var courseDB = await _unitOfWork.CourseRepository.GetAsync(c => c.Id == courseUpdateDTO.Id);
+
+			var updatedCourseDTO = _mapper.Map<CourseDTO>(courseDB);
             return updatedCourseDTO;
         }
 
@@ -315,5 +316,35 @@ namespace Cursus.Service.Services
             return response;
         }
 
+        public async Task<TotalEarningPotentitalDTO> CaculatePotentialEarnings(int courseId, int months)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id  == courseId);
+            if (course == null)
+                throw new KeyNotFoundException("Course Not Found");
+            if (months < 1 || months > 12)
+                throw new ArgumentOutOfRangeException(nameof(months), "Months must be between 1 and 12.");
+            
+
+            var totalRevenue = await _unitOfWork.TransactionRepository.
+                    GetAllAsync(x => x.Description.Contains(course.Name.ToLower())).
+                        ContinueWith(task => task.Result.Sum(t => t.Amount) ?? 0);
+
+            var projectedRevenues = new List<double>();
+            double initialRevenue = (double)totalRevenue;
+            double monthlyGrowthRate = 0.25;
+
+            for(int month = 1; month <= months; month++)
+            {
+                var projectedRevenue = initialRevenue * (double)Math.Pow(1 + (double)monthlyGrowthRate, month);
+                projectedRevenues.Add(projectedRevenue);
+            }
+            return new TotalEarningPotentitalDTO
+            {
+                CourseName = course.Name,
+                InitialRevenue = initialRevenue,
+                ProjectedRevenues = projectedRevenues,
+            };
+                
+        }
     }
 }

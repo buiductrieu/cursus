@@ -12,5 +12,7 @@ namespace Cursus.RepositoryContract.Interfaces
 	{
         Task<Order> GetOrderWithCartAndItemsAsync(int orderId);
         Task UpdateOrderStatus(int orderId,  OrderStatus newStatus);
-	}
+        Task<List<Order>> GetOrderHistory(string userId);
+
+    }
 }

@@ -52,7 +52,25 @@ namespace Cursus.Service.Services
                 throw new BadHttpRequestException($"Your wallet do not have enough money for a {amount} payout");
             }
 
+            wallet.Balance -= amount;
+
             await _unitOfWork.TransactionRepository.AddAsync(transaction);
+            await _unitOfWork.SaveChanges();
+
+            var instructor = await _unitOfWork.InstructorInfoRepository.GetAsync(x => x.UserId == userId);
+            if (instructor == null)
+                throw new KeyNotFoundException("Instructor Not Found");
+
+            PayoutRequest payoutRequest = new()
+            {
+                InstructorId = instructor.Id,
+                TransactionId = transaction.TransactionId,
+                CreatedDate = DateTime.Now,
+                PayoutRequestStatus = Data.Enums.PayoutRequestStatus.Pending,
+            };
+
+            await _unitOfWork.PayoutRequestRepository.AddAsync(payoutRequest);
+            await _unitOfWork.SaveChanges();
 
         }
 

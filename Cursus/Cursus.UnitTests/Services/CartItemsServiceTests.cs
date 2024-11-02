@@ -58,7 +58,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartItemsService.DeleteCartItem(cartItemId);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
             _unitOfWorkMock.Verify(u => u.CartItemsRepository.DeleteCartItems(It.IsAny<CartItems>()), Times.Never);
             _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Never);
         }
@@ -80,8 +80,9 @@ namespace Cursus.UnitTests.Services
             var result = await _cartItemsService.GetAllCartItems(cartId);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
+            Assert.That(result, Is.Not.Null);
+            //Assert.AreEqual(2, result.Count());
+            Assert.That(result.Count, Is.EqualTo(2));
             _unitOfWorkMock.Verify(u => u.CartItemsRepository.GetAllItems(cartId), Times.Once);
         }
     }
