@@ -316,5 +316,35 @@ namespace Cursus.Service.Services
             return response;
         }
 
+        public async Task<TotalEarningPotentitalDTO> CaculatePotentialEarnings(int courseId, int months)
+        {
+            var course = await _unitOfWork.CourseRepository.GetAsync(c => c.Id  == courseId);
+            if (course == null)
+                throw new KeyNotFoundException("Course Not Found");
+            if (months < 1 || months > 12)
+                throw new ArgumentOutOfRangeException(nameof(months), "Months must be between 1 and 12.");
+            
+
+            var totalRevenue = await _unitOfWork.TransactionRepository.
+                    GetAllAsync(x => x.Description.Contains(course.Name.ToLower())).
+                        ContinueWith(task => task.Result.Sum(t => t.Amount) ?? 0);
+
+            var projectedRevenues = new List<double>();
+            double initialRevenue = (double)totalRevenue;
+            double monthlyGrowthRate = 0.25;
+
+            for(int month = 1; month <= months; month++)
+            {
+                var projectedRevenue = initialRevenue * (double)Math.Pow(1 + (double)monthlyGrowthRate, month);
+                projectedRevenues.Add(projectedRevenue);
+            }
+            return new TotalEarningPotentitalDTO
+            {
+                CourseName = course.Name,
+                InitialRevenue = initialRevenue,
+                ProjectedRevenues = projectedRevenues,
+            };
+                
+        }
     }
 }

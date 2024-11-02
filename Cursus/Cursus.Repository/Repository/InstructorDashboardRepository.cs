@@ -28,7 +28,15 @@ namespace Cursus.Repository.Repository
                 .ToListAsync();
 
             var totalPotentialEarnings = courses.Sum(course => course.Price);
-            var totalEarnings = courses.Sum(course => course.InstructorInfo.TotalEarning); 
+            var instructorInfo = await _context.InstructorInfos
+            .Where(p => p.Id == instructorId)
+            .Select(i => new
+            {
+             i.TotalEarning
+            })
+            .FirstOrDefaultAsync();
+
+            var totalEarnings = instructorInfo?.TotalEarning ?? 0;
 
             return new InstructorDashboardDTO
             {
@@ -37,6 +45,21 @@ namespace Cursus.Repository.Repository
                 TotalEarnings = totalEarnings
             };
         }
+        private async Task<double> CalculateEarnings(int courseId)
+        {
+        
+            var numberOfEnrollments = await _context.CourseProgresses
+                .Where(cp => cp.CourseId == courseId)
+                .Select(cp => cp.UserId)
+                .Distinct()
+                .CountAsync();
+
+          
+            var course = await _context.Courses.FindAsync(courseId);
+
+            return course != null ? course.Price * numberOfEnrollments : 0;
+        }
+
         public async Task<List<CourseEarningsDTO>> GetCourseEarningsAsync(int instructorId)
         {
             var courses = await _context.Courses
@@ -44,14 +67,24 @@ namespace Cursus.Repository.Repository
                 .Where(course => course.InstructorInfo.Id == instructorId && course.Status)
                 .ToListAsync();
 
-            return courses.Select(course => new CourseEarningsDTO
+            var courseEarningsList = new List<CourseEarningsDTO>();
+
+            foreach (var course in courses)
             {
-                Status = course.Status ? "Active" : "Deactive",
-                ShortSummary = course.Description.Length > 100 ? course.Description.Substring(0, 100) : course.Description,
- //             Earnings = course.Earnings,
- //             PotentialEarnings = course.PotentialEarnings,
-                Price = course.Price
-            }).ToList();
+                
+                var earnings = await CalculateEarnings(course.Id);
+
+                courseEarningsList.Add(new CourseEarningsDTO
+                {
+                    Status = course.Status ? "Active" : "Deactive",
+                    ShortSummary = course.Description.Length > 100 ? course.Description.Substring(0, 100) : course.Description,
+                    Price = course.Price,
+                    Earnings = earnings  
+                });
+            }
+
+            return courseEarningsList;
         }
+
     }
 }
