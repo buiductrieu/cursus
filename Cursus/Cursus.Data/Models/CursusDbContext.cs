@@ -97,11 +97,6 @@ namespace Cursus.Data.Models
                 }
             );
 
-            modelBuilder.Entity<TransactionHistory>()
-                .HasOne(th => th.Transaction)
-                .WithMany(t => t.TransactionHistories)
-                .HasForeignKey(t => t.TransactionId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<WalletHistory>()
                 .HasOne(wh => wh.Wallet)
