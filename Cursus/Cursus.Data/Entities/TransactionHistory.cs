@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,6 +11,8 @@ namespace Cursus.Data.Entities
 {
     public class TransactionHistory
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
 
@@ -17,11 +21,7 @@ namespace Cursus.Data.Entities
 
         public ApplicationUser? User{ get; set; }
 
-
-        [ForeignKey("Transaction")]
-        public int? TransactionId { get; set; }
-
-        public Transaction? Transaction { get; set; }
+        public int? TrackedTransactionId { get; set; }
 
         public string Description { get; set; } = string.Empty;
 

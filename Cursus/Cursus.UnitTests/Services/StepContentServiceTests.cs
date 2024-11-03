@@ -64,7 +64,7 @@ namespace Cursus.UnitTests.Services
             var result = await _stepContentService.CreateStepContent(stepContentDTO);
 
             // Assert
-            Assert.AreEqual(stepContentDTO, result);
+            Assert.That(result, Is.EqualTo(stepContentDTO));
             _mockStepContentRepository.Verify(r => r.AddAsync(It.IsAny<StepContent>()), Times.Once);
             _mockUnitOfWork.Verify(u => u.SaveChanges(), Times.Once);
         }
@@ -77,7 +77,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(() => _stepContentService.CreateStepContent(stepContentDTO));
-            Assert.AreEqual("ContentType is required.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("ContentType is required."));
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _stepContentService.CreateStepContent(stepContentDTO));
-            Assert.AreEqual("StepContent already exists for this Step.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("StepContent already exists for this Step."));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Cursus.UnitTests.Services
             var result = await _stepContentService.GetStepContentByIdAsync(1);
 
             // Assert
-            Assert.AreEqual(stepContentDTO, result);
+            Assert.That(result, Is.EqualTo(stepContentDTO));
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _stepContentService.GetStepContentByIdAsync(1));
-            Assert.AreEqual("Step Content not found.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Step Content not found."));
         }
 
 
@@ -131,7 +131,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(() => _stepContentService.CreateStepContentWithFileAsync(stepContentDTO, null));
-            Assert.AreEqual("No file uploaded....", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("No file uploaded...."));
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = Assert.ThrowsAsync<ArgumentException>(() => _stepContentService.CreateStepContentWithFileAsync(stepContentDTO, fileMock.Object));
-            Assert.AreEqual("No file uploaded....", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("No file uploaded...."));
         }
     }
 }

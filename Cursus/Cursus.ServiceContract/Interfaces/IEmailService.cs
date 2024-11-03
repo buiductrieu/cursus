@@ -9,6 +9,7 @@ namespace Cursus.ServiceContract.Interfaces
         public void SendEmailConfirmation(string username, string confirmLink);
 		void SendEmailSuccessfullyPurchasedCourse(ApplicationUser user, Order order);
         void SendEmailCertificateCompletion(ApplicationUser user, string certificate);
+        Task SendEmailAsync(ApplicationUser user, string resetLink);
 
-	}
+    }
 }

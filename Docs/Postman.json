@@ -1183,6 +1183,46 @@
 					"response": []
 				},
 				{
+
+					"name": "Approve Instructor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Approved\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/approve?instructorId={{instructorId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"approve"
+							],
+							"query": [
+								{
+									"key": "instructorId",
+									"value": "{{instructorId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Reject Instructor",
 					"event": [
 						{

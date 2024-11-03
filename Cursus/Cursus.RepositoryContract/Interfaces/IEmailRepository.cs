@@ -10,6 +10,7 @@ namespace Cursus.RepositoryContract.Interfaces
         public void SendEmailConfirmation(EmailRequestDTO request, string confirmLink);
 		void SendEmailSuccessfullyPurchasedCourse(EmailRequestDTO request, Order order);
         void SendCertificateEmail(EmailRequestDTO request, string certificateDownloadUrl);
+        void SendEmailForgotPassword(EmailRequestDTO request, string resetLink);
 
     }
 }

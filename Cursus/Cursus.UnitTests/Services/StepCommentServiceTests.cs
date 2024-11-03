@@ -87,7 +87,7 @@ namespace Cursus.UnitTests.Services
             var result = await _stepCommentService.GetStepCommentsAsync(stepId);
 
             // Assert
-            Assert.AreEqual(stepCommentDTOs.Count, result.Count());
+            Assert.That(result.Count(), Is.EqualTo(stepCommentDTOs.Count));
         }
 
 

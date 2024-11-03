@@ -62,7 +62,8 @@ namespace Cursus.UnitTests.Services
             var result = await _stepService.CreateStep(stepCreateDTO);
 
             // Assert
-            Assert.AreEqual(stepDTO, result);
+            //Assert.AreEqual(stepDTO, result);
+            Assert.That(result, Is.EqualTo(stepDTO));
         }
 
         [Test]
@@ -86,7 +87,8 @@ namespace Cursus.UnitTests.Services
             var result = await _stepService.GetStepByIdAsync(1);
 
             // Assert
-            Assert.AreEqual(stepDTO, result);
+            //Assert.AreEqual(stepDTO, result);
+            Assert.That(result, Is.EqualTo(stepDTO));
         }
 
         [Test]
@@ -121,7 +123,7 @@ namespace Cursus.UnitTests.Services
             var result = await _stepService.GetStepsByCoursId(1);
 
             // Assert
-            Assert.AreEqual(stepsDTO, result);
+            Assert.That(result, Is.EqualTo(stepsDTO));
         }
 
         [Test]
