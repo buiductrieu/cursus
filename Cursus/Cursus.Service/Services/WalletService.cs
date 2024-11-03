@@ -33,6 +33,7 @@ namespace Cursus.Service.Services
         {
             Transaction transaction = new()
             {
+                TransactionId = await _unitOfWork.TransactionRepository.GetNextTransactionId(),
                 UserId = userId,
                 Amount = amount,
                 DateCreated = DateTime.Now,
