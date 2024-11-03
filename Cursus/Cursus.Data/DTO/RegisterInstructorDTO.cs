@@ -11,8 +11,11 @@ namespace Cursus.Data.DTO
     public class RegisterInstructorDTO
     {
         [Required(ErrorMessage = "Full Name is required")]
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "UserName must be a valid email address")]
         public string? UserName { get; set; }
         [Required(ErrorMessage = "Password is required")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",
+        ErrorMessage = "Password must be at least 6 characters long, including at least one uppercase letter, one lowercase letter, one number, and one special character.")]
         public string? Password { get; set; }
         [Required(ErrorMessage = "Confirm Password is required")]
         [Compare("Password",ErrorMessage ="Passwords do not match")]
@@ -37,5 +40,7 @@ namespace Cursus.Data.DTO
         public string? SubmitCertificate { get; set; }
 
         public double TotalEarning { get; set; } = 0;
+
+        public double TotalWithdrawn { get; set; } = 0;
     }
 }

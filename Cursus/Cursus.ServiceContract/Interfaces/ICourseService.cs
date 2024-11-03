@@ -1,4 +1,5 @@
-﻿using Cursus.Data.DTO;
+﻿using Cursus.Common.Helper;
+using Cursus.Data.DTO;
 
 namespace Cursus.ServiceContract.Interfaces
 {
@@ -14,11 +15,14 @@ namespace Cursus.ServiceContract.Interfaces
         Task<PageListResponse<CourseDTO>> GetRegisteredCoursesByUserIdAsync(string userId, int page = 1, int pageSize = 20);
 		Task<CourseDTO> CreateCourseWithSteps(CourseCreateDTO courseDTO);
 
-        Task<CourseDTO> UpdateCourseWithSteps(CourseUpdateDTO courseDTO);
+        Task<CourseDTO> UpdateCourse(CourseUpdateDTO courseUpdateDTO);
 
         Task<bool> DeleteCourse(int courseId);
 
         Task<CourseDTO> GetCourseByIdAsync(int courseId);
         Task <CourseDTO> CourseApproval(int courseId, bool choice);
+
+        Task<APIResponse> UpdateCourseStatus(CourseUpdateStatusDTO courseUpdateStatusDTO);
+
     }
 }

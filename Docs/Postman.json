@@ -1,0 +1,2498 @@
+{
+	"info": {
+		"_postman_id": "12586618-1920-446c-8000-381354f6731a",
+		"name": "Cursus",
+		"description": "**Cursus API Documentation**\n\n**Overview:**  \nThe _Cursus_ project is an online course management system that enables instructors to create and manage courses, and allows learners to register and track their learning progress. The API supports core operations such as course creation, instructor management, progress tracking, cart management, payments, and more.\n\n**API Features:**\n\n- **Course Management:** Create, update, and delete courses.\n    \n- **Instructor Management:** Review and manage instructor information.\n    \n- **User Support:** User registration, login, cart management, and payment processing.\n    \n- **Progress Tracking:** Allows learners to monitor their progress and complete courses.\n    \n\n**Environment Setup:**  \nUse the `{{base_url}}` variable as the main API URL and define other variables like `{{user_id}}` or `{{course_id}}` to easily test requests with dynamic IDs.\n\nEndFragment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38320393"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get all user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Admin/manage-users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Admin",
+								"manage-users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify user's status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Admin/toggle-user-status?userId={{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Admin",
+								"toggle-user-status"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin comment user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Admin/add-comments?userId={{userId}}&comment=Good",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Admin",
+								"add-comments"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "comment",
+									"value": "Good"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get instructor info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Admin/get-instructor-info?instructorId={{instructorId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Admin",
+								"get-instructor-info"
+							],
+							"query": [
+								{
+									"key": "instructorId",
+									"value": "{{instructorId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/admin` endpoints let you manage administrative tasks related to users, including modifying status and adding comments."
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Register successful\", function () {\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"quangson4580@gmail.com\",\r\n    \"password\": \"zxcvbnm123@A\",\r\n    \"address\": \"HCM City\",\r\n    \"phoneNumber\": \"0912592395\",\r\n    \"role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"quangsonnguyen408@gmail.com\",\r\n    \"password\": \"zxcvbnm123@A\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/auth` endpoints let you handle authentication actions, such as registering and logging in users."
+		},
+		{
+			"name": "Bookmark",
+			"item": [
+				{
+					"name": "Create Bookmark",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Bookmark?userId={{userId}}&courseId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Bookmark"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "courseId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bookmark",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Bookmark?userId={{userId}}&sortBy=price&sortOrder=asc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Bookmark"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "sortBy",
+									"value": "price",
+									"description": "price, rating, course name"
+								},
+								{
+									"key": "sortOrder",
+									"value": "asc",
+									"description": "asc or desc"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/bookmark` endpoints let you manage bookmarks for user courses."
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Add to cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Add to cart successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cart/add-to-cart?userId={{userId}}&courseId=2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cart",
+								"add-to-cart"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "courseId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart by userID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cart/my-cart?userId={{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cart",
+								"my-cart"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Cart/DeleteCart3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Cart",
+								"DeleteCart3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/cart` endpoints let you manage items in the user’s shopping cart."
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Get all Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Category?searchTerm=&sortColumn=&sortOrder&page=1&pageSize=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Category"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "",
+									"description": "string"
+								},
+								{
+									"key": "sortColumn",
+									"value": "",
+									"description": "string"
+								},
+								{
+									"key": "sortOrder",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "integer"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "integer"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Created\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"New category\",\r\n  \"description\": \"New description\",\r\n  \"dateCreated\": \"2024-10-28T08:41:00.464Z\",\r\n  \"status\": true,\r\n  \"isParent\": true,\r\n  \"parentCategory\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Category",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Updated\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Update category\",\r\n  \"description\": \"Update description\",\r\n  \"parentCategory\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Category/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Category",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Update category\",\r\n  \"description\": \"Update description\",\r\n  \"parentCategory\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Category/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Category",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/category` endpoints let you manage course categories for better course organization."
+		},
+		{
+			"name": "Course",
+			"item": [
+				{
+					"name": "Create course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"instructorInfoId\": 1,\r\n    \"name\": \"New Course\",\r\n    \"description\": \"Course's Description\",\r\n    \"categoryId\": 6,\r\n    \"status\": true,\r\n    \"price\": 100,\r\n    \"discount\": 0,\r\n    \"steps\": [\r\n        {\r\n            \"name\": \"Step 1\",\r\n            \"order\": 1,\r\n            \"description\": \"Step's Description\"\r\n        },\r\n        {\r\n            \"name\": \"Step 2\",\r\n            \"order\": 1,\r\n            \"description\": \"Step's Description\"\r\n        },\r\n        {\r\n            \"name\": \"Step 3\",\r\n            \"order\": 1,\r\n            \"description\": \"Step's Description\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Course",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Approved\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course/ApproveCourse1?choice=True",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"ApproveCourse1"
+							],
+							"query": [
+								{
+									"key": "choice",
+									"value": "True",
+									"description": "boolean"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all courses with pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course?searchTerm=&sortColumn&sortOrder&page=1&pageSize=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "",
+									"description": "string"
+								},
+								{
+									"key": "sortColumn",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "sortOrder",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "integer"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "integer"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 12,   \r\n    \"name\": \"Update Course\",\r\n    \"description\": \"New Description\",\r\n    \"categoryId\": 10,\r\n    \"status\": true,\r\n    \"price\": 11111,\r\n    \"discount\": 20,\r\n    \"startedDate\": \"2024-10-30\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Course/12",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course/11",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get course by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course by userID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course/courses/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"courses",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Track Course's progpress of user's ID ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Course/TrackProgress?userId={{userId}}&courseId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Course",
+								"TrackProgress"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "courseId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/course` endpoints let you manage course details, from creation to approval and deletion."
+		},
+		{
+			"name": "Course Comment",
+			"item": [
+				{
+					"name": "Comment on a course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comment successful\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"comment\": \"This is a comment\",\r\n  \"courseId\": 1,\r\n  \"userId\": \"{{userId}}\",\r\n  \"rating\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/CourseComment/comment-courses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"CourseComment",
+								"comment-courses"
+							],
+							"query": [
+								{
+									"key": "useId",
+									"value": "{{userId}}",
+									"disabled": true
+								},
+								{
+									"key": "courseId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all comment of a course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/CourseComment/comment-courses/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"CourseComment",
+								"comment-courses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment of a course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/CourseComment/comment-courses/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"CourseComment",
+								"comment-courses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/courseComment` endpoints let you manage user comments on courses."
+		},
+		{
+			"name": "Intructor",
+			"item": [
+				{
+					"name": "Register instructor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Register successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"quangsonnguyen2006@gmail.com\",\r\n  \"password\": \"zxcvbnm123@A\",\r\n  \"confirmPassword\": \"zxcvbnm123@A\",\r\n  \"birthday\": \"2024-10-28T08:53:05.668Z\",\r\n  \"phone\": \"0436776982\",\r\n  \"address\": \"HCM City\",\r\n  \"cardName\": \"6631449595\",\r\n  \"cardProvider\": \"string\",\r\n  \"cardNumber\": \"4906115444837137\",\r\n  \"submitCertificate\": \"string\",\r\n  \"totalEarning\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/register-instructor",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"register-instructor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Instructor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Rejected\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/reject?instructorId={{instructorId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"reject"
+							],
+							"query": [
+								{
+									"key": "instructorId",
+									"value": "{{instructorId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Course's Earning of instructor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/instructor-courses?instructorId={{instructorId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"instructor-courses"
+							],
+							"query": [
+								{
+									"key": "instructorId",
+									"value": "{{instructorId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all instructors along with user and instructor information",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/list-instructors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"list-instructors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Instructor request a payout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"instructorId\": \"{{instructorId}}\",\r\n  \"amount\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Instructor/instructor/payout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Instructor",
+								"instructor",
+								"payout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/instructor` endpoints let you manage instructor information, including registration and earnings."
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Order/create?userId={{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Order",
+								"create"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm purchase",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Confirm successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Order/confirm-purchase?userId={{userId}}&orderId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Order",
+								"confirm-purchase"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "orderId",
+									"value": "1",
+									"description": "integer"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/order` endpoints let you manage orders related to user purchases."
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Payment/create-payment?OrderId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Payment",
+								"create-payment"
+							],
+							"query": [
+								{
+									"key": "OrderId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/payment` endpoints let you manage payment records linked to orders."
+		},
+		{
+			"name": "Reason",
+			"item": [
+				{
+					"name": "Create reason",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"courseId\": 3,\r\n  \"description\": \"No submitCertificate\",\r\n  \"dateCancel\": \"2024-11-01T04:13:07.417Z\",\r\n  \"status\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Reason",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Reason"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get reason by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Reason/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Reason",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete reason",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Reason/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Reason",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/reason` endpoints let you manage reasons provided by users when canceling a course."
+		},
+		{
+			"name": "Step",
+			"item": [
+				{
+					"name": "Create step",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"courseId\": 1,\r\n  \"name\": \"New Step 1\",\r\n  \"order\": 1,\r\n  \"description\": \"New description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get step by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete step",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update step",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Updated\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Update Step\",\r\n    \"order\": 10,\r\n    \"description\": \"Update description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get step by courseID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step/1/steps",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"1",
+								"steps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start new step for student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/Step/start-step?useId={{userId}}&step=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"start-step"
+							],
+							"query": [
+								{
+									"key": "useId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "step",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tracking progress for student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Step/progress-percentage?userId={{userId}}&coureseProgressId=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Step",
+								"progress-percentage"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "coureseProgressId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/step` endpoints let you manage the steps within a course."
+		},
+		{
+			"name": "Step Comment",
+			"item": [
+				{
+					"name": "Post comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comment successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"New comment\",\r\n  \"courseId\": 1,\r\n  \"stepId\": 1,\r\n  \"userId\": \"{{userId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/StepComment/post-comment",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"StepComment",
+								"post-comment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all comment of step",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/StepComment/1/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"StepComment",
+								"1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment of step",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Deleted\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/StepComment/1/comments?commentId=1&adminId={{adminID}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"StepComment",
+								"1",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "commentId",
+									"value": "1"
+								},
+								{
+									"key": "adminId",
+									"value": "{{adminID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/stepComment` endpoints let you manage comments on individual course steps."
+		},
+		{
+			"name": "Step Content",
+			"item": [
+				{
+					"name": "Upload file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upload successful\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Id",
+									"value": "",
+									"description": "integer",
+									"type": "text"
+								},
+								{
+									"key": "StepId",
+									"value": "1",
+									"description": "integer",
+									"type": "text"
+								},
+								{
+									"key": "ContentType",
+									"value": "string",
+									"description": "string",
+									"type": "text"
+								},
+								{
+									"key": "ContentURL",
+									"value": "string",
+									"description": "string",
+									"type": "text"
+								},
+								{
+									"key": "DateCreated",
+									"value": "2024-11-01",
+									"description": "datetime",
+									"type": "text"
+								},
+								{
+									"key": "Description",
+									"value": "New description",
+									"description": "string",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"description": "binary",
+									"type": "file",
+									"src": "postman-cloud:///1ef98229-cb9d-4870-a54c-8641484663e1"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/StepContent/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"StepContent",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get step content by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/StepContent/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"StepContent",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/stepContent` endpoints let you manage content files for specific course steps."
+		},
+		{
+			"name": "Transition",
+			"item": [
+				{
+					"name": "Get all transition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Transaction/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Transaction",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transition by userID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Transaction/user/{userId}?userId={{userId}}&page=1&pageSize=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Transaction",
+								"user",
+								"{userId}"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "int"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "int"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get pending transition request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/Transaction/get-pending-payout?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"Transaction",
+								"get-pending-payout"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/transition` endpoints let you manage transaction records and payout requests."
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Update user's profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Updated\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"quangsonnguyen2003@gmail.com\",\r\n  \"address\": \"Ha Long City\",\r\n  \"phoneNumber\": \"06388498\",\r\n  \"userName\": \"quangsonnguyen2003@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/User/Update{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"User",
+								"Update{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/user` endpoints let you manage information in user profiles."
+		},
+		{
+			"name": "Wallet History",
+			"item": [
+				{
+					"name": "Get all wallet history",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/WalletHistory?searchTerm&sortColumn&sortOrder&page=1&pageSize=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"WalletHistory"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "sortColumn",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "sortOrder",
+									"value": null,
+									"description": "string"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "integer"
+								},
+								{
+									"key": "pageSize",
+									"value": "20",
+									"description": "integer"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get wallet history by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/WalletHistory/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"WalletHistory",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get wallet history by wallet Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/WalletHistory/byWallet/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"WalletHistory",
+								"byWallet",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/walletHistory` endpoints let you view and manage transaction history in the user’s wallet."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost:7256",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "http://74.226.205.70:8080",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}

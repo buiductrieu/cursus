@@ -65,5 +65,10 @@ namespace Cursus.Repository.Repository
             }
             _db.Update(course);
         }
+
+        public async Task<int> CountAsync(Expression<Func<Course, bool>> predicate)
+        {
+            return await _db.Courses.CountAsync(predicate);
+        }
     }
 }

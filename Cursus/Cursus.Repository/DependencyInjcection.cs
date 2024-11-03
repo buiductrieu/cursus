@@ -38,6 +38,10 @@ namespace Cursus.Repository
             services.AddTransient<IWalletRepository, WalletRepositoy>();
             services.AddTransient<IPlatformWalletRepository, PlatformWalletRepository>();
             services.AddTransient<ICertificateRepository, CertificateRepository>();
+            services.AddTransient<IPayoutRequestRepository, PayoutRequestRepository>();
+            services.AddTransient<IWalletHistoryRepository, WalletHistoryRepository>();
+            services.AddTransient<ITrackingProgressRepository, TrackingProgressRepository>();
+            services.AddTransient<IInstructorDashboardRepository, InstructorDashboardRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

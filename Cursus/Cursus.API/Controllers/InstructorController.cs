@@ -47,9 +47,22 @@ namespace Cursus.API.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var errorDetails = new Dictionary<string, string>();
+
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    var errors = state.Errors.Select(e => e.ErrorMessage).ToList();
+
+                    if (errors.Any())
+                    {
+                        errorDetails.Add(key, string.Join(", ", errors));
+                    }
+                }
+
                 _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.Result = ModelState;
+                _response.Result = errorDetails;
                 return BadRequest(_response);
             }
             var existingUser = await _userManager.FindByEmailAsync(registerInstructorDTO.UserName);
@@ -90,7 +103,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("approve")]
-        public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] string instructorId)
+        public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.ApproveInstructorAsync(instructorId);
             if (result)
@@ -113,7 +126,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("reject")]
-        public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] string instructorId)
+        public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.RejectInstructorAsync(instructorId);
             if (result)
@@ -181,7 +194,7 @@ namespace Cursus.API.Controllers
                 // Gọi service để lấy thông tin các khóa học của giảng viên
                 var courseSummary = await _instructorService.GetTotalAmountAsync(instructorId);
 
-                if (courseSummary == null || !courseSummary.Any())
+                if (courseSummary == null )
                 {
                     _response.IsSuccess = false;
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -256,14 +269,25 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost("instructor/payout")]
-        public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] string userId, double amount)
+        public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] PayoutRequestDTO payoutRequest)
         {
-            await _walletService.CreatePayout(userId, amount);
+            if (string.IsNullOrEmpty(payoutRequest.InstructorId) || payoutRequest.Amount <= 0)
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.Result = "Invalid userId or amount.";
+                return BadRequest(_response);
+            }
+
+            // Thực hiện yêu cầu rút tiền
+            await _walletService.CreatePayout(payoutRequest.InstructorId, payoutRequest.Amount);
+
             _response.IsSuccess = true;
             _response.StatusCode = HttpStatusCode.OK;
             _response.Result = "Payout request created successfully";
             return Ok(_response);
         }
+
 
     }
 }

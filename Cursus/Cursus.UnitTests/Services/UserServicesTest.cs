@@ -8,8 +8,9 @@ using Cursus.RepositoryContract.Interfaces;
 using Cursus.Repository.Repository;
 using System.Threading.Tasks;
 using Cursus.Service.Services;
+using Microsoft.AspNetCore.Http;
 
-namespace Cursus.UnitTest.Services
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class UserServiceTests
@@ -121,7 +122,7 @@ namespace Cursus.UnitTest.Services
                 .ReturnsAsync((ApplicationUser)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () =>
+            var ex = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
                 await _userService.UpdateUserProfile(userId, updateDto));
             Assert.That(ex.Message, Is.EqualTo("User not found"));
         }
@@ -149,7 +150,7 @@ namespace Cursus.UnitTest.Services
                 .ReturnsAsync(true);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () =>
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () =>
                 await _userService.UpdateUserProfile(userId, updateDto));
             Assert.That(ex.Message, Is.EqualTo("Username already exists"));
         }

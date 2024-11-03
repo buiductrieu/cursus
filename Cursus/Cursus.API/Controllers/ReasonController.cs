@@ -71,5 +71,18 @@ namespace Cursus.API.Controllers
             return NoContent();
         }
 
+        //[HttpGet("course/{courseId}")]
+        //public async Task<IActionResult> GetByCourseId(int courseId)
+        //{
+        //    var response = await _reasonService.GetByCourseIdAsync(courseId);
+
+        //    if (!response.Success)
+        //    {
+        //        return NotFound(response.Message);
+        //    }
+
+        //    return Ok(response.Data);
+        //}
+
     }
 }

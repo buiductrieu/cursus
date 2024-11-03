@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -11,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cursus.Service.Tests
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class AuthServiceTests
@@ -55,7 +56,7 @@ namespace Cursus.Service.Tests
                 .ReturnsAsync((ApplicationUser)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _authService.LoginAsync(loginRequest));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.LoginAsync(loginRequest));
             Assert.AreEqual("Username or password is incorrect!", ex.Message);
         }
 
@@ -105,7 +106,7 @@ namespace Cursus.Service.Tests
             _unitOfWorkMock.Setup(x => x.UserRepository.UsernameExistsAsync(userRegisterDTO.UserName)).ReturnsAsync(true);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _authService.RegisterAsync(userRegisterDTO));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.RegisterAsync(userRegisterDTO));
             Assert.AreEqual("Username is existed", ex.Message);
         }
 
@@ -130,7 +131,7 @@ namespace Cursus.Service.Tests
             _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), userRegisterDTO.Password)).ReturnsAsync(IdentityResult.Success);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _authService.RegisterAsync(userRegisterDTO));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.RegisterAsync(userRegisterDTO));
             Assert.AreEqual("Role is not valid", ex.Message);
         }
 
@@ -162,7 +163,7 @@ namespace Cursus.Service.Tests
             _userManagerMock.Setup(x => x.FindByEmailAsync(username)).ReturnsAsync((ApplicationUser)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<Exception>(async () => await _authService.ConfirmEmail(username, token));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(async () => await _authService.ConfirmEmail(username, token));
             Assert.AreEqual("User not found", ex.Message);
         }
     }

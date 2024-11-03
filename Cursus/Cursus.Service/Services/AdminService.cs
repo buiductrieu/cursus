@@ -58,9 +58,10 @@ namespace Cursus.Service.Services
 
         public async Task<Dictionary<string, object>?> GetInformationInstructor(int instructorId)
         {
+            var userId = _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == instructorId).Result.UserId; // Lấy id người dùng
+            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == userId);
             var instructor = await _adminRepository.GetInformationInstructorAsync(instructorId);
             var details = new Dictionary<string, object>();
-            var allInstructors = await _instructorInfoRepository.GettAllAsync();
 
             // Kiểm tra thông tin instructor
             if (string.IsNullOrEmpty(instructor.UserName))
@@ -75,9 +76,7 @@ namespace Cursus.Service.Services
                 details.Add("PhoneNumber", instructor.PhoneNumber ?? string.Empty);
                 details.Add("AdminComment", instructor.AdminComment ?? string.Empty);
             }
-            var totalEarning = allInstructors
-                     .Where(i => i.Id == instructorId)
-                     .Sum(i => i.TotalEarning);
+            var totalEarning = instructorWallet?.Balance ?? 0; // Nếu không có ví, đặt mặc định là 0
             details.Add("TotalEarning", totalEarning);
             var totalCourses = await _instructorInfoRepository.TotalCourse(instructorId); // Lấy tổng số khóa học
             details.Add("TotalCourses", totalCourses);
