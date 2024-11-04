@@ -29,6 +29,7 @@ namespace Cursus.Service.Services
         public async Task<List<CourseEarningsDTO>> GetCourseEarningsAsync(int instructorId)
         {
             var courseEarnings = await _instructorDashboardRepository.GetCourseEarningsAsync(instructorId);
+            courseEarnings.ForEach(e => e.PotentialEarnings = (e.Price * 0.475) * 12);
             return _mapper.Map<List<CourseEarningsDTO>>(courseEarnings);
         }
     }
