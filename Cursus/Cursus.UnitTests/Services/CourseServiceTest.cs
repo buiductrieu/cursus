@@ -132,6 +132,7 @@ namespace Cursus.UnitTests.Services
             Assert.That(ex.Message, Is.EqualTo("Course not found."));
         }
 
+
     }
 
 
