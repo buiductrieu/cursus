@@ -53,48 +53,33 @@ namespace Cursus.Service.Services
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUser()
         {
-            return  await _adminRepository.GetAllAsync();
+            return await _adminRepository.GetAllAsync();
         }
 
-        public async Task<Dictionary<string, object>?> GetInformationInstructor(int instructorId)
+        public async Task<Dictionary<string, object>> GetInformationInstructor(int instructorId)
         {
-            var userId = _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == instructorId).Result.UserId; // Lấy id người dùng
-            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == userId);
+            var userId = await _unitOfWork.InstructorInfoRepository.GetAsync(i => i.Id == instructorId);
+            if (userId == null) return new Dictionary<string, object> { { "Error", "Instructor not found" } };
+
+            var instructorWallet = await _unitOfWork.WalletRepository.GetAsync(w => w.UserId == userId.UserId);
             var instructor = await _adminRepository.GetInformationInstructorAsync(instructorId);
-            var details = new Dictionary<string, object>();
 
-            // Kiểm tra thông tin instructor
-            if (string.IsNullOrEmpty(instructor.UserName))
-            {
-                details.Add("Error", "Instructor not found");
-            }
-            else
-            {
-                // Thêm thông tin người dùng vào chi tiết
-                details.Add("UserName", instructor.UserName ?? string.Empty);
-                details.Add("Email", instructor.Email ?? string.Empty);
-                details.Add("PhoneNumber", instructor.PhoneNumber ?? string.Empty);
-                details.Add("AdminComment", instructor.AdminComment ?? string.Empty);
-            }
-            var totalEarning = instructorWallet?.Balance ?? 0; // Nếu không có ví, đặt mặc định là 0
-            details.Add("TotalEarning", totalEarning);
-            var totalCourses = await _instructorInfoRepository.TotalCourse(instructorId); // Lấy tổng số khóa học
-            details.Add("TotalCourses", totalCourses);
-
-            // Lấy tổng số khóa học đang hoạt động
-            var totalActiveCourses = await _instructorInfoRepository.TotalActiveCourse(instructorId);
-            details.Add("TotalActiveCourses", totalActiveCourses);
-
-            // Tính tổng thu nhập
-            var totalPayout = await _instructorInfoRepository.TotalPayout(instructorId);
-            details.Add("TotalPayout", totalPayout);
-
-            // Tính trung bình đánh giá
-            var averageRating = await _instructorInfoRepository.RatingNumber(instructorId);
-            details.Add("AverageRating", averageRating);
+            var details = new Dictionary<string, object>
+                {
+                    { "UserName", instructor.UserName ?? string.Empty },
+                    { "Email", instructor.Email ?? string.Empty },
+                    { "PhoneNumber", instructor.PhoneNumber ?? string.Empty },
+                    { "AdminComment", instructor.AdminComment ?? string.Empty },
+                    { "TotalEarning", instructorWallet?.Balance ?? 0.0 },
+                    { "TotalCourses", await _instructorInfoRepository.TotalCourse(instructorId) },
+                    { "TotalActiveCourses", await _instructorInfoRepository.TotalActiveCourse(instructorId) },
+                    { "TotalPayout", await _instructorInfoRepository.TotalPayout(instructorId) },
+                    { "AverageRating", await _instructorInfoRepository.RatingNumber(instructorId) }
+                };
 
             return details;
         }
+
 
 
 
@@ -105,6 +90,6 @@ namespace Cursus.Service.Services
             return await _adminRepository.ToggleUserStatusAsync(userId);
         }
 
-   
+
     }
 }
