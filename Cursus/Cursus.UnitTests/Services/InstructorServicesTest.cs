@@ -15,7 +15,7 @@ using System.Linq.Expressions;
 namespace Cursus.UnitTests.Services
 {
     [TestFixture]
-    public class Tests
+    public class InstructorServicesTests
     {
         private InstructorService _instructorService;
         private Mock<UserManager<ApplicationUser>> _userManagerMock;
