@@ -111,6 +111,10 @@ namespace Cursus.Service.Services
 
             // Lấy CourseId từ step
             var courseId = (await _unitOfWork.StepRepository.GetAsync(cp => cp.Id == stepId)).CourseId;
+            if(courseId == null)
+            {
+                throw new InvalidOperationException("CourseId not found for the specified StepId.");
+            }
 
             // Kiểm tra xem CourseProgress có tồn tại hay không
             var courseProgress = await _unitOfWork.CourseProgressRepository.GetAsync(cp => cp.UserId == userId && courseId == cp.CourseId);
