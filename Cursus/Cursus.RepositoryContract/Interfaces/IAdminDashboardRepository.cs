@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cursus.Data.DTO;
+using Cursus.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,7 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface IAdminDashboardRepository
     {
+        Task<List<PurchaseCourseOverviewDTO>> GetTopPurchasedCourses(int year, string period);
+
     }
 }

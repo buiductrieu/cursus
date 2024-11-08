@@ -276,6 +276,16 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
+
+            // AdminDashboard
+            CreateMap<Course, PurchaseCourseOverviewDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))                     // Map ID của Course
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))            // Map CourseName từ Name
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Description))        // Map Summary từ Description
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))                // Map Price
+                .ForMember(dest => dest.StepCount, opt => opt.MapFrom(src => src.Steps.Count));     // Map số lượng Steps
+
+
         }
     }
 }

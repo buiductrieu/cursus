@@ -43,6 +43,7 @@ namespace Cursus.Repository
             services.AddTransient<ITrackingProgressRepository, TrackingProgressRepository>();
             services.AddTransient<IInstructorDashboardRepository, InstructorDashboardRepository>();
             services.AddTransient<IArchivedTransactionRepository, ArchivedTransactionRepository>();
+            services.AddTransient<IAdminDashboardRepository, AdminDashboardRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
