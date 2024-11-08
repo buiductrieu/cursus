@@ -12,5 +12,7 @@ namespace Cursus.RepositoryContract.Interfaces
     {
         Task<List<PurchaseCourseOverviewDTO>> GetTopPurchasedCourses(int year, string period);
 
+        Task<List<PurchaseCourseOverviewDTO>> GetWorstRatedCourses(int year, string period);
+
     }
 }

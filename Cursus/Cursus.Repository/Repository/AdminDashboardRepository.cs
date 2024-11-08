@@ -58,5 +58,45 @@ namespace Cursus.Repository.Repository
 
             return topCourses;
         }
+        public async Task<List<PurchaseCourseOverviewDTO>> GetWorstRatedCourses(int year, string period)
+        {
+            var coursesQuery = _context.Courses
+                .Include(c => c.Steps)
+                .Where(c => c.Rating > 0)
+                .AsQueryable();
+
+            if (period.ToLower() == "month")
+            {
+                coursesQuery = coursesQuery.Where(c => c.DateCreated.Year == year &&
+                                                        c.DateCreated.Month >= 1 && c.DateCreated.Month <= 12);
+            }
+            else if (period.ToLower() == "quarter")
+            {
+                coursesQuery = coursesQuery.Where(c => c.DateCreated.Year == year &&
+                                                        c.DateCreated.Month >= 1 && c.DateCreated.Month <= 3);
+            }
+
+            var worstCourses = await coursesQuery
+                .Select(c => new
+                {
+                    Course = c,
+                    AverageRating = c.Rating
+                })
+                .OrderBy(r => r.AverageRating)
+                .Take(5)
+                .Select(r => new PurchaseCourseOverviewDTO
+                {
+                    Id = r.Course.Id,
+                    CourseName = r.Course.Name,
+                    Summary = r.Course.Description,
+                    Price = r.Course.Price,
+                    StepCount = r.Course.Steps.Count,
+                    Rating = r.AverageRating
+                })
+                .ToListAsync();
+
+            return worstCourses;
+        }
+
     }
 }

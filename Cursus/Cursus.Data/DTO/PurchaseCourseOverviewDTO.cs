@@ -13,8 +13,10 @@ namespace Cursus.Data.DTO
             public string CourseName { get; set; } 
             public string Summary { get; set; }    
             public double Price { get; set; }      
-            public int StepCount { get; set; }     
-        }
+            public int StepCount { get; set; }
+            public double Rating { get; set; }  
+
     }
+}
 
 

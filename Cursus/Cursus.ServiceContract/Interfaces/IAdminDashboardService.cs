@@ -10,6 +10,7 @@ namespace Cursus.ServiceContract.Interfaces
     public interface IAdminDashboardService
     {
         Task<List<PurchaseCourseOverviewDTO>> GetTopPurchasedCourses(int year, string period);
+        Task<List<PurchaseCourseOverviewDTO>> GetWorstRatedCourses(int year, string period);
 
     }
 }

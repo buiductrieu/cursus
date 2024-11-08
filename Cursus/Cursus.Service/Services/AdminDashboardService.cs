@@ -29,5 +29,11 @@ namespace Cursus.Service.Services
 
             return topPurchasedCoursesDto;
         }
+        public async Task<List<PurchaseCourseOverviewDTO>> GetWorstRatedCourses(int year, string period)
+        {
+            var worstRatedCourses = await _unitOfWork.AdminDashboardRepository.GetWorstRatedCourses(year, period);
+            var worstRatedCoursesDto = _mapper.Map<List<PurchaseCourseOverviewDTO>>(worstRatedCourses);
+            return worstRatedCoursesDto;
+        }
     }
 }

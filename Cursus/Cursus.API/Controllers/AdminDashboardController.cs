@@ -29,5 +29,18 @@ namespace Cursus.API.Controllers
 
             return Ok(courses);
         }
+
+        [HttpGet("worst-rated-courses")]
+        public async Task<ActionResult<List<PurchaseCourseOverviewDTO>>> GetWorstRatedCourses(int year, string period)
+        {
+            var courses = await _adminDashboardService.GetWorstRatedCourses(year, period);
+
+            if (courses == null || courses.Count == 0)
+            {
+                return NotFound("No worst rated courses found for the specified year and period.");
+            }
+
+            return Ok(courses);
+        }
     }
 }
