@@ -276,6 +276,8 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
+            //Notification Mapping
+            CreateMap<Notification, NotificationDTO>();        
         }
     }
 }
