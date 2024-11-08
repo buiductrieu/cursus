@@ -278,6 +278,17 @@ namespace Cursus.Common.Helper
 
             //Notification Mapping
             CreateMap<Notification, NotificationDTO>();        
+
+            // AdminDashboard
+            CreateMap<Course, PurchaseCourseOverviewDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))                   
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Name))           
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Description))      
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))               
+                .ForMember(dest => dest.StepCount, opt => opt.MapFrom(src => src.Steps.Count))     
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating));             
+
+
         }
     }
 }

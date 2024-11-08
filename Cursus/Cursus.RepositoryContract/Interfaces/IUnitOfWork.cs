@@ -36,6 +36,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IInstructorDashboardRepository InstructorDashboardRepository { get; }
         IArchivedTransactionRepository ArchivedTransactionRepository { get; }
         INotificationRepository NotificationRepository { get; }
+        IAdminDashboardRepository AdminDashboardRepository { get; }
         Task SaveChanges();
     }
 }
