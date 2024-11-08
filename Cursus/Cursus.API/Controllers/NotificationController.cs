@@ -39,6 +39,27 @@ namespace Cursus.API.Controllers
 			return Ok(_response);
 		}
 
-	
+		/// <summary>
+		/// Fetch notifications from the user
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
+		[HttpGet("fetch")]
+		public async Task<ActionResult<APIResponse>> FetchNotify(string userId)
+		{
+			if (string.IsNullOrEmpty(userId))
+				return BadRequest("User ID cannot be empty.");
+
+			var notifications = await _notificationService.FetchNotificationsAsync(userId);
+
+			_response.IsSuccess = true;
+			_response.StatusCode = HttpStatusCode.OK;
+			_response.Result = new
+			{
+				UserId = userId,
+				Notifications = notifications
+			};
+			return Ok(_response);
+		}
 	}
 }
