@@ -97,6 +97,14 @@ namespace Cursus.Repository.Repository
 
             return worstCourses;
         }
+        public async Task<int> GetTotalUsersAsync()
+        {
+            return await _context.Users.CountAsync();
+        }
 
+        public async Task<int> GetTotalInstructorsAsync()
+        {
+            return await _context.InstructorInfos.CountAsync();
+        }
     }
 }

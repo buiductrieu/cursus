@@ -14,5 +14,7 @@ namespace Cursus.RepositoryContract.Interfaces
 
         Task<List<PurchaseCourseOverviewDTO>> GetWorstRatedCourses(int year, string period);
 
+        Task<int> GetTotalUsersAsync();
+        Task<int> GetTotalInstructorsAsync();
     }
 }

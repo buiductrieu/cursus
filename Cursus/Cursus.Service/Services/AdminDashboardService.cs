@@ -35,5 +35,13 @@ namespace Cursus.Service.Services
             var worstRatedCoursesDto = _mapper.Map<List<PurchaseCourseOverviewDTO>>(worstRatedCourses);
             return worstRatedCoursesDto;
         }
+        public async Task<int> GetTotalUsersAsync()
+        {
+            return await _unitOfWork.AdminDashboardRepository.GetTotalUsersAsync();
+        }
+        public async Task<int> GetTotalInstructorsAsync()
+        {
+            return await _unitOfWork.AdminDashboardRepository.GetTotalInstructorsAsync();
+        }
     }
 }

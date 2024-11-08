@@ -42,5 +42,19 @@ namespace Cursus.API.Controllers
 
             return Ok(courses);
         }
+
+        [HttpGet("total-users")]
+        public async Task<IActionResult> GetTotalUsers()
+        {
+            var totalUsers = await _adminDashboardService.GetTotalUsersAsync();
+            return Ok(totalUsers);
+        }
+
+        [HttpGet("total-instructors")]
+        public async Task<IActionResult> GetTotalInstructors()
+        {
+            var totalInstructors = await _adminDashboardService.GetTotalInstructorsAsync();
+            return Ok(totalInstructors);
+        }
     }
 }
