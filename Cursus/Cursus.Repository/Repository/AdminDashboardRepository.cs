@@ -43,16 +43,17 @@ namespace Cursus.Repository.Repository
 
             var topCourses = await cartsQuery
                 .SelectMany(c => c.CartItems)
-                .GroupBy(ci => ci.Course.Id) 
+                .GroupBy(ci => ci.Course.Id)
                 .OrderByDescending(g => g.Count())
-                .Take(5) 
+                .Take(5)
                 .Select(g => new PurchaseCourseOverviewDTO
                 {
-                    Id = g.Key, 
+                    Id = g.Key,
                     CourseName = g.FirstOrDefault().Course.Name,
                     Summary = g.FirstOrDefault().Course.Description,
                     Price = g.FirstOrDefault().Course.Price,
-                    StepCount = g.FirstOrDefault().Course.Steps.Count
+                    StepCount = g.FirstOrDefault().Course.Steps.Count,
+                    Rating = g.FirstOrDefault().Course.Rating
                 })
                 .ToListAsync();
 
