@@ -1,4 +1,5 @@
 ﻿using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class InstructorDashboardController : ControllerBase
     {
         private readonly IInstructorDashboardService _instructorDashboardService;
@@ -20,6 +22,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpGet("{instructorId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<IActionResult> GetInstructorDashboard(int instructorId)
         {
             var dashboardData = await _instructorDashboardService.GetInstructorDashboardAsync(instructorId);
@@ -35,6 +38,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpGet("earnings/{instructorId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<IActionResult> GetCourseEarnings(int instructorId)
         {
             var earningsData = await _instructorDashboardService.GetCourseEarningsAsync(instructorId);
