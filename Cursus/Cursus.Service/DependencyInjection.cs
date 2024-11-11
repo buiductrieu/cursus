@@ -41,6 +41,8 @@ namespace Cursus.Service
             services.AddTransient<IWalletHistoryService, WalletHistoryService>();
             services.AddTransient<IInstructorDashboardService, InstructorDashboardService>();
             services.AddTransient<IArchivedTransactionService, ArchivedTransactionService>();
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<IAdminDashboardService, AdminDashboardService>();
             return services;
         }
     }
