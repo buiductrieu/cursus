@@ -133,11 +133,11 @@ namespace Cursus.API
             // Configure the HTTP request pipeline.
             app.UseSwagger(options =>
             {
-                options.RouteTemplate = "/swagger/v1/{documentname}.json";
+                options.RouteTemplate = "/openapi/{documentname}.json";
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API");
+                c.SwaggerEndpoint("/openapi/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
             app.MapScalarApiReference();
