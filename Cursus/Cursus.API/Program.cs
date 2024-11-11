@@ -17,6 +17,7 @@ using Cursus.RepositoryContract.Interfaces;
 using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
+using Scalar.AspNetCore;
 
 namespace Cursus.API
 {
@@ -87,7 +88,7 @@ namespace Cursus.API
 
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1",
+                opt.SwaggerDoc("CursusAPI",
                     new OpenApiInfo
                     {
                         Title = "Cursus API - "+ version,
@@ -130,12 +131,16 @@ namespace Cursus.API
             }
 
             // Configure the HTTP request pipeline.
-            app.UseSwagger();
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "/openapi/{documentName}.json";
+            });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API" + version);
-                c.RoutePrefix = string.Empty;
+                c.SwaggerEndpoint("/openapi/CursusAPI.json", "Cursus API");
+                c.RoutePrefix = string.Empty; // Serve Swagger UI at the root
             });
+            app.MapScalarApiReference();
 
             app.UseRateLimiter();
 
