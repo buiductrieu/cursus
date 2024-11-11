@@ -88,7 +88,7 @@ namespace Cursus.API
 
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("CursusAPI",
+                opt.SwaggerDoc("swagger",
                     new OpenApiInfo
                     {
                         Title = "Cursus API - "+ version,
@@ -133,11 +133,11 @@ namespace Cursus.API
             // Configure the HTTP request pipeline.
             app.UseSwagger(options =>
             {
-                options.RouteTemplate = "/openapi/{documentName}.json";
+                options.RouteTemplate = "/swagger/v1/{documentname}.json";
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/openapi/CursusAPI.json", "Cursus API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
             app.MapScalarApiReference();
