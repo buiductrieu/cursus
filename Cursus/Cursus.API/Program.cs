@@ -138,7 +138,7 @@ namespace Cursus.API
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/openapi/CursusAPI.json", "Cursus API");
-                c.RoutePrefix = string.Empty; // Serve Swagger UI at the root
+                c.RoutePrefix = string.Empty;
             });
             app.MapScalarApiReference();
 
