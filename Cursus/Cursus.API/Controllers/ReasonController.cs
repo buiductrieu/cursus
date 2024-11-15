@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Cursus.Service.Services;
 using Humanizer;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class ReasonController : ControllerBase
     {
         private readonly IReasonService _reasonService;
@@ -31,6 +33,7 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> CreateReason([FromBody] CreateReasonDTO createReasonDTO)
         {
             var reason = await _reasonService.CreateReason(createReasonDTO);
@@ -46,6 +49,7 @@ namespace Cursus.API.Controllers
         /// <param name="reasonId"></param>
         /// <returns></returns>
         [HttpGet("{reasonId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,User,Instructor")]
         public async Task<ActionResult<IEnumerable<ReasonDTO>>> GetReason(int reasonId)
         {
             var reason = await _reasonService.GetReasonByIdAsync(reasonId);
@@ -63,6 +67,7 @@ namespace Cursus.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> DeleteReason(int id)
         {
             await _reasonService.DeleteReasonAsync(id);

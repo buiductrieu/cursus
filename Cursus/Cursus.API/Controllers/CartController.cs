@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -33,7 +34,8 @@ namespace Cursus.API.Controllers
         [HttpDelete("DeleteCart{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<APIResponse>> DeleteCart(int id)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<ActionResult<APIResponse>> DeleteCart(int id)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -62,7 +64,8 @@ namespace Cursus.API.Controllers
         [HttpGet("GetAllCart")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<APIResponse>> GetAllCarts()
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<APIResponse>> GetAllCarts()
 		{
 			var result = await _cartService.GetAllCart();
 			if (result != null)
@@ -84,7 +87,8 @@ namespace Cursus.API.Controllers
         [HttpPut("GetCart{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<APIResponse>> GetCartById(int id)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<APIResponse>> GetCartById(int id)
 		{
 			var result = await _cartService.GetCartByID(id);
 			if (result == null)
@@ -105,7 +109,8 @@ namespace Cursus.API.Controllers
 		/// <param name="courseId"></param>
 		/// <returns></returns>
 		[HttpPost("add-to-cart")]
-		public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
 		{
 			await _cartService.AddCourseToCartAsync(courseId, userId);
 
@@ -122,7 +127,8 @@ namespace Cursus.API.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet("my-cart")]
-		public async Task<ActionResult<APIResponse>> GetCart(string userId)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<ActionResult<APIResponse>> GetCart(string userId)
 		{
 			var cart = await _cartService.GetCartByUserIdAsync(userId);
 			if (cart == null || cart.CartItems.Count == 0)

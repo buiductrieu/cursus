@@ -7,10 +7,12 @@
     using Cursus.ServiceContract.Interfaces;
     using Cursus.Data.DTO.Payment;
     using Cursus.Data.DTO;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
-    
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
@@ -31,6 +33,7 @@
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("transaction")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetAllTransactions(int page = 1, int pageSize = 20)
         {
             var transactions = await _transactionService.GetListTransaction(page, pageSize);
@@ -48,6 +51,7 @@
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("user/{userId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetTransactionsByUserId(string userId, int page = 1, int pageSize = 20)
         {
             var transactions = await _transactionService.GetListTransactionByUserId(userId, page, pageSize);
@@ -63,6 +67,7 @@
         /// </summary>
         /// <returns></returns>
         [HttpGet("get-pending-payout")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetPendingPayoutRequest()
         {
             var transaction = await _transactionService.GetAllPendingPayOutRequest();
@@ -78,6 +83,7 @@
         /// <param name="transactionId"></param>
         /// <returns></returns>
         [HttpGet("archive-transaction/{transactionId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> ArchiveTransaction (int transactionId)
         {
             var transaction = await _archivedTransactionService.ArchiveTransaction(transactionId);
@@ -92,6 +98,7 @@
         /// </summary>
         /// <returns></returns>
         [HttpGet("archive-transaction")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetAllArchivedTransactions()
         {
             var transactions = await _archivedTransactionService.GetAllArchivedTransactions();
@@ -107,6 +114,7 @@
         /// <param name="transactionId"></param>
         /// <returns></returns>
         [HttpGet("unarchive-transaction/{transactionId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> UnarchiveTransaction(int transactionId)
         {
             var transaction = await _archivedTransactionService.UnarchiveTransaction(transactionId);

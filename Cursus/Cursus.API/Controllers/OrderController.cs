@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -9,7 +10,8 @@ namespace Cursus.API.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[EnableRateLimiting("default")]
-	public class OrderController : ControllerBase
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+    public class OrderController : ControllerBase
 	{
 		private readonly IOrderService _orderService;
 		private readonly APIResponse _response;
@@ -25,7 +27,8 @@ namespace Cursus.API.Controllers
 		/// </summary>
 		/// <param name="userId"></param>
 		[HttpPost("create")]
-		public async Task<ActionResult<APIResponse>> CreateOrder(string userId)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<ActionResult<APIResponse>> CreateOrder(string userId)
 		{
 			var order = await _orderService.CreateOrderAsync(userId);
 
@@ -44,7 +47,8 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		[Route("confirm-purchase")]
-		public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
 		{
 			await _orderService.UpdateUserCourseAccessAsync(orderId, userId);
 
@@ -61,6 +65,7 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
         [HttpGet]
         [Route("view-orderHistory")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
         public async Task<ActionResult<APIResponse>> ViewOrderHistory(string userId)
         {
             var order = await _orderService.GetOrderHistoryAsync(userId);

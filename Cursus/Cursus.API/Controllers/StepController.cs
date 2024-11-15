@@ -2,6 +2,7 @@
 using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -10,6 +11,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class StepController : ControllerBase
     {   
         private readonly IStepService _stepService;
@@ -29,6 +31,7 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> CreateStep([FromBody] StepCreateDTO createStepDTO)
         {
             if (!ModelState.IsValid)
@@ -59,6 +62,7 @@ namespace Cursus.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,User")]
         public async Task<ActionResult<APIResponse>> GetStepById(int id)
         {
             var stepDTO = await _stepService.GetStepByIdAsync(id);
@@ -84,6 +88,7 @@ namespace Cursus.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> DeleteStep(int id)
         {
             if (id <= 0)
@@ -111,6 +116,7 @@ namespace Cursus.API.Controllers
         [HttpGet("{courseId}/steps")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,User")]
         public async Task<ActionResult<APIResponse>> GetStepsByCoursId(int courseId)
         {
             try
@@ -142,6 +148,7 @@ namespace Cursus.API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> UpdateStep(int id, [FromBody] StepUpdateDTO updateStepDTO)
         {
             if (id != updateStepDTO.Id)
@@ -180,6 +187,7 @@ namespace Cursus.API.Controllers
         [HttpPost("start-step")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> StartStepAsync(string userId, int stepId)
         {
             if (string.IsNullOrEmpty(userId) || stepId <= 0)
@@ -216,6 +224,7 @@ namespace Cursus.API.Controllers
         [HttpGet("progress-percentage")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> GetPercentageTrackingProgress(string userId, int coureseProgressId)
         {
             if (string.IsNullOrEmpty(userId) || coureseProgressId <= 0)
