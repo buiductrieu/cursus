@@ -31,6 +31,13 @@ namespace Cursus.API.Controllers
 		public async Task<ActionResult<APIResponse>> CreateOrder(string userId, string? VoucherCode)
 		{
 			var order = await _orderService.CreateOrderAsync(userId, VoucherCode);
+			if(order == null)
+			{
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Failed to create order.");
+                return BadRequest(_response);
+			}
 
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;

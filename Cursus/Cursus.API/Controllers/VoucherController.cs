@@ -29,7 +29,6 @@ namespace Cursus.API.Controllers
         /// Voucher
         /// </summary>
         /// <param name="voucherService"></param>
-        /// <param name="unitOfWork"></param>
         /// <param name="apiResponse"></param>
         public VoucherController(IVoucherService voucherService, APIResponse apiResponse)
         {
@@ -40,7 +39,7 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Get Voucher
         /// </summary>
-        /// <param name="GetVouchersByCode"></param>
+        /// <param name="VoucherCode"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetVouchersByCode(string VoucherCode)
@@ -64,6 +63,8 @@ namespace Cursus.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVoucher([FromBody] VoucherDTO createVoucherDTO)
         {
+            
+
             if (!ModelState.IsValid)
             {
                 _apiResponse.IsSuccess = false;
@@ -105,11 +106,11 @@ namespace Cursus.API.Controllers
             if (voucher == null)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-                return StatusCode((int)_apiResponse.StatusCode, _apiResponse);
+                return BadRequest(_apiResponse);
             }
             _apiResponse.Result = voucher;
             _apiResponse.StatusCode = HttpStatusCode.OK;
-            return StatusCode((int)_apiResponse.StatusCode, _apiResponse);
+            return Ok(voucher);
         }
 
         /// <summary>
@@ -124,11 +125,33 @@ namespace Cursus.API.Controllers
             if (voucher == null)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;
-                return StatusCode((int)_apiResponse.StatusCode, _apiResponse);
+                return BadRequest(_apiResponse);
             }
             _apiResponse.Result = voucher;
             _apiResponse.StatusCode = HttpStatusCode.OK;
-            return StatusCode((int)_apiResponse.StatusCode, _apiResponse);
+            return Ok(voucher);
+        }
+        /// <summary>
+        /// Receive Voucher
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="VoucherCode"></param>
+        /// <returns></returns>
+
+        [HttpPost("ReceiveVoucher/{userId}/{VoucherCode}")]
+        public async Task<IActionResult> ReceiveVoucher(string userId, string VoucherCode)
+        {
+            var voucher = await _voucherService.ReceiveVoucher(userId, VoucherCode);
+            if (voucher == null)
+            {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.ErrorMessages.Add("Voucher not found");
+                return BadRequest(_apiResponse);
+            }
+
+            _apiResponse.Result = voucher;
+            _apiResponse.StatusCode = HttpStatusCode.OK;
+            return Ok(voucher);
         }
     }
 }
