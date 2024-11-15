@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -8,6 +9,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class PayoutRequestController : ControllerBase
     {
         public readonly IPayoutRequestService _payoutRequestService;
@@ -22,6 +24,7 @@ namespace Cursus.API.Controllers
         [HttpGet("pending")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> GetPendingPayoutRequests()
         {
             var pendingRequests = await _payoutRequestService.GetPendingPayoutRequest();
@@ -35,6 +38,7 @@ namespace Cursus.API.Controllers
         [HttpGet("approved")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> GetApprovedPayoutRequest()
         {
             var approvedRequest = await _payoutRequestService.GetApprovedPayoutRequest();
@@ -47,6 +51,7 @@ namespace Cursus.API.Controllers
         [HttpGet("reject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> GetRejectedPayoutRequest()
         {
             var rejectRequest = await _payoutRequestService.GetRejectPayoutRequest();
@@ -58,6 +63,7 @@ namespace Cursus.API.Controllers
         [HttpPut("approve/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> ApprovePayoutRequest(int id)
         {
             var response = await _payoutRequestService.AcceptPayout(id);
@@ -78,6 +84,7 @@ namespace Cursus.API.Controllers
         [HttpPut("deny/{id}&{reason}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> DenyPayoutRequest(int id, string reason)
         {
             var response = await _payoutRequestService.DenyPayout(id,reason);

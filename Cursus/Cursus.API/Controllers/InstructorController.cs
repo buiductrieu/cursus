@@ -4,6 +4,7 @@ using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
 
     public class InstructorController : ControllerBase
     {
@@ -43,6 +45,7 @@ namespace Cursus.API.Controllers
         [HttpPost("register-instructor")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> RegisterInstructor(RegisterInstructorDTO registerInstructorDTO)
         {
             if (!ModelState.IsValid)
@@ -103,6 +106,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("approve")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> ApproveInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.ApproveInstructorAsync(instructorId);
@@ -126,6 +130,7 @@ namespace Cursus.API.Controllers
         /// <param name="instructorId"></param>
         /// <returns></returns>
         [HttpPost("reject")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> RejectInstructor([FromQuery] int instructorId)
         {
             var result = await _instructorService.RejectInstructorAsync(instructorId);
@@ -151,6 +156,7 @@ namespace Cursus.API.Controllers
         /// <param name="username"></param>
         /// <returns></returns>
         [HttpGet("confirm-email")]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token, [FromQuery] string username)
         {
             try
@@ -185,6 +191,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,User,Instructor")]
         public async Task<ActionResult<APIResponse>> GetInstructorCourses(int instructorId)
         {
             APIResponse _response = new APIResponse();
@@ -229,6 +236,7 @@ namespace Cursus.API.Controllers
         [HttpGet("list-instructors")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,User")]
         public async Task<ActionResult<APIResponse>> GetAllInstructors()
         {
             var instructors = await _instructorService.GetAllInstructors();
@@ -269,6 +277,7 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost("instructor/payout")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> CreatePayoutRequest([FromBody] PayoutRequestDTO payoutRequest)
         {
             if (string.IsNullOrEmpty(payoutRequest.InstructorId) || payoutRequest.Amount <= 0)

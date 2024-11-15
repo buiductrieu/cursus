@@ -1,6 +1,7 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -9,6 +10,7 @@ namespace Cursus.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class BookmarkController : ControllerBase
     {
         private readonly IBookmarkService _bookmarkService;
@@ -26,6 +28,7 @@ namespace Cursus.API.Controllers
         /// <param name="sortBy"></param>
         /// <param name="sortOrder"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         // Get bookmarks with sorting functionality
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookmarkDTO>>> GetBookmarks(
@@ -41,6 +44,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="courseId"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         [HttpGet("{courseId}/details")]
         public async Task<ActionResult<CourseDetailDTO>> GetCourseDetails(int courseId)
         {
@@ -54,6 +58,7 @@ namespace Cursus.API.Controllers
         /// <param name="userId"></param>
         /// <param name="courseId"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         [HttpPost]
         public async Task<ActionResult<APIResponse>> CreateBookmark(string userId, int courseId)
         {

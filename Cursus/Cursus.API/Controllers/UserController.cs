@@ -2,6 +2,7 @@
 using Cursus.Data.DTO;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -12,6 +13,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class UserController : ControllerBase
 
     {
@@ -34,6 +36,7 @@ namespace Cursus.API.Controllers
         [HttpPut("Update{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> UpdateUserProfile(string id, [FromBody] UserProfileUpdateDTO request)
         {
             var result = await _userService.UpdateUserProfile(id, request);

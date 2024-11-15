@@ -1,14 +1,17 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Net;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     [EnableRateLimiting("default")]
     public class AdminController : ControllerBase
     {
@@ -19,13 +22,16 @@ namespace Cursus.API.Controllers
             _adminService = adminService;
             _response = new APIResponse();
         }
+
         /// <summary>
         /// Modify user's status
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         // POST api/admin/toggleuserstatus?userId=someUserId
         [HttpPost("toggle-user-status")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> ToggleUserStatus(string userId)
         {
             var apiResponse = new APIResponse();
@@ -43,6 +49,9 @@ namespace Cursus.API.Controllers
                 apiResponse.IsSuccess = false;
                 apiResponse.ErrorMessages.Add("Failed to update user status");
             }
+
+
+            
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
         }
 
@@ -50,8 +59,10 @@ namespace Cursus.API.Controllers
         /// Get all users
         /// </summary>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         // GET api/admin/manageusers
         [HttpGet("manage-users")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> ManageUsers()
         {
             var apiResponse = new APIResponse();
@@ -82,10 +93,16 @@ namespace Cursus.API.Controllers
             return StatusCode((int)apiResponse.StatusCode, apiResponse);
 
         }
-
+        /// <summary>
+        /// Add comments
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
+        // POST api/admin/add-comments
         [HttpPost("add-comments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> AdminComments([FromQuery]string userId,[FromQuery] string comment)
         {
           
@@ -105,7 +122,14 @@ namespace Cursus.API.Controllers
                 return BadRequest(_response);
             }
         }
+        /// <summary>
+        /// Get instructor info
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
+        // GET api/admin/get-instructor-info
         [HttpGet("get-instructor-info")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetInformationInstructor([FromQuery] int instructorId)
         {
             var apiResponse = new APIResponse();
@@ -134,7 +158,10 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="transactionId"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
+        // POST api/admin/accept-payout
         [HttpPost("accept-payout")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> AcceptPayout([FromQuery] int transactionId)
         {
             await _adminService.AcceptPayout(transactionId);

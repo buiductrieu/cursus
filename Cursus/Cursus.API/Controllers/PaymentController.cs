@@ -6,9 +6,11 @@
     using System.Threading.Tasks;
     using Cursus.ServiceContract.Interfaces;
     using Cursus.Data.DTO.Payment;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
@@ -29,6 +31,7 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> CreatePayment([FromQuery] CreatePaymentRequest request)
         {
             // Create payment and retrieve approval URL
@@ -52,6 +55,7 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> CapturePayment([FromQuery] CapturePaymentRequest request)
         {
             // Capture the payment and retrieve transaction details

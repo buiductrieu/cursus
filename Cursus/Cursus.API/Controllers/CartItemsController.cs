@@ -1,6 +1,7 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -10,6 +11,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class CartItemsController : ControllerBase
 
     {
@@ -27,6 +29,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,6 +59,7 @@ namespace Cursus.API.Controllers
         /// Get All Cart Items
         /// </summary>
         /// <returns></returns>
+        /// <response code="401">Authenticate error</response>
         [HttpPut("GetAll{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
