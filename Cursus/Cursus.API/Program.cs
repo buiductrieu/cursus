@@ -1,8 +1,5 @@
-
-
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Common.Middleware;
-
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.Repository;
@@ -18,11 +15,21 @@ using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Cursus.API
 {
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main method for the application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -51,12 +58,39 @@ namespace Cursus.API
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
             var paypalSettings = builder.Configuration.GetSection("PayPal");
             builder.Services.Configure<PayPalSetting>(paypalSettings);
 
-            // Đăng ký các dịch vụ
+            // Register PayPalClient and TransactionMonitoringService
             builder.Services.AddScoped<PayPalClient>().AddHostedService<TransactionMonitoringService>();
+
+            // Add JWT Configuration
+            var jwtSecret = builder.Configuration["JWT:Key"]; ;
+            if (string.IsNullOrEmpty(jwtSecret))
+            {
+                throw new ArgumentNullException(nameof(jwtSecret), "JWT Secret cannot be null or empty.");
+            }
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+                };
+            });
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<CursusDbContext>()

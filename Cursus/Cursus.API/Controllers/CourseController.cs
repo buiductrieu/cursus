@@ -4,6 +4,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Repository.Repository;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -13,6 +14,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Instructor")]
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;
@@ -35,6 +37,7 @@ namespace Cursus.API.Controllers
 		[HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> CreateCourse(CourseCreateDTO courseCreateDTO)
         {
             var createdCourse = await _courseService.CreateCourseWithSteps(courseCreateDTO);
@@ -55,6 +58,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> UpdateCourse(int id, [FromBody] CourseUpdateDTO courseUpdateDTO)
         {
             if (id != courseUpdateDTO.Id)
@@ -94,6 +98,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> DeleteCourse(int id)
         {
             try
@@ -133,6 +138,7 @@ namespace Cursus.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Instructor,User")]
         public async Task<ActionResult<APIResponse>> GetAllCourses([FromQuery] string? searchTerm,
         [FromQuery] string? sortColumn,
         [FromQuery] string? sortOrder,
@@ -186,6 +192,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,Admin,User")]
         public async Task<ActionResult<APIResponse>> GetCoursesByUserId(string userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             try
@@ -221,6 +228,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,Admin,User")]
         public async Task<ActionResult<APIResponse>> GetCourseById(int id)
         {
             var course = await _courseService.GetCourseByIdAsync(id);
@@ -235,6 +243,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("ApproveCourse{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> ApproveCourse(int id , bool choice)
         {
             
@@ -255,6 +264,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> TrackProgress(string userId, int courseId)
         {
             try
@@ -296,6 +306,7 @@ namespace Cursus.API.Controllers
         /// <param name="courseUpdateStatusDTO"></param>
         /// <returns></returns>
         [HttpPut("UpdateStatus")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> UpdateCourseStatus([FromBody] CourseUpdateStatusDTO courseUpdateStatusDTO)
         {
             var result = await _courseService.UpdateCourseStatus(courseUpdateStatusDTO);
@@ -309,6 +320,7 @@ namespace Cursus.API.Controllers
 
 
         [HttpPost("calculate-earnings")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,Admin")]
         public async Task<ActionResult<APIResponse>> CalculatePotential([FromBody] CalculateEarningRequestDTO request)
         {
             var earnings = await _courseService.CaculatePotentialEarnings(request.CourseId, request.Months);
