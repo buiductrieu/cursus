@@ -38,11 +38,12 @@ namespace Cursus.UnitTests.Services
         {
             // Arrange
             string userId = "user1";
+            string orderId = "order1";
             _unitOfWorkMock.Setup(x => x.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems,CartItems.Course"))
                            .ReturnsAsync((Cart)null);
 
             // Act & Assert
-            var ex = Assert.ThrowsAsync<BadHttpRequestException>(() => _orderService.CreateOrderAsync(userId));
+            var ex = Assert.ThrowsAsync<BadHttpRequestException>(() => _orderService.CreateOrderAsync(userId, orderId));
             Assert.That(ex.Message, Is.EqualTo("Cart is empty."));
         }
 
