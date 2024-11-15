@@ -39,7 +39,7 @@ namespace Cursus.Service.Services
             {
                 voucher.ExpireDate = voucher.ExpireDate.AddMonths(1); 
             }
-
+                
             await _voucherRepository.AddAsync(voucher); 
 
           
@@ -70,6 +70,19 @@ namespace Cursus.Service.Services
         public Task<VoucherDTO> GetVoucherByID(int id)
         {
             return Task.FromResult(_mapper.Map<VoucherDTO>(_voucherRepository.GetByVourcherIdAsync(id).Result));
+        }
+
+        public Task<bool> ReceiveVoucher(string userId, string codeVoucher)
+        {
+            var voucher = _voucherRepository.GetByCodeAsync(codeVoucher).Result;
+            if (voucher == null)
+            {
+                throw new Exception("Voucher not found");
+            }
+            voucher.UserId = userId;
+            _voucherRepository.UpdateAsync(voucher);
+            _unitOfWork.SaveChanges();
+            return Task.FromResult(true);
         }
 
         public async Task<VoucherDTO> UpdateVoucher(int id, VoucherDTO voucherDTO)

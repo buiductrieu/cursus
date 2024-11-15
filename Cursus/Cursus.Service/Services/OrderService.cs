@@ -45,15 +45,33 @@ namespace Cursus.Service.Services
 			double totalAmount = cart.Total;
 
 			double taxAmount = Math.Round(totalAmount * 0.1, 2);
+            double percentageDiscount = 0;
 
-			var discount = _unitOfWork.VoucherRepository.GetAsync(d => d.UserId == userId && d.VoucherCode == voucherCode).Result;
-		
+            double DiscountAmout = 0;
 
-			double percentageDiscount = discount?.Percentage ?? 0;
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var discount = await _unitOfWork.VoucherRepository.GetAsync(d => d.UserId == userId && d.VoucherCode == voucherCode);
 
-			var DiscountAmout = totalAmount * percentageDiscount / 100;
+                // Kiểm tra mã giảm giá
+                if (discount == null || discount.VoucherCode != voucherCode || discount.UserId != userId)
+                {
+                    throw new BadHttpRequestException("Invalid voucher code.");
+                }
+                else if (discount.CreateDate <= DateTime.Now && DateTime.Now <= discount.ExpireDate)
+                {
+                    // Tính toán phần trăm và số tiền giảm giá nếu mã giảm giá hợp lệ
+                    percentageDiscount = discount.Percentage;
+                    DiscountAmout = totalAmount * percentageDiscount / 100;
+                }
+                if (discount != null)
+                {
+                    discount.IsValid = false;
+                }
+            }
 
-			var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
+
+            var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
 
 			var order = new Order
 			{
@@ -67,11 +85,6 @@ namespace Cursus.Service.Services
 				TransactionId = transaction.TransactionId,
 				Transaction = transaction
 			};
-
-            if (discount != null)
-            { 
-                discount.IsValid = false;
-            }
 
 
             await _unitOfWork.OrderRepository.AddAsync(order);

@@ -295,7 +295,7 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.IsValid, opt => opt.MapFrom(src => src.IsValid))
                 .ForMember(dest => dest.Percentage, opt => opt.MapFrom(src => src.Percentage))
                 .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
-                .ForMember(dest => dest.ExpireDate, opt => opt.MapFrom(src => src.ExpireDate == default ? DateTime.Now.AddMonths(1) : src.ExpireDate))
+                .ForMember(dest => dest.ExpireDate, opt => opt.MapFrom(src => src.ExpireDate))
                 .ReverseMap();
 
 
