@@ -14,9 +14,7 @@ using Cursus.RepositoryContract.Interfaces;
 using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Scalar.AspNetCore;
 
 namespace Cursus.API
 {
@@ -32,6 +30,14 @@ namespace Cursus.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var fullVersion = Assembly.GetExecutingAssembly()
+                                      .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                                      .InformationalVersion ?? "1.0.0";
+
+            // Trim the commit hash suffix if it exists
+            var version = fullVersion.Split('+')[0];
+
+
 
             // Add logging
             builder.Logging.ClearProviders();
@@ -110,13 +116,14 @@ namespace Cursus.API
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1",
+                opt.SwaggerDoc("swagger",
                     new OpenApiInfo
                     {
-                        Title = "Cursus API - V1",
-                        Version = "v1"
+                        Title = "Cursus API - "+ version,
+                        Version = version
                     }
                  );
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -155,12 +162,16 @@ namespace Cursus.API
             }
 
             // Configure the HTTP request pipeline.
-            app.UseSwagger();
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "/openapi/{documentname}.json";
+            });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
+                c.SwaggerEndpoint("/openapi/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
+            app.MapScalarApiReference();
 
             app.UseRateLimiter();
 
