@@ -35,6 +35,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IWalletHistoryRepository WalletHistoryRepository { get; }
         IInstructorDashboardRepository InstructorDashboardRepository { get; }
         IArchivedTransactionRepository ArchivedTransactionRepository { get; }
+        IVoucherRepository VoucherRepository { get; }
         INotificationRepository NotificationRepository { get; }
         IAdminDashboardRepository AdminDashboardRepository { get; }
         Task SaveChanges();
