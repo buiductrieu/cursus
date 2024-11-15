@@ -31,7 +31,7 @@ namespace Cursus.Service.Services
 		}
 
 
-		public async Task<OrderDTO> CreateOrderAsync(string userId)
+		public async Task<OrderDTO> CreateOrderAsync(string userId, string? voucherCode)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
 			if (cart == null || !cart.CartItems.Any())
@@ -46,22 +46,35 @@ namespace Cursus.Service.Services
 
 			double taxAmount = Math.Round(totalAmount * 0.1, 2);
 
+			var discount = _unitOfWork.VoucherRepository.GetAsync(d => d.UserId == userId && d.VoucherCode == voucherCode).Result;
+		
+
+			double percentageDiscount = discount?.Percentage ?? 0;
+
+			var DiscountAmout = totalAmount * percentageDiscount / 100;
 
 			var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
 
 			var order = new Order
 			{
 				CartId = cart.CartId,
-				Amount = totalAmount,
-				PaidAmount = totalAmount + taxAmount,
+				Amount = totalAmount + taxAmount, 
+				discountCode = voucherCode,
+                discountAmount = DiscountAmout,
+				PaidAmount = totalAmount + taxAmount - DiscountAmout,
 				DateCreated = DateTime.Now,
 				Status = OrderStatus.PendingPayment,
 				TransactionId = transaction.TransactionId,
 				Transaction = transaction
 			};
 
+            if (discount != null)
+            { 
+                discount.IsValid = false;
+            }
 
-			await _unitOfWork.OrderRepository.AddAsync(order);
+
+            await _unitOfWork.OrderRepository.AddAsync(order);
 			await _unitOfWork.SaveChanges();
 
 			var OrderDTO = _mapper.Map<OrderDTO>(order);

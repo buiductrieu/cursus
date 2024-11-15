@@ -276,6 +276,16 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
+            CreateMap<Voucher, VoucherDTO>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.VoucherCode, opt => opt.MapFrom(src => src.VoucherCode))
+                .ForMember(dest => dest.IsValid, opt => opt.MapFrom(src => src.IsValid))
+                .ForMember(dest => dest.Percentage, opt => opt.MapFrom(src => src.Percentage))
+                .ForMember(dest => dest.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
+                .ForMember(dest => dest.ExpireDate, opt => opt.MapFrom(src => src.ExpireDate == default ? DateTime.Now.AddMonths(1) : src.ExpireDate))
+                .ReverseMap();
+
+
         }
     }
 }

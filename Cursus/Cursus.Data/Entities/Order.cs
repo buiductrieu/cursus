@@ -12,6 +12,8 @@ namespace Cursus.Data.Entities
         public int CartId { get; set; }
         public Cart? Cart { get; set; }
         public double Amount { get; set; }
+        public string? discountCode { get; set; }
+        public double discountAmount { get; set; }
         public double PaidAmount { get; set; }
         public DateTime DateCreated { get; set; }
         public OrderStatus Status { get; set; }

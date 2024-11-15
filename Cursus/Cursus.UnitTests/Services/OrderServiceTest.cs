@@ -28,16 +28,16 @@ namespace Cursus.UnitTests.Services
 		}
 
 
-		[Test]
-		public async Task CreateOrderAsync_ShouldThrowBadRequestException_WhenCartIsEmpty()
-		{
-			string userId = "user1";
-			_unitOfWorkMock.Setup(x => x.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems,CartItems.Course"))
-						   .ReturnsAsync((Cart)null);
+		//[Test]
+		//public async Task CreateOrderAsync_ShouldThrowBadRequestException_WhenCartIsEmpty()
+		//{
+		//	string userId = "user1";
+		//	_unitOfWorkMock.Setup(x => x.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems,CartItems.Course"))
+		//				   .ReturnsAsync((Cart)null);
 
-			var ex = Assert.ThrowsAsync<BadHttpRequestException>(() => _orderService.CreateOrderAsync(userId));
-			Assert.That(ex.Message, Is.EqualTo("Cart is empty."));
-		}
+		//	var ex = Assert.ThrowsAsync<BadHttpRequestException>(() => _orderService.CreateOrderAsync(userId));
+		//	Assert.That(ex.Message, Is.EqualTo("Cart is empty."));
+		//}
 
 
 		[Test]

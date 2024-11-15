@@ -24,10 +24,11 @@ namespace Cursus.API.Controllers
 		/// Create Order
 		/// </summary>
 		/// <param name="userId"></param>
+		/// <param name="VoucherCode"></param>
 		[HttpPost("create")]
-		public async Task<ActionResult<APIResponse>> CreateOrder(string userId)
+		public async Task<ActionResult<APIResponse>> CreateOrder(string userId, string? VoucherCode)
 		{
-			var order = await _orderService.CreateOrderAsync(userId);
+			var order = await _orderService.CreateOrderAsync(userId, VoucherCode);
 
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;
