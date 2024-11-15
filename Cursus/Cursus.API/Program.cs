@@ -15,6 +15,9 @@ using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Cursus.API
 {
