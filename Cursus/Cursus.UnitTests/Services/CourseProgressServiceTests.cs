@@ -53,8 +53,8 @@ namespace Cursus.UnitTests.Services
             // Assert
             //Assert.AreEqual(2, result.Count());
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.Contains(1, result.ToList());
-            Assert.Contains(2, result.ToList());
+            Assert.That(result.ToList(), Does.Contain(1));
+            Assert.That(result.ToList(), Does.Contain(2));
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace Cursus.UnitTests.Services
             var result = await _courseProgressService.GetRegisteredCourseIdsAsync(userId);
 
             // Assert
-            Assert.IsEmpty(result);
+            Assert.That(result,Is.Empty);
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Cursus.UnitTests.Services
             var result = await _courseProgressService.GetRegisteredCourseIdsAsync(userId);
 
             // Assert
-            Assert.IsEmpty(result);
+            Assert.That(result,Is.Empty);
         }
 
         #endregion

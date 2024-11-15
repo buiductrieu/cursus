@@ -45,7 +45,7 @@ namespace Cursus.UnitTests.Services
             var result = await _service.DeleteComment(commentId);
 
             // Assert
-            Assert.IsTrue(courseComment.IsFlagged);
+            Assert.That(courseComment.IsFlagged, Is.True);
             _unitOfWorkMock.Verify(u => u.CourseCommentRepository.UpdateAsync(courseComment), Times.Once);
             _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
         }
@@ -117,7 +117,7 @@ namespace Cursus.UnitTests.Services
             var result = await _service.GetCourseCommentsAsync(courseId);
 
             // Assert
-            Assert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         [Test]

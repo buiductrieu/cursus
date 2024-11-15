@@ -69,7 +69,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminService.ToggleUserStatusAsync(null);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Cursus.UnitTests.Services
 
             // Act & Assert
             var ex = await _adminService.ToggleUserStatusAsync("user1");
-            Assert.IsFalse(ex);
+            Assert.That(ex, Is.False);
         }
 
         #endregion
@@ -96,7 +96,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminService.AdminComments("user1", "");
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -198,8 +198,8 @@ namespace Cursus.UnitTests.Services
             var result = await _adminService.GetAllUser();
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsEmpty(result);
+            Assert.That(result,Is.Not.Null);
+            Assert.That(result,Is.Empty);
         }
 
         [Test]

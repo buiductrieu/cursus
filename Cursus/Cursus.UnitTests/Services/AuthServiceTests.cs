@@ -89,7 +89,7 @@ namespace Cursus.UnitTests.Services
             var result = await _authService.RegisterAsync(userRegisterDTO);
 
             // Assert
-            Assert.NotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Email, Is.EqualTo(userRegisterDTO.UserName));
         }
 
@@ -153,7 +153,7 @@ namespace Cursus.UnitTests.Services
             var result = await _authService.ConfirmEmail(username, token);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]

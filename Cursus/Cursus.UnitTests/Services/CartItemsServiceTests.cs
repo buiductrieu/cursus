@@ -41,7 +41,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartItemsService.DeleteCartItem(cartItemId);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result,Is.True);
             _unitOfWorkMock.Verify(u => u.CartItemsRepository.DeleteCartItems(cartItem), Times.Once);
             _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
         }

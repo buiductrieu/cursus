@@ -93,7 +93,7 @@ namespace Cursus.UnitTests.Services
             var result = await _orderService.GetOrderHistoryAsync(userId);
 
             // Assert
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(orderDTOs.Count));
             _unitOfWorkMock.Verify(u => u.OrderRepository.GetOrderHistory(userId), Times.Once);
             _mapperMock.Verify(m => m.Map<List<OrderDTO>>(orders), Times.Once);
