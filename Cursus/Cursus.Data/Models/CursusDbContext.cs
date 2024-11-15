@@ -53,9 +53,10 @@ namespace Cursus.Data.Models
         public virtual DbSet<TrackingProgress> TrackingProgresses { get; set; } = null!;
 
         public virtual DbSet<ArchivedTransaction> ArchivedTransactions { get; set; }
+		public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 

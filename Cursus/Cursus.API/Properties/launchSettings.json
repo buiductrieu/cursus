@@ -10,16 +10,17 @@
             },
             "dotnetRunMessages": true
         },
-        "https": {
-            "commandName": "Project",
-            "launchBrowser": true,
-            "launchUrl": "index.html",
-            "applicationUrl": "https://0.0.0.0:7256;http://0.0.0.0:5159", 
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "dotnetRunMessages": true
+      "https": {
+        "commandName": "Project",
+        "launchBrowser": true,
+        "launchUrl": "index.html",
+        //"launchUrl": "scalar/CursusAPI",
+        "applicationUrl": "https://0.0.0.0:7256;http://0.0.0.0:5159",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
         },
+        "dotnetRunMessages": true
+      },
         "IIS Express": {
             "commandName": "IISExpress",
             "launchBrowser": true,

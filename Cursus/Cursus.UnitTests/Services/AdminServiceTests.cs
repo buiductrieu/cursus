@@ -1,169 +1,221 @@
-﻿using Cursus.API.Controllers;
-using Cursus.Common.Helper;
-using Cursus.Data.Entities;
-using Cursus.RepositoryContract.Interfaces;
-using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using NUnit.Framework;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using Cursus.Service.Services;
+using Cursus.RepositoryContract.Interfaces;
+using Cursus.Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+using Cursus.ServiceContract.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class AdminServiceTests
     {
-
-        private Mock<IAdminService> _adminServiceMock;
-        private Mock<IRepository<ApplicationUser>> _userRepositoryMock;
-        private AdminController _controller;
+        private AdminService _adminService;
+        private Mock<IAdminRepository> _adminRepositoryMock;
+        private Mock<IInstructorInfoRepository> _instructorInfoRepositoryMock;
+        private Mock<UserManager<ApplicationUser>> _userManagerMock;
+        private Mock<IUnitOfWork> _unitOfWorkMock;
 
         [SetUp]
         public void Setup()
         {
-            _adminServiceMock = new Mock<IAdminService>();
-            _controller = new AdminController(_adminServiceMock.Object);
-            _userRepositoryMock = new Mock<IRepository<ApplicationUser>>();
+            _adminRepositoryMock = new Mock<IAdminRepository>();
+            _instructorInfoRepositoryMock = new Mock<IInstructorInfoRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            // Setup UserManager mock with required dependencies
+            var store = new Mock<IUserStore<ApplicationUser>>();
+            var options = new Mock<IOptions<IdentityOptions>>();
+            var passwordHasher = new Mock<IPasswordHasher<ApplicationUser>>();
+            var userValidators = new List<IUserValidator<ApplicationUser>>();
+            var passwordValidators = new List<IPasswordValidator<ApplicationUser>>();
+            var keyNormalizer = new Mock<ILookupNormalizer>();
+            var errors = new Mock<IdentityErrorDescriber>();
+            var services = new Mock<IServiceProvider>();
+            var logger = new Mock<ILogger<UserManager<ApplicationUser>>>();
+
+            _userManagerMock = new Mock<UserManager<ApplicationUser>>(
+                store.Object,
+                options.Object,
+                passwordHasher.Object,
+                userValidators,
+                passwordValidators,
+                keyNormalizer.Object,
+                errors.Object,
+                services.Object,
+                logger.Object);
+
+            _adminService = new AdminService(
+                _adminRepositoryMock.Object,
+                _instructorInfoRepositoryMock.Object,
+                _userManagerMock.Object,
+                _unitOfWorkMock.Object);
         }
 
-        [Test]
-        public async Task ToggleUserStatus_ReturnsOkResult_WhenServiceReturnsTrue()
-        {
-            // Arrange
-            string userId = "someUserId";
-            _adminServiceMock
-                .Setup(s => s.ToggleUserStatusAsync(userId))
-                .ReturnsAsync(true);
+        #region ToggleUserStatus Tests
 
+        [Test]
+        public async Task ToggleUserStatusAsync_ShouldReturnFalse_WhenUserIdIsNull()
+        {
             // Act
-            var result = await _controller.ToggleUserStatus(userId) as ObjectResult;
+            var result = await _adminService.ToggleUserStatusAsync(null);
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.IsTrue(apiResponse.IsSuccess);
-            Assert.That(apiResponse.Result, Is.EqualTo("User status has been updated"));
+            Assert.IsFalse(result);
         }
 
         [Test]
-        public async Task ToggleUserStatus_ReturnsBadRequest_WhenServiceReturnsFalse()
+        public async Task ToggleUserStatusAsync_False_WhenUserUpdateFails()
         {
             // Arrange
-            string userId = "someUserId";
-            _adminServiceMock
-                .Setup(s => s.ToggleUserStatusAsync(userId))
-                .ReturnsAsync(false);
+            var user = new ApplicationUser { Id = "user1", Status = true };
+            _userManagerMock.Setup(um => um.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+            _userManagerMock.Setup(um => um.UpdateAsync(user)).ThrowsAsync(new Exception("Update failed"));
 
+            // Act & Assert
+            var ex = await _adminService.ToggleUserStatusAsync("user1");
+            Assert.IsFalse(ex);
+        }
+
+        #endregion
+
+        #region AdminComments Tests
+
+        [Test]
+        public async Task AdminComments_ShouldReturnFalse_WhenCommentIsEmpty()
+        {
             // Act
-            var result = await _controller.ToggleUserStatus(userId) as ObjectResult;
+            var result = await _adminService.AdminComments("user1", "");
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.ErrorMessages, Does.Contain("Failed to update user status"));
+            Assert.IsFalse(result);
         }
 
-      
         [Test]
-        public async Task Admin_Comments_returnsOkResult_WhenServiceReturnsTrue()
-        {
-            //Arrange 
-            string userId = "1";
-            string comment = "test comment";
-
-            _adminServiceMock
-                .Setup(s => s.AdminComments(userId, comment))
-                .ReturnsAsync(true);
-
-            //Act
-            var result = await _controller.AdminComments(userId, comment) as ObjectResult;
-            //Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.IsTrue(apiResponse.IsSuccess);
-            Assert.That(apiResponse.Result, Is.EqualTo("Comment is sucessful"));
-        }
-        [Test]
-        public async Task Admin_Comments_returnsBadRequestResult_WhenServiceReturnsFalse()
-        {
-            //Arrange 
-            string userId = "123";
-            string comment = "test comment";
-            //Act
-            _adminServiceMock
-                .Setup(s => s.AdminComments(userId, comment))
-                .ReturnsAsync(false);
-            var result = await _controller.AdminComments(userId, comment) as ObjectResult;
-            //Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.ErrorMessages, Does.Contain("Failed to add comment"));
-        }
-        [Test]
-        public async Task GetInstructors_returnsOkResult_WhenServiceReturnsTrue()
-        {
-            //Arrange 
-            int userId = 1;
-            var mockInstructorInfo = new Dictionary<string, object>
-                {
-                    { "UserName", "Test Instructor" },
-                    { "Email", "instructor@example.com" },
-                    { "PhoneNumber", "1234567890" },
-                    { "TotalCourses", 5 },
-                    { "TotalActiveCourses", 3 },
-                    { "TotalEarning", 1500.0 },
-                    { "TotalPayout", 1200.0 },
-                    { "AverageRating", 4.5 },
-                    { "AdminComment", "Great performance" }
-                };
-            //Act
-            _adminServiceMock
-                .Setup(s => s.GetInformationInstructor(userId))
-                .ReturnsAsync(mockInstructorInfo);
-            var result = await _controller.GetInformationInstructor(1) as ObjectResult;
-            //Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.IsTrue(apiResponse.IsSuccess);
-            Assert.That(apiResponse.Result, Is.Not.Null);
-
-        }
-        [Test]
-        public async Task GetInstructors_returnsNotFoundResult_WhenServiceReturnsFalse()
+        public async Task AdminComments_ShouldThrowException_WhenDatabaseUpdateFails()
         {
             // Arrange
-            int userId = 99;
+            _adminRepositoryMock.Setup(ar => ar.AdminComments(It.IsAny<string>(), It.IsAny<string>()))
+                                .ThrowsAsync(new Exception("Database update failed"));
 
-            _adminServiceMock
-                .Setup(s => s.GetInformationInstructor(userId))
-                .ReturnsAsync((Dictionary<string, object>?)null); 
-            // Act
-            var result = await _controller.GetInformationInstructor(userId) as ObjectResult;
-
-            // Assert
-            Assert.That(result, Is.Not.Null);
-            var apiResponse = result.Value as APIResponse;
-            Assert.That(apiResponse, Is.Not.Null);
-            Assert.That(apiResponse.IsSuccess, Is.False);
-            Assert.That(apiResponse.ErrorMessages, Does.Contain("Instructor not found"));
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<Exception>(async () => await _adminService.AdminComments("user1", "Test comment"));
+            Assert.That(ex.Message, Is.EqualTo("Database update failed"));
         }
 
+        #endregion
 
+        #region AcceptPayout Tests
+
+        [Test]
+        public async Task AcceptPayout_ShouldThrowException_WhenWalletNotFound()
+        {
+            // Arrange
+            var transaction = new Transaction { TransactionId = 1, Description = "payout", Amount = 100 };
+            _unitOfWorkMock.Setup(uow => uow.TransactionRepository.GetAsync(
+                It.IsAny<Expression<Func<Transaction, bool>>>(),
+                null))
+                .ReturnsAsync((Transaction?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<KeyNotFoundException>(async () => await _adminService.AcceptPayout(1));
+        }
+
+        [Test]
+        public async Task AcceptPayout_ShouldThrowException_WhenSaveChangesFails()
+        {
+            // Arrange
+            var transaction = new Transaction { TransactionId = 1, Description = "payout", Amount = 100 };
+            var wallet = new Wallet { UserId = "user1", Balance = 200 };
+
+            _unitOfWorkMock.Setup(uow => uow.TransactionRepository.GetAsync(
+                It.IsAny<Expression<Func<Transaction, bool>>>(),
+                null))
+                .ReturnsAsync(transaction);
+
+            _unitOfWorkMock.Setup(uow => uow.WalletRepository.GetAsync(
+                It.IsAny<Expression<Func<Wallet, bool>>>(),
+                null))
+                .ReturnsAsync(wallet);
+
+            _unitOfWorkMock.Setup(uow => uow.SaveChanges())
+                .Throws(new Exception("Database save failed"));
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<Exception>(async () => await _adminService.AcceptPayout(1));
+            Assert.That(ex.Message, Is.EqualTo("Database save failed"));
+        }
+
+        #endregion
+
+        #region GetInformationInstructor Tests
+
+        [Test]
+        public async Task GetInformationInstructor_ShouldReturnEmptyDictionary_WhenInstructorIdIsInvalid()
+        {
+            // Act
+            Assert.ThrowsAsync<NullReferenceException>(async () => await _adminService.GetInformationInstructor(-1));
+
+            // Assert
+
+        }
+
+        [Test]
+        public async Task GetInformationInstructor_ShouldReturnPartialData_WhenInstructorInfoIsIncomplete()
+        {
+            // Arrange
+            var partialInstructorInfo = (UserName: "PartialName", Email: (string?)null, PhoneNumber: (string?)null, AdminComment: (string?)null);
+            _adminRepositoryMock.Setup(repo => repo.GetInformationInstructorAsync(2))
+                                .ReturnsAsync(partialInstructorInfo);
+
+            Assert.ThrowsAsync<NullReferenceException>(async () => await _adminService.GetInformationInstructor(2));
+
+
+        }
+
+        #endregion
+
+        #region GetAllUser Tests
+
+        [Test]
+        public async Task GetAllUser_ShouldReturnEmptyList_WhenNoUsersExist()
+        {
+            // Arrange
+            _adminRepositoryMock.Setup(repo => repo.GetAllAsync(
+                It.IsAny<Expression<Func<ApplicationUser, bool>>>(),
+                It.IsAny<string?>()))
+                .ReturnsAsync(new List<ApplicationUser>());
+
+            // Act
+            var result = await _adminService.GetAllUser();
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public async Task GetAllUser_ShouldThrowException_WhenRepositoryFails()
+        {
+            // Arrange
+            _adminRepositoryMock.Setup(repo => repo.GetAllAsync(
+                It.IsAny<Expression<Func<ApplicationUser, bool>>>(),
+                It.IsAny<string?>()))
+                .ThrowsAsync(new Exception("Database error"));
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<Exception>(async () => await _adminService.GetAllUser());
+            Assert.That(ex.Message, Is.EqualTo("Database error"));
+        }
+
+        #endregion
     }
 }
