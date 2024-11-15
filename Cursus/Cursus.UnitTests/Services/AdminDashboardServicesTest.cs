@@ -46,7 +46,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminDashboardService.GetTopPurchasedCourses(year, period);
 
 
-            Assert.AreEqual(topCourses, result);  
+            Assert.That(topCourses, Is.EqualTo(result));  
         }
 
 
@@ -75,7 +75,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminDashboardService.GetWorstRatedCourses(year, period);
 
             // Assert
-            Assert.AreEqual(worstCourses, result);  // Kiểm tra xem kết quả trả về có giống như mong đợi không
+            Assert.That(worstCourses, Is.EqualTo(result));  // Kiểm tra xem kết quả trả về có giống như mong đợi không
         }
 
 
@@ -92,7 +92,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminDashboardService.GetTotalUsersAsync();
 
             // Assert
-            Assert.AreEqual(totalUsers, result);
+            Assert.That(totalUsers, Is.EqualTo(result));
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Cursus.UnitTests.Services
             var result = await _adminDashboardService.GetTotalInstructorsAsync();
 
             // Assert
-            Assert.AreEqual(totalInstructors, result);
+            Assert.That(totalInstructors,Is.EqualTo(result));
         }
     }
 }

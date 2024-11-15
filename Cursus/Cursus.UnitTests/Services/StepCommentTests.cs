@@ -90,7 +90,8 @@ namespace Cursus.UnitTests.Services
             var result = await _controller.DeleteComment(commentId, adminId);
 
             // Assert
-            Assert.IsInstanceOf<NoContentResult>(result);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
+
         }
 
         [Test]
@@ -106,7 +107,7 @@ namespace Cursus.UnitTests.Services
             var result = await _controller.DeleteComment(commentId, adminId);
 
             // Assert
-            Assert.IsInstanceOf<NotFoundResult>(result);
+            Assert.That(result, Is.InstanceOf<NotFoundResult>());
         }
     }
 }

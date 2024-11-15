@@ -82,7 +82,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.GetCartByID(1);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result,Is.Null);
         }
 
         #endregion
@@ -196,7 +196,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartService.DeleteCart(1);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]

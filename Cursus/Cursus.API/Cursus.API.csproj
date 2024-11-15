@@ -8,6 +8,7 @@
 	<UserSecretsId>92088b1a-8469-45ab-b9ef-acd6a2e15c3e</UserSecretsId>
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
