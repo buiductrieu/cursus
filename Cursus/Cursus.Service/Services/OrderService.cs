@@ -2,6 +2,7 @@
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enums;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -14,23 +15,16 @@ namespace Cursus.Service.Services
 		private readonly IMapper _mapper;
 		private readonly IEmailService _emailService;
 		private readonly IPaymentService _paymentService;
+        private readonly IStatisticsNotificationService _notificationService;
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
+        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
 			_emailService = emailService;
-		}
+			_notificationService = notificationService;
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IPaymentService paymentService)
-		{
-			_unitOfWork = unitOfWork;
-			_mapper = mapper;
-			_emailService = emailService;
-			_paymentService = paymentService;
-		}
-
-
+        }
 		public async Task<OrderDTO> CreateOrderAsync(string userId)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
@@ -81,6 +75,9 @@ namespace Cursus.Service.Services
                 return orderDTOs;
             }
         }
+
+       
+
         public async Task UpdateUserCourseAccessAsync(int orderId, string userId)
 		{
 			var order = await _unitOfWork.OrderRepository.GetAsync(o => o.OrderId == orderId && o.Cart.UserId == userId && o.Status == OrderStatus.Paid, "Cart,Cart.CartItems.Course");
@@ -147,6 +144,12 @@ namespace Cursus.Service.Services
 
 			_emailService.SendEmailSuccessfullyPurchasedCourse(user, order);
 
-		}
-	}
+            await _notificationService.NotifySalesAndRevenueUpdate();
+            await _notificationService.NotifyOrderStatisticsUpdate();
+
+        }
+
+        
+
+    }
 }

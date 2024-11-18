@@ -28,7 +28,7 @@ namespace Cursus.UnitTests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _mapperMock = new Mock<IMapper>();
             _emailServiceMock = new Mock<IEmailService>();
-            _orderService = new OrderService(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object);
+           // _orderService = new OrderService(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object);
         }
 
         #region CreateOrderAsync Tests

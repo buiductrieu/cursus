@@ -1,7 +1,9 @@
-﻿using Cursus.Common.Helper;
+﻿using Cursus.API.Hubs;
+using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace Cursus.API.Controllers
@@ -13,11 +15,12 @@ namespace Cursus.API.Controllers
 	{
 		private readonly IOrderService _orderService;
 		private readonly APIResponse _response;
+        
 
-		public OrderController(IOrderService orderService, APIResponse response)
+        public OrderController(IOrderService orderService, APIResponse response)
 		{
 			_orderService = orderService;
-			_response = response;
+			_response = response;		
 		}
 
 		/// <summary>
@@ -51,8 +54,9 @@ namespace Cursus.API.Controllers
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;
 			_response.Result = "Course access granted.";
-
-			return Ok(_response);
+            // Gửi thông điệp cho tất cả các client kết nối tới Hub
+           
+            return Ok(_response);
 		}
 		/// <summary>
 		/// View order history

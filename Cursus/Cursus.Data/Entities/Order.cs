@@ -19,6 +19,7 @@ namespace Cursus.Data.Entities
         [ForeignKey("Transaction")]
         public int TransactionId { get; set; }
         public Transaction? Transaction { get; set; }
+        
     }
     public enum OrderStatus
     {
