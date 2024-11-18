@@ -131,10 +131,10 @@ namespace Cursus.API
                 var scriptRunner = serviceProvider.GetRequiredService<SqlScriptRunner>();
                 var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
 
-                // Xác định đường dẫn tới thư mục SqlScripts
+               
                 string scriptsFolderPath = Path.Combine(environment.ContentRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
 
-                // Kiểm tra và thực thi các script nếu thư mục tồn tại
+               
                 if (Directory.Exists(scriptsFolderPath))
                 {
                     try
