@@ -1,4 +1,5 @@
 ﻿using Cursus.Data.DTO;
+using Cursus.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Cursus.ServiceContract.Interfaces
 {
     public interface IPrivacyPolicyService
     {
-        Task<IEnumerable<PrivacyPolicyDTO>> GetPrivacyPolicyAsync();
+        Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicyAsync();
         Task<PrivacyPolicyDTO> CreatePrivacyPolicyAsync(PrivacyPolicyDTO privacyPolicyDTO);
         Task<PrivacyPolicyDTO> UpdatePrivacyPolicyAsync(int id, PrivacyPolicyDTO privacyPolicyDTO);
         Task DeletePrivacyPolicyAsync(int id);

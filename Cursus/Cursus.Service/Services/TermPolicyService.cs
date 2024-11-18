@@ -24,11 +24,11 @@ namespace Cursus.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TermPolicyDTO>> GetTermPolicyAsync()
+        public async Task<IEnumerable<Term>> GetTermPolicyAsync()
         {
             var termPolicies = await _unitOfWork.TermPolicyRepository.GetAllAsync();
             if (termPolicies == null) throw new KeyNotFoundException("Term Policy not found");
-            return _mapper.Map<IEnumerable<TermPolicyDTO>>(termPolicies);
+            return termPolicies;
         }
         public async Task<TermPolicyDTO> CreateTermPolicyAsync(TermPolicyDTO termPolicyDTO)
         {

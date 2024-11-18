@@ -22,14 +22,14 @@ namespace Cursus.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<HomePageDTO> GetHomePageAsync()
+        public async Task<HomePage> GetHomePageAsync()
         {
             var homePage = await _unitOfWork.HomePageRepository.GetAllAsync();
             if (homePage == null) throw new KeyNotFoundException("Home Page infomation not found");
             var homePageInfo = homePage
                         .OrderByDescending(hp => hp.LastUpdatedDate)
                         .FirstOrDefault();
-            return _mapper.Map<HomePageDTO>(homePageInfo);
+            return homePageInfo;
         }
 
         public async Task<HomePageDTO> UpdateHomePageAsync(int id, HomePageDTO homePageDto)
@@ -42,5 +42,6 @@ namespace Cursus.Service.Services
             await _unitOfWork.SaveChanges();
             return _mapper.Map<HomePageDTO>(homePage);
         }
+
     }
 }

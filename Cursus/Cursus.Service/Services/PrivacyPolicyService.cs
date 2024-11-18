@@ -22,11 +22,11 @@ namespace Cursus.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<PrivacyPolicyDTO>> GetPrivacyPolicyAsync()
+        public async Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicyAsync()
         {
             var privacyPolicies = await _unitOfWork.PrivacyPolicyRepository.GetAllAsync();
             if (privacyPolicies == null) throw new KeyNotFoundException("Privacy Policy not found");
-            return _mapper.Map<IEnumerable<PrivacyPolicyDTO>>(privacyPolicies);
+            return privacyPolicies;
         }
 
         public async Task<PrivacyPolicyDTO> CreatePrivacyPolicyAsync(PrivacyPolicyDTO privacyPolicyDTO)
