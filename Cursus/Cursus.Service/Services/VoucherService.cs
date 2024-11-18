@@ -72,9 +72,9 @@ namespace Cursus.Service.Services
             return Task.FromResult(_mapper.Map<VoucherDTO>(_voucherRepository.GetByVourcherIdAsync(id).Result));
         }
 
-        public Task<bool> ReceiveVoucher(string userId, string codeVoucher)
+        public Task<bool> ReceiveVoucher(string userId, int VoucherID)
         {
-            var voucher = _voucherRepository.GetByCodeAsync(codeVoucher).Result;
+            var voucher = _voucherRepository.GetByVourcherIdAsync(VoucherID).Result;
             if (voucher == null)
             {
                 throw new Exception("Voucher not found");

@@ -135,13 +135,13 @@ namespace Cursus.API.Controllers
         /// Receive Voucher
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="VoucherCode"></param>
+        /// <param name="voucherId"></param>
         /// <returns></returns>
 
         [HttpPost("ReceiveVoucher/{userId}/{VoucherCode}")]
-        public async Task<IActionResult> ReceiveVoucher(string userId, string VoucherCode)
+        public async Task<IActionResult> ReceiveVoucher(string userId, int voucherId)
         {
-            var voucher = await _voucherService.ReceiveVoucher(userId, VoucherCode);
+            var voucher = await _voucherService.ReceiveVoucher(userId, voucherId);
             if (voucher == null)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;
