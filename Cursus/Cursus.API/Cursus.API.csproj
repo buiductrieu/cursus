@@ -9,6 +9,8 @@
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
     <ServerGarbageCollection>true</ServerGarbageCollection>
+    <Nullable>disable</Nullable>
+    <NoWarn>$(NoWarn);8632</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
