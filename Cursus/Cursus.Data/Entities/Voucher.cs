@@ -16,8 +16,8 @@ namespace Cursus.Data.Entities
         public string? VoucherCode { get; set; }
         public bool IsValid { get; set; } = true;
         public string? Name { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
-        public DateTime ExpireDate { get; set; } = DateTime.Now.AddMonths(1);
+        public DateTime CreateDate { get; set; } 
+        public DateTime ExpireDate { get; set; }
 
         [Range(0, 100, ErrorMessage = "Percentage must be between 0 and 100")]
         public double Percentage { get; set; }

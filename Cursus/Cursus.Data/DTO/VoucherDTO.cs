@@ -17,5 +17,6 @@ namespace Cursus.Data.DTO
         public DateTime CreateDate { get; set; }
         public DateTime ExpireDate { get; set; }
         public double Percentage { get; set; }
+        
     }
 }
