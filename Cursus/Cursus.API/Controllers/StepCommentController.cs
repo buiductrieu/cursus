@@ -1,5 +1,6 @@
 ﻿using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -12,6 +13,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class StepCommentController : ControllerBase
     {
         private readonly IStepCommentService _stepCommentService;
@@ -27,6 +29,7 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
         /// <exception cref="BadHttpRequestException"></exception>
         [HttpPost("post-comment")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<StepCommentDTO>> PostComment([FromBody] StepCommentCreateDTO dto)
         {
             if (dto == null) throw new BadHttpRequestException("Comment data is required.");
@@ -40,6 +43,7 @@ namespace Cursus.API.Controllers
         /// <param name="stepId"></param>
         /// <returns></returns>
         [HttpGet("{stepId}/comments")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<IEnumerable<StepCommentDTO>>> GetComments(int stepId)
         {
             var comments = await _stepCommentService.GetStepCommentsAsync(stepId);
@@ -51,6 +55,7 @@ namespace Cursus.API.Controllers
         /// <param name="commentId"></param>
         /// <returns></returns>
         [HttpDelete("delete-comment")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult> DeleteComment(int commentId, string adminId)
         {
             var isDeleted = await _stepCommentService.DeleteStepCommentIfAdmin(commentId, adminId);

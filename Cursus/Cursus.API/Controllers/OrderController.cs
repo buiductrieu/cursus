@@ -1,6 +1,7 @@
 ﻿using Cursus.API.Hubs;
 using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.SignalR;
@@ -11,7 +12,8 @@ namespace Cursus.API.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[EnableRateLimiting("default")]
-	public class OrderController : ControllerBase
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+    public class OrderController : ControllerBase
 	{
 		private readonly IOrderService _orderService;
 		private readonly APIResponse _response;
@@ -27,10 +29,18 @@ namespace Cursus.API.Controllers
 		/// Create Order
 		/// </summary>
 		/// <param name="userId"></param>
+		/// <param name="VoucherCode"></param>
 		[HttpPost("create")]
-		public async Task<ActionResult<APIResponse>> CreateOrder(string userId)
+		public async Task<ActionResult<APIResponse>> CreateOrder(string userId, string? VoucherCode)
 		{
-			var order = await _orderService.CreateOrderAsync(userId);
+			var order = await _orderService.CreateOrderAsync(userId, VoucherCode);
+			if(order == null)
+			{
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.ErrorMessages.Add("Failed to create order.");
+                return BadRequest(_response);
+			}
 
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;
@@ -47,7 +57,8 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		[Route("confirm-purchase")]
-		public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
 		{
 			await _orderService.UpdateUserCourseAccessAsync(orderId, userId);
 
@@ -65,6 +76,7 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
         [HttpGet]
         [Route("view-orderHistory")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
         public async Task<ActionResult<APIResponse>> ViewOrderHistory(string userId)
         {
             var order = await _orderService.GetOrderHistoryAsync(userId);

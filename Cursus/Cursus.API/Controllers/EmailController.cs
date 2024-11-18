@@ -2,6 +2,7 @@
 using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -31,6 +32,7 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public ActionResult<APIResponse> SendEmail([FromBody] EmailRequestDTO requestDTO)
         {
             try

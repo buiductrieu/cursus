@@ -2,6 +2,7 @@
 using Cursus.Data.DTO.Category;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
@@ -35,7 +36,7 @@ namespace Cursus.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
         public async Task<ActionResult<APIResponse>> GetAllCategories([FromQuery] string? searchTerm,
         [FromQuery] string? sortColumn,
         [FromQuery] string? sortOrder,
@@ -62,7 +63,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
         public async Task<ActionResult<APIResponse>> GetCategory(int id)
         {
 
@@ -89,7 +90,7 @@ namespace Cursus.API.Controllers
         /// <param name="createCategoryDto"></param>
         /// <returns></returns>
         [HttpPost]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CreateCategoryDTO createCategoryDto)
         {
             if (!ModelState.IsValid)
@@ -116,7 +117,7 @@ namespace Cursus.API.Controllers
         /// <param name="updateCategoryDto"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> UpdateCategory(int id, [FromBody] UpdateCategoryDTO updateCategoryDto)
         {
 
@@ -135,7 +136,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> DeleteCategory(int id)
         {
 

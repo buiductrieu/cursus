@@ -5,6 +5,7 @@ using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System.Net;
 
 namespace Cursus.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]

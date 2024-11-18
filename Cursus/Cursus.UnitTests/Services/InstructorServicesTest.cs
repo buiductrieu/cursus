@@ -172,7 +172,7 @@ namespace Cursus.UnitTests.Services
 
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            Assert.IsNull(result);
+            Assert.That(result,Is.Null);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
             _userManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Instructor"), Times.Never);
         }
@@ -196,7 +196,7 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Invalid email format" }));
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -220,7 +220,7 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Invalid password format" }));
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         }
 
@@ -245,7 +245,7 @@ namespace Cursus.UnitTests.Services
                 .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Passwords do not match" }));
             var result = await _instructorService.InstructorAsync(registerInstructorDTO);
 
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
             _userManagerMock.Verify(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()), Times.Once);
         }
 

@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.IO;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class StepContentController : ControllerBase
     {
         private readonly IStepContentService _stepContentService;
@@ -36,6 +38,7 @@ namespace Cursus.API.Controllers
         [HttpPost("upload")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<ActionResult<APIResponse>> UploadFile([FromForm] StepContentDTO stepContentDTO, IFormFile file)
         {
             try
@@ -81,6 +84,7 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
 
         [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor,User")]
         public async Task<IActionResult> GetStepContentById(int id)
         {
             var stepContentDTO = await _stepContentService.GetStepContentByIdAsync(id);

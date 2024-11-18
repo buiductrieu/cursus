@@ -1,6 +1,4 @@
-
-
-﻿using Cursus.Common.Helper;
+using Cursus.Common.Helper;
 using Cursus.Common.Middleware;
 using Cursus.Data.Entities;
 using Cursus.Data.Models;
@@ -21,14 +19,32 @@ using Cursus.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
+using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Cursus.API
 {
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
     public class Program
     {
-        public static async Task Main(string[] args)
+        /// The main method for the application.
+        /// </summary>
+        /// <param name="args">The command-line arguments.</param>
+        public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var fullVersion = Assembly.GetExecutingAssembly()
+                                      .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                                      .InformationalVersion ?? "1.0.0";
+
+            // Trim the commit hash suffix if it exists
+            var version = fullVersion.Split('+')[0];
+
+
 
             // Add logging
             builder.Logging.ClearProviders();
@@ -45,14 +61,40 @@ namespace Cursus.API
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-           
-
             var paypalSettings = builder.Configuration.GetSection("PayPal");
             builder.Services.Configure<PayPalSetting>(paypalSettings);
 
-            // Đăng ký các dịch vụ
+            // Register PayPalClient and TransactionMonitoringService
             builder.Services.AddScoped<PayPalClient>().AddHostedService<TransactionMonitoringService>();
             builder.Services.AddScoped<SqlScriptRunner>();
+            // Add JWT Configuration
+            var jwtSecret = builder.Configuration["JWT:Key"]; ;
+            if (string.IsNullOrEmpty(jwtSecret))
+            {
+                throw new ArgumentNullException(nameof(jwtSecret), "JWT Secret cannot be null or empty.");
+            }
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+                };
+            });
+
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<CursusDbContext>()
                 .AddDefaultTokenProviders();
@@ -82,13 +124,14 @@ namespace Cursus.API
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("v1",
+                opt.SwaggerDoc("swagger",
                     new OpenApiInfo
                     {
-                        Title = "Cursus API - V1",
-                        Version = "v1"
+                        Title = "Cursus API - "+ version,
+                        Version = version
                     }
                  );
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -157,13 +200,17 @@ namespace Cursus.API
 
 
             // Configure the HTTP request pipeline.
-            app.UseSwagger();
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "/openapi/{documentname}.json";
+            });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cursus API v1");
+                c.SwaggerEndpoint("/openapi/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
             app.MapHub<StatisticsHub>("/statisticsHub"); // Cấu hình Hub
+            app.MapScalarApiReference();
 
             app.UseRateLimiter();
 

@@ -1,6 +1,7 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -9,6 +10,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Instructor")]
     public class WalletHistoryController : ControllerBase
     {
         private readonly IWalletHistoryService _walletHistoryService;
@@ -30,6 +32,7 @@ namespace Cursus.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Instructor")]
         public async Task<ActionResult<APIResponse>> GetAllWalletHistories([FromQuery] string? searchTerm,
             [FromQuery] string? sortColumn,
             [FromQuery] string? sortOrder,
@@ -57,6 +60,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Instructor")]
         public async Task<ActionResult<APIResponse>> GetWalletHistory(int id)
         {
             
@@ -74,6 +78,7 @@ namespace Cursus.API.Controllers
         /// <param name="walletId"></param>
         /// <returns></returns>
         [HttpGet("byWallet/{walletId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Instructor")]
         public async Task<ActionResult<APIResponse>> GetWalletHistoriesByWalletId(int walletId)
         {
             

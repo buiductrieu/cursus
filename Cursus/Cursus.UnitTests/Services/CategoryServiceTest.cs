@@ -144,7 +144,7 @@ new Category { Id = 1, Name = "Test Category 1", Description = "Test Description
             var result = await _categoryService.DeleteCategory(1);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]
