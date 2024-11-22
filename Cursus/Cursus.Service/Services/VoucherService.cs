@@ -74,10 +74,8 @@ namespace Cursus.Service.Services
 
         public async Task<bool> ReceiveVoucher(string userId, int VoucherID)
         {
-
             var voucher = await _voucherRepository.GetByVourcherIdAsync(VoucherID);
-
-            
+          
             voucher.UserId = userId;
             await _voucherRepository.UpdateAsync(voucher);
             await _unitOfWork.SaveChanges();
