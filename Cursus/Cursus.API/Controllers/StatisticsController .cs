@@ -91,7 +91,7 @@ public class StatisticsController : ControllerBase
         return Ok(_response);
     }
     [HttpGet("top-revenue")]
-    public async Task<IActionResult> GetTopInstructorsByRevenue(int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> GetTopInstructorsByRevenue([FromQuery] int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
     {
         var result = await _statisticService.GetTopInstructorsByRevenueAsync(topN, startDate, endDate, pageNumber, pageSize);
         _response.Result = result;
@@ -102,7 +102,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("top-courses")]
-    public async Task<IActionResult> GetTopInstructorsByCourses(int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> GetTopInstructorsByCourses([FromQuery] int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
     {
         var result = await _statisticService.GetTopInstructorsByCoursesAsync(topN, startDate, endDate, pageNumber, pageSize);
         _response.Result = result;

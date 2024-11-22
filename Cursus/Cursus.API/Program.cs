@@ -130,9 +130,15 @@ namespace Cursus.API
                 var dbContext = serviceProvider.GetRequiredService<CursusDbContext>();
                 var scriptRunner = serviceProvider.GetRequiredService<SqlScriptRunner>();
                 var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+                string baseDirectory = AppContext.BaseDirectory;
 
-                // Xác định đường dẫn tới thư mục SqlScripts
-                string scriptsFolderPath = Path.Combine(environment.ContentRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
+                string projectRootPath = GetSolutionRootDirectory();
+
+                // Xây dựng đường dẫn đến thư mục SQL Scripts
+                string scriptsFolderPath = Path.Combine(projectRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
+
+                // Chuẩn hóa đường dẫn
+                scriptsFolderPath = Path.GetFullPath(scriptsFolderPath);
 
                 // Kiểm tra và thực thi các script nếu thư mục tồn tại
                 if (Directory.Exists(scriptsFolderPath))
@@ -149,7 +155,7 @@ namespace Cursus.API
                 }
                 else
                 {
-                    Console.WriteLine($"Scripts folder not found: {scriptsFolderPath}");
+                    Console.WriteLine($"Scriptsssss folder not found: {scriptsFolderPath}");
                 }
             }
 
@@ -179,5 +185,26 @@ namespace Cursus.API
 
             app.Run();
         }
+        static string GetSolutionRootDirectory()
+        {
+            // Bắt đầu từ thư mục thực thi hiện tại
+            string directory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Lặp để tìm file .sln
+            while (!string.IsNullOrEmpty(directory))
+            {
+                if (Directory.GetFiles(directory, "*.sln").Length > 0)
+                {
+                    return directory; // Trả về thư mục chứa file .sln
+                }
+
+                // Đi lên một cấp thư mục
+                directory = Directory.GetParent(directory)?.FullName;
+            }
+
+            throw new Exception("Không tìm thấy file .sln trong cây thư mục.");
+        }
     }
+
+
 }
