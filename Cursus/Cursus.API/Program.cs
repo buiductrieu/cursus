@@ -14,6 +14,11 @@ using Cursus.RepositoryContract.Interfaces;
 using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
+using Cursus.API.Hubs;
+using Cursus.Common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.CodeAnalysis.Scripting;
+using System;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +32,6 @@ namespace Cursus.API
     /// </summary>
     public class Program
     {
-        /// <summary>
         /// The main method for the application.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
@@ -59,13 +63,12 @@ namespace Cursus.API
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
             var paypalSettings = builder.Configuration.GetSection("PayPal");
             builder.Services.Configure<PayPalSetting>(paypalSettings);
 
             // Register PayPalClient and TransactionMonitoringService
             builder.Services.AddScoped<PayPalClient>().AddHostedService<TransactionMonitoringService>();
-
+            builder.Services.AddScoped<SqlScriptRunner>();
             // Add JWT Configuration
             var jwtSecret = builder.Configuration["JWT:Key"]; ;
             if (string.IsNullOrEmpty(jwtSecret))
@@ -118,6 +121,8 @@ namespace Cursus.API
 
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+            //SignalIR DashBoard
+            builder.Services.AddSignalR();
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
@@ -164,9 +169,35 @@ namespace Cursus.API
 
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<CursusDbContext>();
-                //dbContext.Database.Migrate();
+                var serviceProvider = scope.ServiceProvider;
+                var dbContext = serviceProvider.GetRequiredService<CursusDbContext>();
+                var scriptRunner = serviceProvider.GetRequiredService<SqlScriptRunner>();
+                var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+
+               
+                string scriptsFolderPath = Path.Combine(environment.ContentRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
+
+               
+                if (Directory.Exists(scriptsFolderPath))
+                {
+                    try
+                    {
+                        await scriptRunner.ExecuteAllSqlScriptsAsync(scriptsFolderPath);
+                        Console.WriteLine("SQL scripts executed successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error executing scripts: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Scripts folder not found: {scriptsFolderPath}");
+                }
             }
+
+
+
 
             // Configure the HTTP request pipeline.
             app.UseSwagger(options =>
@@ -178,6 +209,7 @@ namespace Cursus.API
                 c.SwaggerEndpoint("/openapi/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
+            app.MapHub<StatisticsHub>("/statisticsHub"); // Cấu hình Hub
             app.MapScalarApiReference();
 
             app.UseStaticFiles();

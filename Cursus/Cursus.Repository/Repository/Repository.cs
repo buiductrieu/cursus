@@ -8,7 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-
+#pragma warning disable CS1998
 namespace Cursus.Repository.Repository
 {
     public class Repository<T> : IRepository<T> where T : class

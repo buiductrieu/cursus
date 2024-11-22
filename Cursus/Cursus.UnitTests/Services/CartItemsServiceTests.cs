@@ -3,12 +3,9 @@ using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace Cursus.UnitTests.Services
 {
+
     [TestFixture]
     public class CartItemsServiceTests
     {
@@ -41,7 +38,7 @@ namespace Cursus.UnitTests.Services
             var result = await _cartItemsService.DeleteCartItem(cartItemId);
 
             // Assert
-            Assert.That(result,Is.True);
+            Assert.That(result, Is.True);
             _unitOfWorkMock.Verify(u => u.CartItemsRepository.DeleteCartItems(cartItem), Times.Once);
             _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
         }
@@ -64,15 +61,30 @@ namespace Cursus.UnitTests.Services
         }
 
         [Test]
+        public async Task DeleteCartItem_ShouldThrowException_WhenDeleteFails()
+        {
+            // Arrange
+            var cartItemId = 1;
+            var cartItem = new CartItems { CartItemsId = cartItemId };
+            _unitOfWorkMock.Setup(u => u.CartItemsRepository.GetItemByID(cartItemId))
+                           .ReturnsAsync(cartItem);
+            _unitOfWorkMock.Setup(u => u.CartItemsRepository.DeleteCartItems(cartItem))
+                           .ThrowsAsync(new Exception("Deletion failed"));
+
+            // Act & Assert
+            Assert.ThrowsAsync<Exception>(async () => await _cartItemsService.DeleteCartItem(cartItemId));
+        }
+
+        [Test]
         public async Task GetAllCartItems_ShouldReturnCartItems_WhenCartItemsExist()
         {
             // Arrange
             var cartId = 1;
             var cartItems = new List<CartItems>
-            {
-                new CartItems { CartItemsId = 1, CartId = cartId },
-                new CartItems { CartItemsId = 2, CartId = cartId }
-            };
+        {
+            new CartItems { CartItemsId = 1, CartId = cartId },
+            new CartItems { CartItemsId = 2, CartId = cartId }
+        };
             _unitOfWorkMock.Setup(u => u.CartItemsRepository.GetAllItems(cartId))
                            .ReturnsAsync(cartItems);
 
@@ -81,9 +93,36 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            //Assert.AreEqual(2, result.Count());
-            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.Count(), Is.EqualTo(2));
             _unitOfWorkMock.Verify(u => u.CartItemsRepository.GetAllItems(cartId), Times.Once);
+        }
+
+        [Test]
+        public async Task GetAllCartItems_ShouldReturnEmptyList_WhenNoCartItemsExist()
+        {
+            // Arrange
+            var cartId = 1;
+            _unitOfWorkMock.Setup(u => u.CartItemsRepository.GetAllItems(cartId))
+                           .ReturnsAsync(new List<CartItems>());
+
+            // Act
+            var result = await _cartItemsService.GetAllCartItems(cartId);
+
+            // Assert
+            Assert.That(result, Is.Empty);
+            _unitOfWorkMock.Verify(u => u.CartItemsRepository.GetAllItems(cartId), Times.Once);
+        }
+
+        [Test]
+        public async Task GetAllCartItems_ShouldThrowException_WhenGetAllItemsFails()
+        {
+            // Arrange
+            var cartId = 1;
+            _unitOfWorkMock.Setup(u => u.CartItemsRepository.GetAllItems(cartId))
+                           .ThrowsAsync(new Exception("Retrieval failed"));
+
+            // Act & Assert
+            Assert.ThrowsAsync<Exception>(async () => await _cartItemsService.GetAllCartItems(cartId));
         }
     }
 }

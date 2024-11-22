@@ -38,6 +38,9 @@ namespace Cursus.RepositoryContract.Interfaces
         IVoucherRepository VoucherRepository { get; }
         INotificationRepository NotificationRepository { get; }
         IAdminDashboardRepository AdminDashboardRepository { get; }
+        IHomePageRepository HomePageRepository { get; }
+        ITermPolicyRepository TermPolicyRepository { get; }
+        IPrivacyPolicyRepository PrivacyPolicyRepository { get; }
         Task SaveChanges();
     }
 }

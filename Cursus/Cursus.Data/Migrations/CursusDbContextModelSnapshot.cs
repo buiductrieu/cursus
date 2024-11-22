@@ -229,7 +229,8 @@ namespace Cursus.Data.Migrations
 
                     b.HasKey("CartItemsId");
 
-                    b.HasIndex("CartId");
+                    b.HasIndex("CartId")
+                        .HasDatabaseName("IDX_CartItems_CartId");
 
                     b.HasIndex("CourseId");
 
@@ -522,17 +523,14 @@ namespace Cursus.Data.Migrations
                     b.Property<int>("TransactionId")
                         .HasColumnType("int");
 
-                    b.Property<double>("discountAmount")
-                        .HasColumnType("float");
-
-                    b.Property<string>("discountCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("OrderId");
 
                     b.HasIndex("CartId");
 
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("Status", "DateCreated")
+                        .HasDatabaseName("IDX_Orders_Status_DateCreated");
 
                     b.ToTable("Order");
                 });
@@ -853,46 +851,6 @@ namespace Cursus.Data.Migrations
                     b.ToTable("TransactionHistories");
                 });
 
-            modelBuilder.Entity("Cursus.Data.Entities.Voucher", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpireDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Percentage")
-                        .HasColumnType("float");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VoucherCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Vouchers");
-                });
-
             modelBuilder.Entity("Cursus.Data.Entities.Wallet", b =>
                 {
                     b.Property<int>("Id")
@@ -983,19 +941,19 @@ namespace Cursus.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "32a5924a-e578-4dc9-9cc3-cd10c87fc89f",
+                            Id = "f21f03c1-53da-479b-a5a0-5663084c1839",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "b0532654-d35c-4f7a-985d-b95a717734df",
+                            Id = "5de6e523-ff11-4ca1-b3a1-43fcc65ea1c5",
                             Name = "Instructor",
                             NormalizedName = "INSTRUCTOR"
                         },
                         new
                         {
-                            Id = "4df862e7-ade1-49c0-bb59-31c7b5e2152a",
+                            Id = "92723228-f464-4b0a-812e-a3e8ef467928",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -1402,15 +1360,6 @@ namespace Cursus.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Cursus.Data.Entities.Voucher", b =>
-                {
-                    b.HasOne("Cursus.Data.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Cursus.Data.Entities.Wallet", b =>

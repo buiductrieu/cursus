@@ -241,6 +241,7 @@ namespace Cursus.API.Controllers
         /// Approve Course
         /// </summary>
         /// <param name="id"></param>
+        /// <param choice ="choice"></param>
         /// <returns></returns>
         [HttpGet("ApproveCourse{id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]

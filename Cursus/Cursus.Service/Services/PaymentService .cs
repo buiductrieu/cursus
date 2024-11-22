@@ -10,25 +10,28 @@ using Cursus.Data.DTO;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using System.Linq.Expressions;
+using Cursus.Repository.Repository;
 
 
 namespace Demo_PayPal.Service
 {
-    public class PaymentService : IPaymentService
+    public class PaymentService: IPaymentService
     {
-        private readonly PayPalClient _payPalClient;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+        private readonly PayPalClient _payPalClient ;
+        private readonly IUnitOfWork _unitOfWork ;
+        private readonly IMapper _mapper  ;
+        private readonly IConfiguration _configuration  ;
         private readonly ILogger<PaymentService> _logger;
-       
-        public PaymentService(PayPalClient payPalClient, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, ILogger<PaymentService> logger)
+        private readonly IStatisticsNotificationService _notificationService;
+
+        public PaymentService(PayPalClient payPalClient, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, ILogger<PaymentService> logger, IStatisticsNotificationService notificationService)
         {
             _payPalClient = payPalClient;
             _unitOfWork = unitOfWork;
-            _configuration = configuration;
             _mapper = mapper;
+            _configuration = configuration;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<Transaction> CreateTransaction(string userId, string paymentMethod, string description)
@@ -167,6 +170,8 @@ namespace Demo_PayPal.Service
             {
 
                 await UpdateTransactionToCompleted(transaction);
+                await _notificationService.NotifySalesAndRevenueUpdate();
+                await _notificationService.NotifyOrderStatisticsUpdate();
                 return _mapper.Map<TransactionDTO>(transaction);
             }
             else if (result.Status == "CREATED")

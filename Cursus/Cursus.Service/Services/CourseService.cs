@@ -4,6 +4,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enums;
 using Cursus.Repository.Enum;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -346,5 +347,7 @@ namespace Cursus.Service.Services
             };
                 
         }
+
+        }
     }
-}
+
