@@ -74,11 +74,10 @@ namespace Cursus.Service.Services
 
         public async Task<bool> ReceiveVoucher(string userId, int VoucherID)
         {
+
             var voucher = await _voucherRepository.GetByVourcherIdAsync(VoucherID);
-            if (voucher == null)
-            {
-                throw new Exception("Voucher not found");
-            }
+
+            
             voucher.UserId = userId;
             await _voucherRepository.UpdateAsync(voucher);
             await _unitOfWork.SaveChanges();

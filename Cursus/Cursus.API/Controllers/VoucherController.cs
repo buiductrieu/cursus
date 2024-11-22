@@ -142,7 +142,7 @@ namespace Cursus.API.Controllers
         public async Task<IActionResult> ReceiveVoucher(string userId, int voucherId)
         {
             var voucher = await _voucherService.ReceiveVoucher(userId, voucherId);
-            if (voucher == null)
+            if (!voucher)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.ErrorMessages.Add("Voucher not found");
