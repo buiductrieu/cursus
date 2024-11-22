@@ -18,6 +18,7 @@ using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Cursus.Service.Hubs;
 
 namespace Cursus.API
 {
@@ -40,7 +41,8 @@ namespace Cursus.API
             // Trim the commit hash suffix if it exists
             var version = fullVersion.Split('+')[0];
 
-
+            //Add SignalR
+            builder.Services.AddSignalR();
 
             // Add logging
             builder.Logging.ClearProviders();
@@ -158,6 +160,8 @@ namespace Cursus.API
             });
             var app = builder.Build();
 
+            app.MapHub<ChatHub>("/chatHub");
+
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<CursusDbContext>();
@@ -175,6 +179,8 @@ namespace Cursus.API
                 c.RoutePrefix = string.Empty;
             });
             app.MapScalarApiReference();
+
+            app.UseStaticFiles();
 
             app.UseRateLimiter();
 
