@@ -57,7 +57,7 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
 		[HttpPost]
 		[Route("confirm-purchase")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> ConfirmPurchase(string userId, int orderId)
 		{
 			await _orderService.UpdateUserCourseAccessAsync(orderId, userId);
