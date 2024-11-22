@@ -276,6 +276,7 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
+
             //Notification Mapping
             CreateMap<Notification, NotificationDTO>();        
 
@@ -286,8 +287,31 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Description))      
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))               
                 .ForMember(dest => dest.StepCount, opt => opt.MapFrom(src => src.Steps.Count))     
-                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating));             
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating));
+            // Mapping for Term policy to TermDTO
+            CreateMap<Term, TermPolicyDTO>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.LastUpdatedBy, opt => opt.MapFrom(src => src.LastUpdatedBy))
+                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => src.LastUpdatedDate))
+                .ReverseMap();
 
+            // Mapping for privacy Policy to PolicyDTO
+            CreateMap<PrivacyPolicy, PrivacyPolicyDTO>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.LastUpdatedBy, opt => opt.MapFrom(src => src.LastUpdatedBy))
+                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => src.LastUpdatedDate))
+                .ReverseMap();
+
+            // Mapping for HomePage to HomePageDTO
+            CreateMap<HomePage, HomePageDTO>()
+                .ForMember(dest => dest.BranchName, opt => opt.MapFrom(src => src.BranchName))
+                .ForMember(dest => dest.SupportHotline, opt => opt.MapFrom(src => src.SupportHotline))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.WorkingTime, opt => opt.MapFrom(src => src.WorkingTime))
+                .ForMember(dest => dest.LastUpdatedBy, opt => opt.MapFrom(src => src.LastUpdatedBy))
+                .ForMember(dest => dest.LastUpdatedDate, opt => opt.MapFrom(src => src.LastUpdatedDate))
+                .ReverseMap();
 
             CreateMap<Voucher, VoucherDTO>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

@@ -14,10 +14,16 @@ using Cursus.RepositoryContract.Interfaces;
 using Demo_PayPal.Service;
 using System.Threading.RateLimiting;
 using Cursus.Service.Services;
+using Cursus.API.Hubs;
+using Cursus.Common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.CodeAnalysis.Scripting;
+using System;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Cursus.Service.Hubs;
 
 namespace Cursus.API
 {
@@ -26,7 +32,6 @@ namespace Cursus.API
     /// </summary>
     public class Program
     {
-        /// <summary>
         /// The main method for the application.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
@@ -40,7 +45,8 @@ namespace Cursus.API
             // Trim the commit hash suffix if it exists
             var version = fullVersion.Split('+')[0];
 
-
+            //Add SignalR
+            builder.Services.AddSignalR();
 
             // Add logging
             builder.Logging.ClearProviders();
@@ -57,13 +63,12 @@ namespace Cursus.API
             // Add services to the container.
             builder.Services.AddDbContext<CursusDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
             var paypalSettings = builder.Configuration.GetSection("PayPal");
             builder.Services.Configure<PayPalSetting>(paypalSettings);
 
             // Register PayPalClient and TransactionMonitoringService
             builder.Services.AddScoped<PayPalClient>().AddHostedService<TransactionMonitoringService>();
-
+            builder.Services.AddScoped<SqlScriptRunner>();
             // Add JWT Configuration
             var jwtSecret = builder.Configuration["JWT:Key"]; ;
             if (string.IsNullOrEmpty(jwtSecret))
@@ -116,6 +121,8 @@ namespace Cursus.API
 
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+            //SignalIR DashBoard
+            builder.Services.AddSignalR();
 
             // Configure Swagger services
             builder.Services.AddEndpointsApiExplorer();
@@ -158,11 +165,16 @@ namespace Cursus.API
             });
             var app = builder.Build();
 
+            app.MapHub<ChatHub>("/chatHub");
+
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<CursusDbContext>();
-                //dbContext.Database.Migrate();
+                var serviceProvider = scope.ServiceProvider;
+                var dbContext = serviceProvider.GetRequiredService<CursusDbContext>();
             }
+
+
+
 
             // Configure the HTTP request pipeline.
             app.UseSwagger(options =>
@@ -174,7 +186,10 @@ namespace Cursus.API
                 c.SwaggerEndpoint("/openapi/swagger.json", "Cursus API");
                 c.RoutePrefix = string.Empty;
             });
+            app.MapHub<StatisticsHub>("/statisticsHub"); // Cấu hình Hub
             app.MapScalarApiReference();
+
+            app.UseStaticFiles();
 
             app.UseRateLimiter();
 

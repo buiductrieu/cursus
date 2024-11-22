@@ -1,4 +1,4 @@
-using Cursus.Data.Entities;
+﻿using Cursus.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -54,6 +54,9 @@ namespace Cursus.Data.Models
 
         public virtual DbSet<ArchivedTransaction> ArchivedTransactions { get; set; }
 		public virtual DbSet<Notification> Notifications { get; set; } = null!;
+        public virtual DbSet<HomePage> HomePages { get; set; }
+        public virtual DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
+        public virtual DbSet<Term> Terms { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -119,6 +122,21 @@ namespace Cursus.Data.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Order>()
+            .HasIndex(o => o.DateCreated)
+            .HasFilter("[Status] = 1")
+            .IncludeProperties(o => new { o.PaidAmount, o.CartId })
+            .HasDatabaseName("IDX_Orders_Status1_DateCreated");
+
+            modelBuilder.Entity<CartItems>()
+            .HasIndex(ci => ci.CartId)
+            .HasDatabaseName("IDX_CartItems_CartId");
+
+            modelBuilder.Entity<InstructorInfo>()
+            .HasIndex(ii => ii.UserId)
+            .HasDatabaseName("IDX_InstructorInfo_UserId");
+
         }
     }
 }

@@ -16,5 +16,8 @@ namespace Cursus.ServiceContract.Interfaces
         Task<bool> RejectInstructorAsync(int instructorId);
         Task<InstuctorTotalEarnCourseDTO> GetTotalAmountAsync (int instructorId);
         Task<IEnumerable<InstructorInfo>> GetAllInstructors();
+       
+
     }
 }
+
