@@ -138,7 +138,7 @@ namespace Cursus.API.Controllers
         /// <param name="voucherId"></param>
         /// <returns></returns>
 
-        [HttpPost("ReceiveVoucher/{userId}/{VoucherCode}")]
+        [HttpPost("ReceiveVoucher/{userId}/{voucherId}")]
         public async Task<IActionResult> ReceiveVoucher(string userId, int voucherId)
         {
             var voucher = await _voucherService.ReceiveVoucher(userId, voucherId);
