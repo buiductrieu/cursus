@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Group Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #leaveGroupButton, #sendMessageSection {
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <h1>SignalR Group Chat</h1>
+
+    <div id="control-section" >
+        <input type="text" id="groupName" placeholder="Enter group name">
+        <button id="joinGroupButton">Join Group</button>
+        <button id="leaveGroupButton">Leave Group</button>
+    </div>
+
+    <div id="messages" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px; max-height: 300px; overflow-y: auto;">
+        <h3>Messages:</h3>
+    </div>
+
+
+    <div id="sendMessageSection" style="margin-top: 20px;">
+        <input type="text" id="messageInput" placeholder="Enter your message">
+        <button id="sendMessageButton">Send Message</button>
+    </div>
+    <script>
+        // Create connection to the SignalR hub
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub") // Replace with your Hub endpoint
+            .build();
+
+        // Track whether the user is in a group
+        let currentGroup = null;
+
+        // Function to handle messages from the group
+        connection.on("ReceiveMessage", (message) => {
+            const messagesDiv = document.getElementById("messages");
+            const newMessage = document.createElement("div");
+            newMessage.textContent = message;
+            messagesDiv.appendChild(newMessage);
+        });
+
+        // Start the connection
+        connection.start()
+            .then(() => console.log("Connected to the SignalR hub."))
+            .catch(err => console.error("Error connecting to SignalR hub:", err));
+
+        // Add event listener to the "Join Group" button
+        document.getElementById("joinGroupButton").addEventListener("click", async () => {
+            const groupName = document.getElementById("groupName").value;
+
+            if (groupName.trim() === "") {
+                alert("Please enter a group name.");
+                return;
+            }
+
+            try {
+                // Invoke the JoinGroup method on the server
+                await connection.invoke("JoinGroup", groupName);
+                console.log(`Joined group: ${groupName}`);
+                currentGroup = groupName; // Track the group the user joined
+                document.getElementById("leaveGroupButton").style.display = "inline-block"; // Show "Leave Group" button
+                document.getElementById("sendMessageSection").style.display = "block"; // Show message sending section
+            } catch (err) {
+                console.error("Error joining group:", err);
+            }
+        });
+
+        // Add event listener to the "Leave Group" button
+        document.getElementById("leaveGroupButton").addEventListener("click", async () => {
+            if (!currentGroup) {
+                alert("You are not part of any group.");
+                return;
+            }
+
+            try {
+                // Invoke the LeaveGroup method on the server
+                await connection.invoke("LeaveGroup", currentGroup);
+                console.log(`Left group: ${currentGroup}`);
+                currentGroup = null; // Clear the current group
+                document.getElementById("leaveGroupButton").style.display = "none"; // Hide "Leave Group" button
+                document.getElementById("sendMessageSection").style.display = "none"; // Hide message sending section
+            } catch (err) {
+                console.error("Error leaving group:", err);
+            }
+        });
+
+        // Add event listener to the "Send Message" button
+        document.getElementById("sendMessageButton").addEventListener("click", async () => {
+            if (!currentGroup) {
+                alert("You must join a group to send a message.");
+                return;
+            }
+
+            const message = document.getElementById("messageInput").value;
+            if (message.trim() === "") {
+                alert("Please enter a message.");
+                return;
+            }
+
+            try {
+                // Invoke the SendMessageToGroup method on the server
+                await connection.invoke("SendMessageToGroup", currentGroup, message);
+                console.log(`Message sent to group ${currentGroup}: ${message}`);
+                document.getElementById("messageInput").value = ""; // Clear the input
+            } catch (err) {
+                console.error("Error sending message:", err);
+            }
+        });
+    </script>
+</body>
+</html>
