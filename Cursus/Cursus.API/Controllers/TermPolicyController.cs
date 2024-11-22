@@ -10,7 +10,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class TermPolicyController : ControllerBase
     {
         private readonly ITermPolicyService _termPolicyService;
@@ -49,6 +48,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="termPolicyDTO"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<APIResponse>> CreateTermPolicy([FromBody] TermPolicyDTO termPolicyDTO)
         {
@@ -65,6 +65,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <param name="termPolicyDTO"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<APIResponse>> UpdateTermPolicy(int id, [FromBody] TermPolicyDTO termPolicyDTO)
         {
@@ -80,6 +81,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<APIResponse>> DeleteTermPolicy(int id)
         {
