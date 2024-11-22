@@ -35,7 +35,7 @@ namespace Cursus.API
         /// The main method for the application.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var fullVersion = Assembly.GetExecutingAssembly()
