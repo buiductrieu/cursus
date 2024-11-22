@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Cursus.UnitTests.Services
@@ -147,5 +148,108 @@ namespace Cursus.UnitTests.Services
             // Act & Assert
             Assert.ThrowsAsync<KeyNotFoundException>(() => _stepService.UpdateStep(stepUpdateDTO));
         }
+        [Test]
+        public async Task DeleteStep_ValidStepId_ShouldDeleteStep()
+        {
+            // Arrange
+            var stepEntity = new Step { Id = 1, Name = "Step 1" };
+            _mockUnitOfWork.Setup(u => u.StepRepository.GetAsync(It.IsAny<Expression<Func<Step, bool>>>(), null))
+                           .ReturnsAsync(stepEntity);
+            _mockUnitOfWork.Setup(u => u.StepRepository.DeleteAsync(stepEntity)).ReturnsAsync(stepEntity);
+            _mockUnitOfWork.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _stepService.DeleteStep(1);
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public void DeleteStep_InvalidStepId_ShouldThrowKeyNotFoundException()
+        {
+            // Arrange
+            _mockUnitOfWork.Setup(u => u.StepRepository.GetAsync(It.IsAny<Expression<Func<Step, bool>>>(), null))
+                           .ReturnsAsync((Step)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<KeyNotFoundException>(() => _stepService.DeleteStep(1));
+        }
+
+        [Test]
+        public async Task GetPercentageTrackingProgress_ValidInputs_ShouldReturnCompletionPercentage()
+        {
+            // Arrange
+            var courseProgress = new CourseProgress { ProgressId = 100, CourseId = 10, UserId = "user1", IsCompleted = false };
+            _mockUnitOfWork.Setup(u => u.CourseProgressRepository.GetAsync(It.IsAny<Expression<Func<CourseProgress, bool>>>(), null))
+                           .ReturnsAsync(courseProgress);
+            _mockStepRepository.Setup(r => r.GetToTalSteps(10)).ReturnsAsync(5); // Total steps
+            _mockTrackingProgressRepository.Setup(r => r.GetCompletedStepsCountByUserId("user1")).ReturnsAsync(5); // Completed steps
+            _mockUnitOfWork.Setup(u => u.CourseProgressRepository.UpdateAsync(courseProgress)).ReturnsAsync(courseProgress);
+            _mockUnitOfWork.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _stepService.GetPercentageTrackingProgress("user1", 100);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(100));
+            Assert.That(courseProgress.IsCompleted, Is.True);
+
+            // Verify UpdateAsync and SaveChanges are called
+            _mockUnitOfWork.Verify(u => u.CourseProgressRepository.UpdateAsync(courseProgress), Times.Once);
+            _mockUnitOfWork.Verify(u => u.SaveChanges(), Times.Once);
+        }
+
+
+        [Test]
+        public void StartStepAsync_InvalidUserId_ShouldThrowArgumentException()
+        {
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(() => _stepService.StartStepAsync("", 1));
+        }
+
+        [Test]
+        public void StartStepAsync_InvalidStepId_ShouldThrowInvalidOperationException()
+        {
+            // Arrange
+            _mockUnitOfWork.Setup(u => u.StepRepository.GetAsync(It.IsAny<Expression<Func<Step, bool>>>(), null))
+                           .ReturnsAsync((Step)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NullReferenceException>(() => _stepService.StartStepAsync("user1", 1));
+        }
+
+
+        [Test]
+        public void GetPercentageTrackingProgress_InvalidCourseProgress_ShouldThrowInvalidOperationException()
+        {
+            // Arrange
+            _mockUnitOfWork.Setup(u => u.CourseProgressRepository.GetAsync(It.IsAny<Expression<Func<CourseProgress, bool>>>(), null))
+                           .ReturnsAsync((CourseProgress)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<InvalidOperationException>(() => _stepService.GetPercentageTrackingProgress("user1", 100));
+        }
+
+        [Test]
+        public async Task UpdateStep_ValidId_ShouldUpdateStep()
+        {
+            // Arrange
+            var stepEntity = new Step { Id = 1, Name = "Step 1" };
+            var updateDTO = new StepUpdateDTO { Id = 1, Name = "Updated Step", Order = 2, Description = "Updated Description" };
+            var updatedStepDTO = new StepDTO { Id = 1, Name = "Updated Step", Order = 2, Description = "Updated Description" };
+
+            _mockUnitOfWork.Setup(u => u.StepRepository.GetByIdAsync(1)).ReturnsAsync(stepEntity);
+            _mockUnitOfWork.Setup(u => u.StepRepository.UpdateAsync(stepEntity)).ReturnsAsync(stepEntity);
+            _mockMapper.Setup(m => m.Map<StepDTO>(stepEntity)).Returns(updatedStepDTO);
+            _mockUnitOfWork.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _stepService.UpdateStep(updateDTO);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(updatedStepDTO));
+        }
+
     }
 }
