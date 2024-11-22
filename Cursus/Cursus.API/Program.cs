@@ -171,29 +171,6 @@ namespace Cursus.API
             {
                 var serviceProvider = scope.ServiceProvider;
                 var dbContext = serviceProvider.GetRequiredService<CursusDbContext>();
-                var scriptRunner = serviceProvider.GetRequiredService<SqlScriptRunner>();
-                var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
-
-               
-                string scriptsFolderPath = Path.Combine(environment.ContentRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
-
-               
-                if (Directory.Exists(scriptsFolderPath))
-                {
-                    try
-                    {
-                        await scriptRunner.ExecuteAllSqlScriptsAsync(scriptsFolderPath);
-                        Console.WriteLine("SQL scripts executed successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error executing scripts: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Scripts folder not found: {scriptsFolderPath}");
-                }
             }
 
 
