@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cursus.Repository.Repository
 {
-    internal class CertificateRepository : Repository<Certificate>, ICertificateRepository
+    public class CertificateRepository : Repository<Certificate>, ICertificateRepository
     {
         private readonly CursusDbContext _db;
     public CertificateRepository(CursusDbContext db) : base(db)
