@@ -3,6 +3,7 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.Data.Enum;
 using Cursus.Data.Models;
+using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -239,5 +240,7 @@ namespace Cursus.Service.Services
         {
             return _unitOfWork.InstructorInfoRepository.GetAllInstructors();
         }
+
+        
     }
 }

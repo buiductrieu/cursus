@@ -25,6 +25,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<APIResponse> UpdateCourseStatus(CourseUpdateStatusDTO courseUpdateStatusDTO);
 
         Task<TotalEarningPotentitalDTO> CaculatePotentialEarnings(int courseId, int months);
+       
 
     }
 }

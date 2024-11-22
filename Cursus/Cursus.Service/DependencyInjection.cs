@@ -24,7 +24,7 @@ namespace Cursus.Service
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IStepContentService, StepContentService>();
             services.AddTransient<IAzureBlobStorageService, AzureBlobStorageService>();
-           
+            services.AddTransient<IStatisticService, StatisticService>();
             services.AddTransient<IStepCommentService, StepCommentService>();
             services.AddTransient<IBookmarkService, BookmarkService>();
             services.AddTransient<IStepService, StepService>();
@@ -41,6 +41,7 @@ namespace Cursus.Service
             services.AddTransient<IWalletHistoryService, WalletHistoryService>();
             services.AddTransient<IInstructorDashboardService, InstructorDashboardService>();
             services.AddTransient<IArchivedTransactionService, ArchivedTransactionService>();
+            services.AddTransient<IStatisticsNotificationService, StatisticsNotificationService>();
             services.AddTransient<IVoucherService, VoucherService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IAdminDashboardService, AdminDashboardService>();

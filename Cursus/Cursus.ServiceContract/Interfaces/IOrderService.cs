@@ -6,6 +6,10 @@ namespace Cursus.ServiceContract.Interfaces
 		Task<OrderDTO> CreateOrderAsync(string userId, string voucherCode);
 		Task UpdateUserCourseAccessAsync(int orderId, string userId);
         Task<List<OrderDTO>> GetOrderHistoryAsync(string userId);
+     
 
     }
+
+
 }
+

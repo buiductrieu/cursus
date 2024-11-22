@@ -26,6 +26,7 @@ namespace Cursus.UnitTests.Services
         private Mock<IMapper> _mapperMock;
         private Mock<IEmailService> _emailServiceMock;
         private Mock<IPaymentService> _paymentServiceMock;
+        private Mock<IStatisticsNotificationService> _no;
         private OrderService _orderService;
 
 
@@ -36,6 +37,7 @@ namespace Cursus.UnitTests.Services
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _mapperMock = new Mock<IMapper>();
             _emailServiceMock = new Mock<IEmailService>();
+            _no = new Mock<IStatisticsNotificationService>();
             _paymentServiceMock = new Mock<IPaymentService>();
 
             // Then create the service with the initialized mocks
@@ -43,7 +45,9 @@ namespace Cursus.UnitTests.Services
                 _unitOfWorkMock.Object,
                 _mapperMock.Object,
                 _emailServiceMock.Object,
+                _no.Object,
                 _paymentServiceMock.Object
+
             );
         }
 
@@ -175,7 +179,7 @@ namespace Cursus.UnitTests.Services
             paymentServiceMock.Setup(p => p.CreateTransaction(userId, "PayPal", It.IsAny<string>()))
                               .ReturnsAsync(transaction);
 
-            _orderService = new OrderService(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object, paymentServiceMock.Object);
+            _orderService = new OrderService(_unitOfWorkMock.Object, _mapperMock.Object, _emailServiceMock.Object,_no.Object , paymentServiceMock.Object);
 
             // Act
             var result = await _orderService.CreateOrderAsync(userId, voucherCode);
