@@ -35,7 +35,7 @@ namespace Cursus.API
         /// The main method for the application.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var fullVersion = Assembly.GetExecutingAssembly()
@@ -171,6 +171,36 @@ namespace Cursus.API
             {
                 var serviceProvider = scope.ServiceProvider;
                 var dbContext = serviceProvider.GetRequiredService<CursusDbContext>();
+                var scriptRunner = serviceProvider.GetRequiredService<SqlScriptRunner>();
+                var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+                string baseDirectory = AppContext.BaseDirectory;
+
+                string projectRootPath = GetSolutionRootDirectory();
+
+                // Xây dựng đường dẫn đến thư mục SQL Scripts
+                string scriptsFolderPath = Path.Combine(projectRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
+
+                // Chuẩn hóa đường dẫn
+                scriptsFolderPath = Path.GetFullPath(scriptsFolderPath);
+
+               
+                if (Directory.Exists(scriptsFolderPath))
+                {
+                    try
+                    {
+                        await scriptRunner.ExecuteAllSqlScriptsAsync(scriptsFolderPath);
+                        Console.WriteLine("SQL scripts executed successfully.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error executing scripts: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Scriptsssss folder not found: {scriptsFolderPath}");
+                }
+
             }
 
 
@@ -205,5 +235,26 @@ namespace Cursus.API
 
             app.Run();
         }
+        static string GetSolutionRootDirectory()
+        {
+            // Bắt đầu từ thư mục thực thi hiện tại
+            string directory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Lặp để tìm file .sln
+            while (!string.IsNullOrEmpty(directory))
+            {
+                if (Directory.GetFiles(directory, "*.sln").Length > 0)
+                {
+                    return directory; // Trả về thư mục chứa file .sln
+                }
+
+                // Đi lên một cấp thư mục
+                directory = Directory.GetParent(directory)?.FullName;
+            }
+
+            throw new Exception("Không tìm thấy file .sln trong cây thư mục.");
+        }
     }
+
+
 }
