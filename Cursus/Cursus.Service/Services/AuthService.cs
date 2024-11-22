@@ -165,7 +165,7 @@ namespace Cursus.Service.Services
                 Expries = DateTime.UtcNow.AddDays(7),//Refresh hết hạn sau 7 ngày
                 Created = DateTime.UtcNow
             };
-            _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
             await _unitOfWork.SaveChanges();   
             return refreshToken;
         }
@@ -184,7 +184,7 @@ namespace Cursus.Service.Services
 
             var newRefreshToken = await GetRefreshTokenAsync(user);
             findToken.Revoked = DateTime.UtcNow;
-            _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
+            await _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
             await _unitOfWork.SaveChanges();
             return new LoginResponseDTO
             {
@@ -204,7 +204,7 @@ namespace Cursus.Service.Services
 
             findToken.Revoked = DateTime.UtcNow;
 
-            _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
+            await _unitOfWork.RefreshTokenRepository.UpdateAsync(findToken);
             await _unitOfWork.SaveChanges();
         }
 

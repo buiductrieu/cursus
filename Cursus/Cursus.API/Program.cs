@@ -132,6 +132,7 @@ namespace Cursus.API
                 var environment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
                 string baseDirectory = AppContext.BaseDirectory;
 
+<<<<<<< HEAD
                 string projectRootPath = GetSolutionRootDirectory();
 
                 // Xây dựng đường dẫn đến thư mục SQL Scripts
@@ -139,8 +140,12 @@ namespace Cursus.API
 
                 // Chuẩn hóa đường dẫn
                 scriptsFolderPath = Path.GetFullPath(scriptsFolderPath);
+=======
+               
+                string scriptsFolderPath = Path.Combine(environment.ContentRootPath, "Cursus.Data", "SqlScripts", "StoredProcedures");
+>>>>>>> 1613ce9d918fe971802f6d7532fb180b92190505
 
-                // Kiểm tra và thực thi các script nếu thư mục tồn tại
+               
                 if (Directory.Exists(scriptsFolderPath))
                 {
                     try

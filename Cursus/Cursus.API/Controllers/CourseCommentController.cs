@@ -1,6 +1,7 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -11,6 +12,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
     public class CourseCommentController : ControllerBase
     {
         private readonly ICourseCommentService _courseCommentService;

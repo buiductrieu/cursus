@@ -87,7 +87,7 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         #endregion
@@ -156,7 +156,7 @@ namespace Cursus.UnitTests.Services
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.IsEmpty(result);
+            Assert.That(result, Is.Empty);
         }
 
         #endregion

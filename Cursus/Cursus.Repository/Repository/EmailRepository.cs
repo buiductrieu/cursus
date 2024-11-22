@@ -60,6 +60,7 @@ namespace Cursus.Repository.Repository
 		public void SendEmailSuccessfullyPurchasedCourse(EmailRequestDTO request, Order order)
 		{
 			double tax = order.Cart.Total * 0.10;
+            double discount = order.discountAmount;
 
 			string body = $@"
     <!DOCTYPE html>
@@ -103,10 +104,11 @@ namespace Cursus.Repository.Repository
 
 			body += $@"
                 </ul>
-                <p><strong>Subtotal:</strong> ${order.Cart.Total}</p>
-                <p><strong>Tax:</strong> ${tax} (10%)</p>
+                <p><strong>Subtotal:</strong> ${order.Cart.Total.ToString("F2")}</p>
+                <p><strong>Tax:</strong> ${tax.ToString("F2")} (10%)</p>
+                <p><strong>Discount:</strong> $ - {discount.ToString("F2")}</p>
 
-                <p style=""font-size: 18px;""><strong>Total Paid:</strong> ${order.PaidAmount}</p>
+                <p style=""font-size: 18px;""><strong>Total Paid:</strong> ${order.PaidAmount.ToString("F2")}</p>
                
                 <p>Thank you for choosing us! We wish you the best of luck in your learning journey.</p>
                 <p>Warm regards,</p>

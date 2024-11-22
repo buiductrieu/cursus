@@ -1,6 +1,7 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.Data.Entities;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -17,6 +18,7 @@ public class CertificateController : ControllerBase
     }
 
     [HttpPost("create-certificate")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> CreateCertificate(string userId, int courseId)
     {
         var apiResponse = new APIResponse();
@@ -29,6 +31,7 @@ public class CertificateController : ControllerBase
     }
 
     [HttpGet("download-certificate")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
     public async Task<IActionResult> DownloadCertificate(string userId, int courseId)
     {
         var apiResponse = new APIResponse();
@@ -50,6 +53,7 @@ public class CertificateController : ControllerBase
 
 
     [HttpGet("download-certificate/{certificateId}")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
     public async Task<IActionResult> DownloadCertificateById(int certificateId)
     {
         var apiResponse = new APIResponse();
@@ -63,6 +67,7 @@ public class CertificateController : ControllerBase
     }
 
     [HttpGet("export-excel")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
     public async Task<IActionResult> ExportCertificatesToExcel()
     {
         var excelData = await _certificateService.ExportCertificatesToExcel();
@@ -84,6 +89,7 @@ public class CertificateController : ControllerBase
 
 
     [HttpGet("export-excel-by-user/{userId}")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
     public async Task<IActionResult> ExportCertificatesToExcelByUserId(string userId)
     {
         var excelData = await _certificateService.ExportCertificatesUserToExcel(userId);

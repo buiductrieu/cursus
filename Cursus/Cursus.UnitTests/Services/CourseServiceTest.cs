@@ -115,7 +115,7 @@ namespace Cursus.UnitTests.Services
             var result = await _courseService.DeleteCourse(course.Id);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
 
         [Test]

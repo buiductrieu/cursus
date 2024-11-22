@@ -17,15 +17,15 @@ namespace Cursus.Service.Services
 		private readonly IPaymentService _paymentService;
         private readonly IStatisticsNotificationService _notificationService;
 
-        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService)
+		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
 			_emailService = emailService;
 			_notificationService = notificationService;
 
-        }
-		public async Task<OrderDTO> CreateOrderAsync(string userId)
+		}
+		public async Task<OrderDTO> CreateOrderAsync(string userId, string? voucherCode)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");
 			if (cart == null || !cart.CartItems.Any())
@@ -39,15 +39,41 @@ namespace Cursus.Service.Services
 			double totalAmount = cart.Total;
 
 			double taxAmount = Math.Round(totalAmount * 0.1, 2);
+            double percentageDiscount = 0;
+
+            double DiscountAmout = 0;
+
+            if (!string.IsNullOrEmpty(voucherCode))
+            {
+                var discount = await _unitOfWork.VoucherRepository.GetAsync(d => d.UserId == userId && d.VoucherCode == voucherCode);
+
+                // Kiểm tra mã giảm giá
+                if (discount == null || discount.VoucherCode != voucherCode || discount.UserId != userId)
+                {
+                    throw new BadHttpRequestException("Invalid voucher code.");
+                }
+                else if (discount.CreateDate <= DateTime.Now && DateTime.Now <= discount.ExpireDate)
+                {
+                    // Tính toán phần trăm và số tiền giảm giá nếu mã giảm giá hợp lệ
+                    percentageDiscount = discount.Percentage;
+                    DiscountAmout = totalAmount * percentageDiscount / 100;
+                }
+                if (discount != null)
+                {
+                    discount.IsValid = false;
+                }
+            }
 
 
-			var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
+            var transaction = await _paymentService.CreateTransaction(userId, "PayPal", $"User {userId} enrolls course(s): {string.Join(", ", cart.CartItems.Select(ci => ci.Course.Name))}");
 
 			var order = new Order
 			{
 				CartId = cart.CartId,
-				Amount = totalAmount,
-				PaidAmount = totalAmount + taxAmount,
+				Amount = totalAmount + taxAmount, 
+				discountCode = voucherCode,
+                discountAmount = DiscountAmout,
+				PaidAmount = totalAmount + taxAmount - DiscountAmout,
 				DateCreated = DateTime.Now,
 				Status = OrderStatus.PendingPayment,
 				TransactionId = transaction.TransactionId,
@@ -55,7 +81,7 @@ namespace Cursus.Service.Services
 			};
 
 
-			await _unitOfWork.OrderRepository.AddAsync(order);
+            await _unitOfWork.OrderRepository.AddAsync(order);
 			await _unitOfWork.SaveChanges();
 
 			var OrderDTO = _mapper.Map<OrderDTO>(order);
