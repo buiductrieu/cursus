@@ -17,14 +17,16 @@ namespace Cursus.Service.Services
 		private readonly IPaymentService _paymentService;
         private readonly IStatisticsNotificationService _notificationService;
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService)
+		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService, IPaymentService paymentService)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
 			_emailService = emailService;
 			_notificationService = notificationService;
+            _paymentService = paymentService;
 
-		}
+
+        }	
 		public async Task<OrderDTO> CreateOrderAsync(string userId, string? voucherCode)
 		{
 			var cart = await _unitOfWork.CartRepository.GetAsync(c => c.UserId == userId && !c.IsPurchased, "CartItems,CartItems.Course");

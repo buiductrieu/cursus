@@ -10,7 +10,7 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;

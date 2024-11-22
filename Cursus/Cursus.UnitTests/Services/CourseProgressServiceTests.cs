@@ -107,7 +107,7 @@ namespace Cursus.UnitTests.Services
 
         #region Performance Tests
 
-        [Test, Timeout(1000)]
+        [Test, CancelAfter(1000)]
         public async Task TrackingProgressAsync_PerformanceTest()
         {
             // Arrange
