@@ -10,7 +10,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class HomePageController : ControllerBase
     {
         private readonly IHomePageService _homePageService;
@@ -50,6 +49,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <param name="homePageDto"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<APIResponse>> UpdateHomePage(int id, [FromBody] HomePageDTO homePageDto)
         {

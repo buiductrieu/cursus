@@ -25,7 +25,7 @@ namespace Cursus.Service.Services
         public async Task<IEnumerable<PrivacyPolicy>> GetPrivacyPolicyAsync()
         {
             var privacyPolicies = await _unitOfWork.PrivacyPolicyRepository.GetAllAsync();
-            if (privacyPolicies == null) throw new KeyNotFoundException("Privacy Policy not found");
+            if (privacyPolicies == null || !privacyPolicies.Any()) throw new KeyNotFoundException("Privacy Policy not found");
             return privacyPolicies;
         }
 
