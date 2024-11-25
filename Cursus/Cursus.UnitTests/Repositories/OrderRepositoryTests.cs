@@ -11,7 +11,7 @@ using Moq;
 using Cursus.Data.Enums;
 using Cursus.Data.DTO;
 
-namespace Cursus.Tests.Repository
+namespace Cursus.UnitTests.Repositories
 {
     public class OrderRepositoryTests
     {
