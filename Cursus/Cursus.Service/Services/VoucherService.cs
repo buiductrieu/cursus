@@ -72,6 +72,31 @@ namespace Cursus.Service.Services
             return Task.FromResult(_mapper.Map<VoucherDTO>(_voucherRepository.GetByVourcherIdAsync(id).Result));
         }
 
+        public async Task<bool> GiveVoucher(string GiverID, string ReceiverID, int voucherID)
+        {
+            var voucher = await _voucherRepository.GetByVourcherIdAsync(voucherID);
+            var Receiver = await _unitOfWork.UserRepository.GetAsync(u => u.Id == ReceiverID);
+            if(Receiver == null)
+            {
+                throw new Exception("Receiver not found");
+            }
+
+            if (voucher.UserId.Equals(GiverID) && voucher.Id == voucherID && voucher.IsValid == true)
+            {
+               
+                voucher.UserId = ReceiverID;
+                await _voucherRepository.UpdateAsync(voucher);
+                await _unitOfWork.SaveChanges();
+
+            }
+            else
+            {
+                throw new Exception("Voucher or Giver not found");
+            }
+
+            return true;
+        }
+
         public async Task<bool> ReceiveVoucher(string userId, int VoucherID)
         {
             var voucher = await _voucherRepository.GetByVourcherIdAsync(VoucherID);
