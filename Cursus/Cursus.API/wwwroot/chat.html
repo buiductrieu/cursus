@@ -15,7 +15,7 @@
 <body>
     <h1>SignalR Group Chat</h1>
 
-    <div id="control-section" >
+    <div id="control-section">
         <input type="text" id="groupName" placeholder="Enter group name">
         <button id="joinGroupButton">Join Group</button>
         <button id="leaveGroupButton">Leave Group</button>
@@ -25,12 +25,37 @@
         <h3>Messages:</h3>
     </div>
 
-
     <div id="sendMessageSection" style="margin-top: 20px;">
         <input type="text" id="messageInput" placeholder="Enter your message">
         <button id="sendMessageButton">Send Message</button>
     </div>
     <script>
+        // Function to generate a color based on the connectionId
+        function generateColor(connectionId) {
+            let hash = 0;
+            for (let i = 0; i < connectionId.length; i++) {
+                hash = connectionId.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const color = `#${((hash >> 24) & 0xFF).toString(16).padStart(2, '0')}${((hash >> 16) & 0xFF).toString(16).padStart(2, '0')}${((hash >> 8) & 0xFF).toString(16).padStart(2, '0')}`;
+            return color;
+        }
+
+        // Function to add a message to the chat
+        function addMessage(content, color = null, isSystemMessage = false) {
+            const messagesDiv = document.getElementById("messages");
+            const newMessage = document.createElement("div");
+            newMessage.textContent = content;
+            newMessage.style.margin = "5px 0";
+
+            if (isSystemMessage) {
+                newMessage.style.color = "grey"; // System messages in grey
+            } else if (color) {
+                newMessage.style.color = color; // User-specific color
+            }
+
+            messagesDiv.appendChild(newMessage);
+        }
+
         // Create connection to the SignalR hub
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub") // Replace with your Hub endpoint
@@ -39,12 +64,15 @@
         // Track whether the user is in a group
         let currentGroup = null;
 
-        // Function to handle messages from the group
-        connection.on("ReceiveMessage", (message) => {
-            const messagesDiv = document.getElementById("messages");
-            const newMessage = document.createElement("div");
-            newMessage.textContent = message;
-            messagesDiv.appendChild(newMessage);
+        // Handle messages from the group
+        connection.on("ReceiveMessage", (connectionId, message) => {
+            const color = generateColor(connectionId); // Generate color for the user
+            addMessage(message, color);
+        });
+
+        // Handle system messages (e.g., user joins/leaves group)
+        connection.on("SystemMessage", (message) => {
+            addMessage(message, null, true); // Add system message in grey
         });
 
         // Start the connection
