@@ -10,7 +10,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class PrivacyPolicyController : ControllerBase
     {
         private readonly IPrivacyPolicyService _privacyPolicyService;
@@ -49,6 +48,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="privacyPolicyDTO"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<APIResponse>> CreatePrivacyPolicy([FromBody] PrivacyPolicyDTO privacyPolicyDTO)
         {
@@ -65,6 +65,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <param name="privacyPolicyDTO"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<APIResponse>> UpdatePrivacyPolicy(int id, [FromBody] PrivacyPolicyDTO privacyPolicyDTO)
         {
@@ -80,6 +81,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<APIResponse>> DeletePrivacyPolicy(int id)
         {

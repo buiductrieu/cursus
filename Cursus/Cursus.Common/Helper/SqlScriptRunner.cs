@@ -53,6 +53,7 @@ namespace Cursus.Common
 
         private async Task ExecuteSqlScriptAsync(string script)
         {
+            // Tách script thành các câu lệnh SQL
             var statements = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
             await using var connection = new SqlConnection(_connectionString);
@@ -64,8 +65,15 @@ namespace Cursus.Common
 
                 try
                 {
-                    await using var command = new SqlCommand(statement, connection);
+                    _logger.LogDebug("Executing SQL statement: {Statement}", statement.Substring(0, Math.Min(100, statement.Length)) + "...");
+
+                    await using var command = new SqlCommand(statement, connection)
+                    {
+                        CommandTimeout = 120 // Tăng thời gian chờ lên 120 giây
+                    };
                     await command.ExecuteNonQueryAsync();
+
+                    _logger.LogInformation("Successfully executed SQL statement.");
                 }
                 catch (Exception ex)
                 {

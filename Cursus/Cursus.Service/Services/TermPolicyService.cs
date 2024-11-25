@@ -27,7 +27,7 @@ namespace Cursus.Service.Services
         public async Task<IEnumerable<Term>> GetTermPolicyAsync()
         {
             var termPolicies = await _unitOfWork.TermPolicyRepository.GetAllAsync();
-            if (termPolicies == null) throw new KeyNotFoundException("Term Policy not found");
+            if (termPolicies == null || !termPolicies.Any()) throw new KeyNotFoundException("Term Policy not found");
             return termPolicies;
         }
         public async Task<TermPolicyDTO> CreateTermPolicyAsync(TermPolicyDTO termPolicyDTO)
@@ -45,7 +45,7 @@ namespace Cursus.Service.Services
         public async Task DeleteTermPolicyAsync(int id)
         {
             var termPolicy = await _unitOfWork.TermPolicyRepository.GetAsync(t=>t.Id==id);
-            if (termPolicy == null) throw new KeyNotFoundException("Term Policy not found");
+            if (termPolicy == null ) throw new KeyNotFoundException("Term Policy not found");
 
             _unitOfWork.TermPolicyRepository.DeleteAsync(termPolicy);
             await _unitOfWork.SaveChanges();

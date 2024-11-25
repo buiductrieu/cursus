@@ -8,7 +8,7 @@ namespace Cursus.Data.DTO
 {
     public class InstructorStatisticDTO
     {
-        public int InstructorId { get; set; }
+        public string InstructorId { get; set; }
         public string InstructorName { get; set; }
         public double TotalEarnings { get; set; }
         public long TotalCoursesSold { get; set; }

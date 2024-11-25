@@ -9,19 +9,16 @@ BEGIN
     SET NOCOUNT ON;
     DECLARE @Offset INT = (@PageNumber - 1) * @PageSize;
     WITH TopInstructors AS (
-        SELECT 
+        SELECT TOP (@TopN)
             vc.InstructorId,
             vc.InstructorName,
             vc.TotalCoursesSold,
-            MAX(o.DateCreated) AS LastOrderDate
+            MAX(vc.LastOrderDate) AS LastOrderDate
         FROM vw_TopInstructorsByCourses vc
-        INNER JOIN dbo.[CartItems] ci ON vc.InstructorId = ci.CourseId
-        INNER JOIN dbo.[Order] o ON ci.CartId = o.CartId
-        WHERE  (o.DateCreated >= @StartDate OR @StartDate IS NULL)
-            AND (o.DateCreated <= @EndDate OR @EndDate IS NULL)
+        WHERE (vc.LastOrderDate >= @StartDate OR @StartDate IS NULL)
+          AND (vc.LastOrderDate <= @EndDate OR @EndDate IS NULL)
         GROUP BY vc.InstructorId, vc.InstructorName, vc.TotalCoursesSold
-        ORDER BY vc.TotalCoursesSold DESC
-        OFFSET 0 ROWS FETCH NEXT @TopN ROWS ONLY
+        ORDER BY vc.TotalCoursesSold DESC, MAX(vc.LastOrderDate) DESC
     )
     SELECT 
         InstructorId,
@@ -29,7 +26,7 @@ BEGIN
         TotalCoursesSold,
         LastOrderDate
     FROM TopInstructors
-    ORDER BY TotalCoursesSold DESC
+    ORDER BY TotalCoursesSold DESC, LastOrderDate DESC
     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
 END;
 GO

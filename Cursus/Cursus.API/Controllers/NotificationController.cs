@@ -1,5 +1,6 @@
 ﻿using Cursus.Common.Helper;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -7,6 +8,8 @@ namespace Cursus.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin, User")]
+
 	public class NotificationController : ControllerBase
 	{
 		private readonly INotificationService _notificationService;
@@ -25,6 +28,8 @@ namespace Cursus.API.Controllers
 		/// <param name="message"></param>
 		/// <returns></returns>
 		[HttpPost("send")]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+
 		public async Task<ActionResult<APIResponse>> SendNotify(string userId, string message)
 		{
 			if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(message))
@@ -45,6 +50,7 @@ namespace Cursus.API.Controllers
 		/// <param name="userId"></param>
 		/// <returns></returns>
 		[HttpGet("fetch")]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
 		public async Task<ActionResult<APIResponse>> FetchNotify(string userId)
 		{
 			if (string.IsNullOrEmpty(userId))
