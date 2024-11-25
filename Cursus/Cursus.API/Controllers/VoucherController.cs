@@ -153,5 +153,30 @@ namespace Cursus.API.Controllers
             _apiResponse.StatusCode = HttpStatusCode.OK;
             return Ok(voucher);
         }
+
+        /// <summary>
+        /// Give Voucher
+        /// </summary>
+        /// <param name="GiverID"></param>
+        /// <param name="RecieverID"></param>
+        /// <param name="voucherId"></param>
+        /// <returns></returns>
+        [HttpPost("GiveVoucher/{GiverID}/{RecieverID}/{voucherId}")]
+        public async Task<IActionResult> GiveVoucher(string GiverID, string RecieverID, int voucherId)
+        {
+            var voucher = await _voucherService.GiveVoucher(GiverID, RecieverID, voucherId);
+            if(!voucher)
+            {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.ErrorMessages.Add("Voucher not found");
+                return BadRequest(_apiResponse);
+            }
+            else
+            {
+                _apiResponse.Result = voucher;
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                return Ok(voucher);
+            }
+        }
     }
 }

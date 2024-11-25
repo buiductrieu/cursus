@@ -15,5 +15,7 @@ namespace Cursus.ServiceContract.Interfaces
         Task<VoucherDTO> GetVoucherByID(int id);
         Task<VoucherDTO> GetVoucherByCode(string code); 
         Task<bool> ReceiveVoucher(string userId, int voucherID);
+        Task<bool> GiveVoucher(string GiverID, string ReceiverID, int voucherID);
+
     }
 }
