@@ -27,7 +27,7 @@ namespace Cursus.Repository.Repository
         }
         public async Task<CartItems> GetItemByID(int cartItemsId)
         {
-            return await GetAsync(filter: b => b.CartItemsId == cartItemsId, includeProperties: "Cart,Course");
+            return await GetAsync(filter: b => b.CartItemsId == cartItemsId, includeProperties: "Course");
         }
     }
 }

@@ -122,7 +122,7 @@ namespace Cursus.UnitTests.Services
                 _mockVoucherRepository.Setup(r => r.GetByVourcherIdAsync(It.IsAny<int>())).ReturnsAsync((Voucher)null);
 
                 // Act & Assert
-                Assert.ThrowsAsync<Exception>(() => _service.ReceiveVoucher("user1", 1));
+                Assert.ThrowsAsync<NullReferenceException>(() => _service.ReceiveVoucher("user1", 1));
             }
 
             [Test]
