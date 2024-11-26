@@ -3,7 +3,11 @@ using Cursus.Data.DTO;
 using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
+using Cursus.ServiceContract.Interfaces;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Moq;
+using NuGet.Protocol.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -173,6 +177,47 @@ namespace Cursus.UnitTests.Services
                 Assert.That(result.Name, Is.EqualTo("New Name"));
                 _mockUnitOfWork.Verify(u => u.SaveChanges(), Times.Once);
             }
-        }
+            [Test]
+            public async Task GiveVoucher_ShouldAssignVoucher_WhenValidInputProvided()
+            {
+                // Arrange
+                string giverID = "giver123";
+                string receiverID = "receiver456";
+                int voucherID = 1;
+                var voucher = new Voucher { Id = voucherID, IsValid = true };
+                var receiver = new ApplicationUser { Id = receiverID };
+
+                _mockVoucherRepository.Setup(r => r.GetByVourcherIdAsync(voucherID))
+                    .ReturnsAsync(voucher);
+                _mockUnitOfWork.Setup(u => u.UserRepository.ExiProfile(receiverID))
+                    .Returns(Task.FromResult(receiver));
+                _mockUnitOfWork.Setup(u => u.SaveChanges()).Returns(Task.CompletedTask);
+
+                // Act
+                var result = await _service.GiveVoucher(giverID, receiverID, voucherID);
+
+                // Assert
+                Assert.That(result);
+                Assert.That(voucher.UserId, Is.EqualTo(receiverID));
+                _mockVoucherRepository.Verify(r => r.UpdateAsync(voucher), Times.Once);
+                _mockUnitOfWork.Verify(u => u.SaveChanges(), Times.Once);
+            }
+            [Test]
+            public void GiveVoucher_ShouldThrowException_WhenVoucherNotFound()
+               {
+                // Arrange
+                string giverID = "giver123";
+                string receiverID = "receiver456";
+                int voucherID = 1;
+
+                _mockVoucherRepository.Setup(r => r.GetByVourcherIdAsync(voucherID))
+                    .ReturnsAsync((Voucher)null);
+
+                // Act & Assert
+                Assert.ThrowsAsync<InvalidOperationException>(() => _service.GiveVoucher(giverID, receiverID, voucherID));
+              }
+        
+
+    }
     }
 
