@@ -6,6 +6,7 @@ using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
@@ -42,6 +43,8 @@ namespace Cursus.API.Controllers
         /// <param name="VoucherCode"></param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+
         public async Task<IActionResult> GetVouchersByCode(string VoucherCode)
         {
             var vouchers = await _voucherService.GetVoucherByCode(VoucherCode);
@@ -61,6 +64,8 @@ namespace Cursus.API.Controllers
         /// <param name="createVoucherDTO"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+
         public async Task<IActionResult> CreateVoucher([FromBody] VoucherDTO createVoucherDTO)
         {
             
@@ -100,6 +105,8 @@ namespace Cursus.API.Controllers
         /// <param name="updateVoucherDTO"></param>
         /// <returns></returns>
         [HttpPut]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+
         public async Task<IActionResult> UpdateVoucher(int Userid, [FromBody] VoucherDTO updateVoucherDTO)
         {
             var voucher = await _voucherService.UpdateVoucher(Userid, updateVoucherDTO);
@@ -119,6 +126,7 @@ namespace Cursus.API.Controllers
         /// <param name="VoucherId"></param>
         /// <returns></returns>
         [HttpDelete("{VoucherId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteVoucher(int VoucherId)
         {
             var voucher = await _voucherService.DeleteVoucher(VoucherId);
@@ -139,6 +147,7 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
 
         [HttpPost("ReceiveVoucher/{userId}/{voucherId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> ReceiveVoucher(string userId, int voucherId)
         {
             var voucher = await _voucherService.ReceiveVoucher(userId, voucherId);
@@ -162,6 +171,7 @@ namespace Cursus.API.Controllers
         /// <param name="voucherId"></param>
         /// <returns></returns>
         [HttpPost("GiveVoucher/{GiverID}/{RecieverID}/{voucherId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<IActionResult> GiveVoucher(string GiverID, string RecieverID, int voucherId)
         {
             var voucher = await _voucherService.GiveVoucher(GiverID, RecieverID, voucherId);
