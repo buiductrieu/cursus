@@ -1,11 +1,4 @@
 using Cursus.ServiceContract.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 
 namespace Cursus.RepositoryContract.Interfaces
 {
@@ -41,6 +34,7 @@ namespace Cursus.RepositoryContract.Interfaces
         IHomePageRepository HomePageRepository { get; }
         ITermPolicyRepository TermPolicyRepository { get; }
         IPrivacyPolicyRepository PrivacyPolicyRepository { get; }
+        IMessageRepository MessageRepository { get; }
         Task SaveChanges();
     }
 }
