@@ -12,7 +12,7 @@
         }
 
         #leaveGroupButton, #sendMessageSection, #control-section {
-            display: none; /* Initially hidden */
+            display: none; 
         }
 
         /* Modal styles */
@@ -47,14 +47,15 @@
                 font-size: 1rem;
             }
 
-            #loginForm button{
+            #loginForm button {
                 display: flex;
                 margin-left: auto;
             }
-            #loginError {
-                color: red;
-                display: none;
-            }
+
+        #loginError {
+            color: red;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +134,7 @@
                         // Mark the user as authenticated
                         isAuthenticated = true;
                         loggedUser.username = loginRequestDTO.username;
-                        loggedUser.role = result.result.role; 
+                        loggedUser.role = result.result.role;
                         loggedUser.userId = result.result.user.id;
                         console.log(loggedUser);
                         // Hide login modal and show chat interface
@@ -156,27 +157,73 @@
             }
         });
 
+        document.getElementById("username").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                document.getElementById("loginButton").click();
+            }
+        });
 
-
+        document.getElementById("password").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("loginButton").click();
+            }
+        });
 
         // Function to add a message to the chat
-        function addMessage(content, isMyMessage = false, isSystemMessage = false) {
+        function addMessage(content, isMyMessage = false, isSystemMessage = false, timestamp = null) {
             const messagesDiv = document.getElementById("messages");
             const newMessage = document.createElement("div");
-            newMessage.textContent = content ;
-            newMessage.style.margin = "5px 0";
 
             if (isSystemMessage) {
-                newMessage.style.color = "grey"; // System messages in grey
-            } else if (isMyMessage) {
-                newMessage.style.color = "black"; // User-specific color
-            }
-            else {
-                newMessage.style.color = "blue";
+                // System message styling
+                newMessage.style.color = "grey";
+                newMessage.style.margin = "5px 0";
+                newMessage.style.textAlign = "center";
+                newMessage.style.fontStyle = "italic";
+                newMessage.textContent = content;
+                newMessage.style.fontSize = "14px";
+            } else {
+                // Styled message box
+                newMessage.style.border = "1px solid grey";
+                newMessage.style.backgroundColor = "white";
+                newMessage.style.padding = "10px";
+                newMessage.style.margin = "5px 0";
+                newMessage.style.borderRadius = "5px";
+                newMessage.style.color = isMyMessage ? "black" : "blue"; // Different colors for own and others' messages
+                newMessage.style.position = "relative";
+                newMessage.style.paddingLeft = "10px";
+
+                newMessage.style.wordWrap = "break-word"; // Break words if necessary
+                newMessage.style.wordBreak = "break-word"; // Ensure words break properly
+                newMessage.style.overflowWrap = "break-word"; // Alternative property for older browsers
+
+                // Main content
+                const messageText = document.createElement("span");
+                messageText.textContent = content;
+
+                // Timestamp element
+                const timestampElement = document.createElement("span");
+                const date = timestamp ? new Date(timestamp) : new Date();
+                const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g., "02:15 PM"
+                timestampElement.textContent = ` ${formattedTime}`;
+                timestampElement.style.fontSize = "12px";
+                timestampElement.style.color = "grey";
+                timestampElement.style.marginLeft = "10px";
+                timestampElement.style.float = "right";
+
+                // Append message content and timestamp to the message div
+                newMessage.appendChild(messageText);
+                newMessage.appendChild(timestampElement);
             }
 
             messagesDiv.appendChild(newMessage);
+
+            // Scroll to the bottom of the messages div for new messages
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
+
 
         // Create connection to the SignalR hub
         const connection = new signalR.HubConnectionBuilder()
@@ -188,7 +235,7 @@
         connection.on("ReceiveMessage", (userId, message) => {
             if (userId == loggedUser.userId) {
                 addMessage(message, true, false);
-            }else {
+            } else {
                 addMessage(message, false, false);
             }
         });
@@ -214,12 +261,37 @@
             }
 
             try {
-                await connection.invoke("JoinGroup", groupName);
+                
                 currentGroup = groupName;
                 document.getElementById("leaveGroupButton").style.display = "inline-block";
                 document.getElementById("sendMessageSection").style.display = "block";
+
+
+                // Fetch messages after successful group connection
+                const response = await fetch("/api/Message?groupName=" + groupName); // Replace with your actual API endpoint
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.isSuccess) {
+                        data.result.forEach((message) => {
+                            addMessage(
+                                `@${message.username.split('@')[0]}: ${message.text} `,
+                                message.username == loggedUser.username,
+                                false,
+                                message.timeStamp
+                            );
+                        });
+                    } else {
+                        console.error("Failed to fetch messages:", data.errorMessages);
+                        addMessage("Failed to load messages. Please try again later.", false, true); // System message
+                    }
+                    await connection.invoke("JoinGroup", groupName, loggedUser.username);
+                } else {
+                    console.error("Failed to fetch messages:", response.statusText);
+                    addMessage("Error fetching messages from the server.", false, true); // System message
+                }
             } catch (err) {
                 console.error("Error joining group:", err);
+                addMessage("Error joining the group. Please try again later.", false, true); // System message
             }
         });
 
@@ -256,6 +328,13 @@
                 document.getElementById("messageInput").value = "";
             } catch (err) {
                 console.error("Error sending message:", err);
+            }
+        });
+
+        document.getElementById("messageInput").addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("sendMessageButton").click();
             }
         });
     </script>

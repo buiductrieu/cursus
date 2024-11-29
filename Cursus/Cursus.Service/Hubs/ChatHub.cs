@@ -45,12 +45,12 @@ namespace Cursus.Service.Hubs
             await Clients.Group(groupName).SendAsync("ReceiveMessage", $"{userId}", $"@{userName[0]}: {message}");
         }
 
-        public async Task JoinGroup(string groupName)
+        public async Task JoinGroup(string groupName, string username)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             if (UserNumbers.TryGetValue(Context.ConnectionId, out int userNumber))
             {
-                await Clients.Group(groupName).SendAsync("SystemMessage", $"User has joined the group.");
+                await Clients.Group(groupName).SendAsync("SystemMessage", $"{username.Split("@")[0]} has joined the group.");
             }
         }
 
