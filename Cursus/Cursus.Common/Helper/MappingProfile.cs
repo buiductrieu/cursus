@@ -322,7 +322,11 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.ExpireDate, opt => opt.MapFrom(src => src.ExpireDate))
                 .ReverseMap();
 
-
+            CreateMap<Message, MessageDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.TimeStamp, opt => opt.MapFrom(src => src.TimeStamp))
+                .ForMember(dest => dest.Username, opt => opt.Ignore());
         }
     }
 }
