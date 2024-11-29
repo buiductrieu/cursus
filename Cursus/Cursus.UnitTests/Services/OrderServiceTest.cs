@@ -15,7 +15,7 @@ using Cursus.ServiceContract.Interfaces;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Linq.Expressions;
 using DocumentFormat.OpenXml.Presentation;
-
+namespace Cursus.UnitTests.Repositories;
 [TestFixture]
 public class OrderServiceTests
 {
