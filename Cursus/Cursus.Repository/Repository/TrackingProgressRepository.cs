@@ -18,7 +18,5 @@ namespace Cursus.Repository.Repository
         {
             return await _db.TrackingProgresses.CountAsync(tp => tp.UserId == userId);
         }
-
-
     }
 }

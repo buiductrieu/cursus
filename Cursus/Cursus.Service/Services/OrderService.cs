@@ -6,6 +6,7 @@ using Cursus.Repository.Repository;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Cursus.Service.Services
 {
@@ -16,14 +17,16 @@ namespace Cursus.Service.Services
 		private readonly IEmailService _emailService;
 		private readonly IPaymentService _paymentService;
         private readonly IStatisticsNotificationService _notificationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService, IPaymentService paymentService)
+        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService, IPaymentService paymentService, IHttpContextAccessor httpContextAccessor)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
 			_emailService = emailService;
 			_notificationService = notificationService;
             _paymentService = paymentService;
+			_httpContextAccessor = httpContextAccessor;
 
 
         }	
@@ -89,10 +92,11 @@ namespace Cursus.Service.Services
 			var OrderDTO = _mapper.Map<OrderDTO>(order);
 			return OrderDTO;
 		}
-        public async Task<List<OrderDTO>> GetOrderHistoryAsync(string userId)
+        public async Task<List<OrderDTO>> GetOrderHistoryAsync()
         {
             {
-                var orders = await _unitOfWork.OrderRepository.GetOrderHistory(userId);
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+				var orders = await _unitOfWork.OrderRepository.GetOrderHistory(userId);
 
                 if (orders == null || !orders.Any())
                 {

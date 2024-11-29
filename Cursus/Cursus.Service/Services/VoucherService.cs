@@ -72,35 +72,41 @@ namespace Cursus.Service.Services
             return Task.FromResult(_mapper.Map<VoucherDTO>(_voucherRepository.GetByVourcherIdAsync(id).Result));
         }
 
-        public async Task<bool> GiveVoucher(string GiverID, string ReceiverID, int voucherID)
+        public async Task<bool> GiveVoucher(string giverID, string receiverID, int voucherID)
         {
+           
+            if (string.IsNullOrEmpty(giverID) || string.IsNullOrEmpty(receiverID))
+            {
+                throw new ArgumentException("GiverID and ReceiverID cannot be null or empty.");
+            }
+
             var voucher = await _voucherRepository.GetByVourcherIdAsync(voucherID);
-            var Receiver = await _unitOfWork.UserRepository.GetAsync(u => u.Id == ReceiverID);
-            if(Receiver == null)
+            if (voucher == null || !voucher.IsValid) 
+            {
+                throw new InvalidOperationException("Voucher is not valid or does not exist.");
+            }
+
+            var receiver = await _unitOfWork.UserRepository.ExiProfile(receiverID);
+            if (receiver == null)
             {
                 throw new Exception("Receiver not found");
             }
 
-            if (voucher.UserId.Equals(GiverID) && voucher.Id == voucherID && voucher.IsValid == true)
-            {
-               
-                voucher.UserId = ReceiverID;
-                await _voucherRepository.UpdateAsync(voucher);
-                await _unitOfWork.SaveChanges();
-
-            }
-            else
-            {
-                throw new Exception("Voucher or Giver not found");
-            }
+            
+            voucher.UserId = receiverID;
+            await _voucherRepository.UpdateAsync(voucher);
+            await _unitOfWork.SaveChanges();
 
             return true;
         }
-
         public async Task<bool> ReceiveVoucher(string userId, int VoucherID)
         {
             var voucher = await _voucherRepository.GetByVourcherIdAsync(VoucherID);
-          
+            if (voucher == null || !voucher.IsValid)
+            {
+                throw new Exception("Voucher is not valid or does not exist.");
+            }
+
             voucher.UserId = userId;
             await _voucherRepository.UpdateAsync(voucher);
             await _unitOfWork.SaveChanges();
