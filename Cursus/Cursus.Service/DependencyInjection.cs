@@ -15,7 +15,7 @@ namespace Cursus.Service
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<ICourseService, CourseService>();
             services.AddTransient<ICourseService, CourseService>();
-            services.AddTransient<ICourseProgressService, CourseProgressService>();         
+            services.AddTransient<ICourseProgressService, CourseProgressService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IInstructorService, InstructorService>();
             services.AddTransient<IAuthService, AuthService>();
@@ -29,13 +29,13 @@ namespace Cursus.Service
             services.AddTransient<IBookmarkService, BookmarkService>();
             services.AddTransient<IStepService, StepService>();
             services.AddTransient<IReasonService, ReasonService>();
-			services.AddTransient<ICartService, CartService>();
-			services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<ICartItemsService, CartItemsService>();
             services.AddTransient<ICertificateService, CertificateService>();
-            services.AddTransient<ICourseCommentService, CourseCommentService>();   
+            services.AddTransient<ICourseCommentService, CourseCommentService>();
             services.AddTransient<ITransactionService, TransactionService>();
-            services.AddTransient<IPaymentService,PaymentService>();
+            services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<IPayoutRequestService, PayoutRequestService>();
             services.AddTransient<IWalletHistoryService, WalletHistoryService>();
@@ -48,6 +48,7 @@ namespace Cursus.Service
             services.AddTransient<IHomePageService, HomePageService>();
             services.AddTransient<ITermPolicyService, TermPolicyService>();
             services.AddTransient<IPrivacyPolicyService, PrivacyPolicyService>();
+            services.AddTransient<IMessageService, MessageService>();
             return services;
         }
     }

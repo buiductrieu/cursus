@@ -1,4 +1,6 @@
-﻿using Cursus.RepositoryContract.Interfaces;
+﻿using Cursus.Data.Entities;
+using Cursus.RepositoryContract.Interfaces;
+using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
@@ -8,6 +10,14 @@ namespace Cursus.Service.Hubs
     {
         private static ConcurrentDictionary<string, int> UserNumbers = new();
         private static int NextUserNumber = 1;
+        private readonly IMessageService _messageService;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ChatHub(IMessageService messageService, IUnitOfWork unitOfWork)
+        {
+            _messageService = messageService;
+            _unitOfWork = unitOfWork;
+        }
 
         public override async Task OnConnectedAsync()
         {
@@ -20,30 +30,27 @@ namespace Cursus.Service.Hubs
             await base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public async Task SendMessageToGroup(string groupName, string message, string userId)
         {
-            if (UserNumbers.TryRemove(Context.ConnectionId, out int userNumber))
+            Message msg = new Message()
             {
-                await Clients.All.SendAsync("SystemMessage", $"User {userNumber} has left the chat.");
-            }
-
-            await base.OnDisconnectedAsync(exception);
+                Text = message,
+                SenderId = userId,
+                GroupName = groupName,
+                TimeStamp = DateTime.Now
+            };
+            await _messageService.AddMessage(msg);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
+            var userName = user.UserName.Split("@");
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", $"{userId}", $"@{userName[0]}: {message}");
         }
 
-        public async Task SendMessageToGroup(string groupName, string message)
-        {
-            if (UserNumbers.TryGetValue(Context.ConnectionId, out int userNumber))
-            {
-                await Clients.Group(groupName).SendAsync("ReceiveMessage", $"{Context.ConnectionId}", $"User {userNumber}: {message}");
-            }
-        }
-
-        public async Task JoinGroup(string groupName)
+        public async Task JoinGroup(string groupName, string username)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             if (UserNumbers.TryGetValue(Context.ConnectionId, out int userNumber))
             {
-                await Clients.Group(groupName).SendAsync("SystemMessage", $"User {userNumber} has joined the group.");
+                await Clients.Group(groupName).SendAsync("SystemMessage", $"{username.Split("@")[0]} has joined the group.");
             }
         }
 

@@ -219,6 +219,8 @@ namespace Cursus.API
             app.MapHub<StatisticsHub>("/statisticsHub"); // Cấu hình Hub
             app.MapScalarApiReference();
 
+            
+
             app.UseStaticFiles();
 
             app.UseRateLimiter();
