@@ -12,7 +12,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
+
     public class CourseCommentController : ControllerBase
     {
         private readonly ICourseCommentService _courseCommentService;
@@ -31,6 +31,7 @@ namespace Cursus.API.Controllers
         /// <returns></returns>
         [HttpPost("comment-courses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
         public async Task<ActionResult<APIResponse>> PostComment([FromBody] CourseCommentCreateDTO dto)
         {
 
@@ -48,6 +49,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("comment-courses/{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
         public async Task<ActionResult<APIResponse>> GetCourseComment(int id)
         {
             var comments = await _courseCommentService.GetCourseCommentsAsync(id);
@@ -63,6 +65,7 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost("comment-courses/{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin,Instructor")]
         public async Task<ActionResult<APIResponse>> DeleteComment(int id)
         {
             var comment = await _courseCommentService.DeleteComment(id);

@@ -7,7 +7,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class InstructorDashboardController : ControllerBase
     {
         private readonly IInstructorDashboardService _instructorDashboardService;

@@ -13,7 +13,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class ReasonController : ControllerBase
     {
         private readonly IReasonService _reasonService;

@@ -11,7 +11,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+
     public class CartItemsController : ControllerBase
 
     {
@@ -33,6 +33,7 @@ namespace Cursus.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> DeleteCartItems(int id)
         {
             if (!ModelState.IsValid)
@@ -63,6 +64,7 @@ namespace Cursus.API.Controllers
         [HttpPut("GetAll{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> GetAllCartItems(int id)
         {
             var result = await _cartItemsService.GetAllCartItems(id);
