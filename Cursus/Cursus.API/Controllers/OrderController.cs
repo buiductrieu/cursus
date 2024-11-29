@@ -78,9 +78,9 @@ namespace Cursus.API.Controllers
         [HttpGet]
         [Route("view-orderHistory")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
-        public async Task<ActionResult<APIResponse>> ViewOrderHistory(string userId)
+        public async Task<ActionResult<APIResponse>> ViewOrderHistory()
         {
-            var order = await _orderService.GetOrderHistoryAsync(userId);
+            var order = await _orderService.GetOrderHistoryAsync();
             if (order == null)
             {
                 _response.IsSuccess = false;
