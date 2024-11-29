@@ -57,6 +57,7 @@ namespace Cursus.Data.Models
         public virtual DbSet<HomePage> HomePages { get; set; }
         public virtual DbSet<PrivacyPolicy> PrivacyPolicies { get; set; }
         public virtual DbSet<Term> Terms { get; set; }
+        public virtual DbSet<InstructorCertificate> InstructorCertificates { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
