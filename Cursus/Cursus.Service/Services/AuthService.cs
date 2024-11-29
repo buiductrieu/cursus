@@ -48,6 +48,9 @@ namespace Cursus.Service.Services
             if (!isValid)
                 throw new BadHttpRequestException("Username or password is incorrect!");
 
+            if (!user.Status)
+                throw new BadHttpRequestException("Your account is banned!");
+
             if (!user.EmailConfirmed)
                 return null;
 
