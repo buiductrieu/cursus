@@ -60,7 +60,9 @@ namespace Cursus.Data.Models
         public virtual DbSet<InstructorCertificate> InstructorCertificates { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public virtual DbSet<Message> Messages { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 

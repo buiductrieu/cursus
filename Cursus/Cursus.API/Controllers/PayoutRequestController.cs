@@ -9,7 +9,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+
     public class PayoutRequestController : ControllerBase
     {
         public readonly IPayoutRequestService _payoutRequestService;

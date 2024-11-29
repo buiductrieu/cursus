@@ -110,9 +110,10 @@ namespace Cursus.API.Controllers
 		/// <returns></returns>
 		[HttpPost("add-to-cart")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<ActionResult<APIResponse>> AddCourseToCart(string userId, int courseId)
+        public async Task<ActionResult<APIResponse>> AddCourseToCart( int courseId)
 		{
-			await _cartService.AddCourseToCartAsync(courseId, userId);
+			var userId = User.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            await _cartService.AddCourseToCartAsync(courseId, userId);
 
 			_response.IsSuccess = true;
 			_response.StatusCode = HttpStatusCode.OK;
