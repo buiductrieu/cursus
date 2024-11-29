@@ -26,6 +26,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> GetHomePage()
         {
             var homePageInfo = await _homePageService.GetHomePageAsync();

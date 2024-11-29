@@ -8,7 +8,7 @@ namespace Cursus.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin, User")]
+
 
 	public class NotificationController : ControllerBase
 	{

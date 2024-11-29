@@ -3,10 +3,12 @@ using Cursus.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     [ApiController]
     public class AdminDashboardController : ControllerBase
     {
@@ -18,6 +20,7 @@ namespace Cursus.API.Controllers
         }
 
         [HttpGet("top-purchased-courses")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<List<PurchaseCourseOverviewDTO>>> GetTopPurchasedCourses(int year, string period)
         {
             var courses = await _adminDashboardService.GetTopPurchasedCourses(year, period);
@@ -31,6 +34,7 @@ namespace Cursus.API.Controllers
         }
 
         [HttpGet("worst-rated-courses")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<List<PurchaseCourseOverviewDTO>>> GetWorstRatedCourses(int year, string period)
         {
             var courses = await _adminDashboardService.GetWorstRatedCourses(year, period);
@@ -44,6 +48,7 @@ namespace Cursus.API.Controllers
         }
 
         [HttpGet("total-users")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetTotalUsers()
         {
             var totalUsers = await _adminDashboardService.GetTotalUsersAsync();
@@ -51,6 +56,7 @@ namespace Cursus.API.Controllers
         }
 
         [HttpGet("total-instructors")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetTotalInstructors()
         {
             var totalInstructors = await _adminDashboardService.GetTotalInstructorsAsync();

@@ -12,7 +12,7 @@ namespace Cursus.API.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+
     public class OrderController : ControllerBase
 	{
 		private readonly IOrderService _orderService;
@@ -31,7 +31,8 @@ namespace Cursus.API.Controllers
 		/// <param name="userId"></param>
 		/// <param name="VoucherCode"></param>
 		[HttpPost("create")]
-		public async Task<ActionResult<APIResponse>> CreateOrder(string userId, string? VoucherCode)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        public async Task<ActionResult<APIResponse>> CreateOrder(string userId, string? VoucherCode)
 		{
 			var order = await _orderService.CreateOrderAsync(userId, VoucherCode);
 			if(order == null)
