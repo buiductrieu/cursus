@@ -11,7 +11,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     [EnableRateLimiting("default")]
     public class AdminController : ControllerBase
     {

@@ -11,7 +11,6 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class StepController : ControllerBase
     {   
         private readonly IStepService _stepService;

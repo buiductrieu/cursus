@@ -13,7 +13,6 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
     public class UserController : ControllerBase
 
     {

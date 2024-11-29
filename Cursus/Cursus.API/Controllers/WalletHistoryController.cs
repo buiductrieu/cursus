@@ -10,7 +10,7 @@ namespace Cursus.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Instructor")]
+
     public class WalletHistoryController : ControllerBase
     {
         private readonly IWalletHistoryService _walletHistoryService;

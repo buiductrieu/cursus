@@ -26,6 +26,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult<APIResponse>> GetTermPolicies()
         {
             var termPolicies = await _termPolicyService.GetTermPolicyAsync();
