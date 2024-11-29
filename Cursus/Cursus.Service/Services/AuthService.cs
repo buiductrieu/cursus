@@ -75,7 +75,7 @@ namespace Cursus.Service.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email), //Thông tin chủ thể của object: tên đăng nhập của user
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id), //Thông tin chủ thể của object: tên đăng nhập của user
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),// unique identifier giúp phân biệt các token khác nhau, Sử dụng NewGuid() để tạo ra một giá trị đi nhất
                 new Claim(ClaimTypes.NameIdentifier, user.Id), //Id để xác định người dùng 1 cách duy nhất 
             };
