@@ -17,7 +17,7 @@ using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using Microsoft.AspNetCore.Http;
 
-namespace Cursus.Tests
+namespace Cursus.UnitTests.Services
 {
     [TestFixture]
     public class AuthServiceTests
