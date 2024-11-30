@@ -33,61 +33,65 @@ namespace Cursus.Service.Services
 
         public async Task<IEnumerable<PayoutRequestDisplayDTO>> GetApprovedPayoutRequest()
         {
-            var approvedRequest = await _db.PayoutRequests
-            //.Include(pr => pr.Instructor)
-            //.ThenInclude(i => i.User)
-            .Include(pr => pr.Transaction)
-            .Where(pr => pr.PayoutRequestStatus == PayoutRequestStatus.Approved)
-            .ToListAsync();
+            var approvedRequest = await (
+                from pr in _db.PayoutRequests
+                join tr in _db.Transactions on pr.TransactionId equals tr.TransactionId
+                join usr in _db.Users on tr.UserId equals usr.Id
+                where pr.PayoutRequestStatus == PayoutRequestStatus.Approved
+                select new PayoutRequestDisplayDTO
+                {
+                    Id = pr.Id,
+                    InstructorName = usr.UserName, // Lấy tên User
+                    Amount = tr.Amount ?? 0,
+                    CreateDate = pr.CreatedDate,
+                    TransactionId = pr.TransactionId,
+                    Status = pr.PayoutRequestStatus
+                }
+            ).ToListAsync();
 
-            return approvedRequest.Select( x => new PayoutRequestDisplayDTO
-            {
-                Id = x.Id,
-               // InstructorName = x.Instructor?.User?.UserName,
-                Amount = x.Transaction?.Amount?? 0,
-                CreateDate = x.CreatedDate,
-                TransactionId = x.TransactionId,
-                Status = x.PayoutRequestStatus
-            }).ToList();
+            return approvedRequest;
         }
 
         public async Task<IEnumerable<PayoutRequestDisplayDTO>> GetPendingPayoutRequest()
         {
-            var pendingRequests = await _db.PayoutRequests
-                //.Include(pr => pr.Instructor)
-                //.ThenInclude(i => i.User)
-                .Include(pr => pr.Transaction)
-                .Where(pr => pr.PayoutRequestStatus == PayoutRequestStatus.Pending)
-                .ToListAsync();
+            var pendingRequest = await (
+                from pr in _db.PayoutRequests
+                join tr in _db.Transactions on pr.TransactionId equals tr.TransactionId
+                join usr in _db.Users on tr.UserId equals usr.Id
+                where pr.PayoutRequestStatus == PayoutRequestStatus.Pending
+                select new PayoutRequestDisplayDTO
+                {
+                    Id = pr.Id,
+                    InstructorName = usr.UserName, // Lấy tên User
+                    Amount = tr.Amount ?? 0,
+                    CreateDate = pr.CreatedDate,
+                    TransactionId = pr.TransactionId,
+                    Status = pr.PayoutRequestStatus
+                }
+            ).ToListAsync();
 
-            return pendingRequests.Select(x => new PayoutRequestDisplayDTO
-            {
-                Id = x.Id,
-               // InstructorName = x.Instructor?.User?.UserName,
-                Amount = x.Transaction?.Amount ?? 0,
-                CreateDate = x.CreatedDate,
-                TransactionId = x.TransactionId,
-                Status = x.PayoutRequestStatus
-            }).ToList();
+            return pendingRequest;
         }
 
         public async Task<IEnumerable<PayoutRequestDisplayDTO>> GetRejectPayoutRequest()
         {
-            var rejectRequest = await _db.PayoutRequests
-                //.Include(pr => pr.Instructor)
-                //.ThenInclude(i => i.User)
-                .Include(pr => pr.Transaction)
-                .Where(pr => pr.PayoutRequestStatus == PayoutRequestStatus.Rejected)
-                .ToListAsync();
-            return rejectRequest.Select(x => new PayoutRequestDisplayDTO
-            {
-                Id = x.Id,
-              //  InstructorName = x.Instructor?.User?.UserName,
-                Amount = x.Transaction?.Amount ?? 0,
-                CreateDate = x.CreatedDate,
-                TransactionId = x.TransactionId,
-                Status = x.PayoutRequestStatus
-            }).ToList();
+            var rejectRequest = await (
+                from pr in _db.PayoutRequests
+                join tr in _db.Transactions on pr.TransactionId equals tr.TransactionId
+                join usr in _db.Users on tr.UserId equals usr.Id
+                where pr.PayoutRequestStatus == PayoutRequestStatus.Rejected
+                select new PayoutRequestDisplayDTO
+                {
+                    Id = pr.Id,
+                    InstructorName = usr.UserName, // Lấy tên User
+                    Amount = tr.Amount ?? 0,
+                    CreateDate = pr.CreatedDate,
+                    TransactionId = pr.TransactionId,
+                    Status = pr.PayoutRequestStatus
+                }
+            ).ToListAsync();
+
+            return rejectRequest;
         }
         public async Task<PayoutAcceptDTO> AcceptPayout(int id)
         {

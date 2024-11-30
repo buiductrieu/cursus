@@ -14,7 +14,7 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Instructor")]
+
     public class CourseController : ControllerBase
     {
         private readonly ICourseService _courseService;

@@ -44,6 +44,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginRequestDTO)
         {
             var loginResult = await _authService.LoginAsync(loginRequestDTO);
@@ -79,6 +80,7 @@ namespace Cursus.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [AllowAnonymous]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDTO refreshTokenRequest)
         {
             var responseDTO = await _authService.RefreshTokenAsync(refreshTokenRequest.RefreshToken);
@@ -98,6 +100,7 @@ namespace Cursus.API.Controllers
         [HttpPost("logout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<IActionResult> Logout([FromBody] LogoutRequestDTO logoutRequest)
         {
             // Gọi phương thức LogoutAsync để thu hồi Refresh Token
@@ -120,6 +123,7 @@ namespace Cursus.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> Register(UserRegisterDTO dto)
         {
             if (!ModelState.IsValid)
@@ -153,6 +157,7 @@ namespace Cursus.API.Controllers
         /// <param name="username"></param>
         /// <returns></returns>
         [HttpGet("confirm-email")]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> ConfirmEmail([FromQuery] string token, [FromQuery] string username)
         {
             try
@@ -184,6 +189,7 @@ namespace Cursus.API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("forget-password")]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequestDTO model)
         {
 
@@ -205,6 +211,7 @@ namespace Cursus.API.Controllers
         /// <param name="newPassword"></param>
         /// <returns></returns>
         [HttpPost("reset-password")]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(string email, string token, string newPassword)
         {
             var user = await _userManager.FindByEmailAsync(email);

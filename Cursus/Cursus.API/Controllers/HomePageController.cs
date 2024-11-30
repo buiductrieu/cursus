@@ -26,6 +26,7 @@ namespace Cursus.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<APIResponse>> GetHomePage()
         {
             var homePageInfo = await _homePageService.GetHomePageAsync();
@@ -49,7 +50,8 @@ namespace Cursus.API.Controllers
         /// <param name="id"></param>
         /// <param name="homePageDto"></param>
         /// <returns></returns>
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "FPTAdminOnly")]
         [HttpPut("{id}")]
         public async Task<ActionResult<APIResponse>> UpdateHomePage(int id, [FromBody] HomePageDTO homePageDto)
         {
@@ -66,6 +68,7 @@ namespace Cursus.API.Controllers
             _response.StatusCode = HttpStatusCode.BadRequest;
             _response.ErrorMessages.Add("Failed to update home page information.");
             return BadRequest(_response);
+
         }
     }
 }

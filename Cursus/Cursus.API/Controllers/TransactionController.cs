@@ -11,7 +11,6 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 
     public class TransactionController : ControllerBase
     {

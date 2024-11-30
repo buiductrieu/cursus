@@ -35,6 +35,7 @@ namespace Cursus.RepositoryContract.Interfaces
         ITermPolicyRepository TermPolicyRepository { get; }
         IPrivacyPolicyRepository PrivacyPolicyRepository { get; }
         IMessageRepository MessageRepository { get; }
+        IInstructorCertificateRepository InstructorCertificateRepository { get; }   
         Task SaveChanges();
     }
 }

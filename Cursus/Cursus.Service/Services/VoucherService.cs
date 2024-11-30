@@ -4,9 +4,11 @@ using Cursus.Data.Entities;
 using Cursus.RepositoryContract.Interfaces;
 using Cursus.ServiceContract.Interfaces;
 using DocumentFormat.OpenXml.VariantTypes;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +19,15 @@ namespace Cursus.Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IVoucherRepository _voucherRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public VoucherService(IUnitOfWork unitOfWork, IMapper mapper, IVoucherRepository voucherRepository)
+
+        public VoucherService(IUnitOfWork unitOfWork, IMapper mapper, IVoucherRepository voucherRepository, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _voucherRepository = voucherRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<VoucherDTO> CreateVoucher(VoucherDTO voucherDTO)
@@ -72,9 +77,10 @@ namespace Cursus.Service.Services
             return Task.FromResult(_mapper.Map<VoucherDTO>(_voucherRepository.GetByVourcherIdAsync(id).Result));
         }
 
-        public async Task<bool> GiveVoucher(string giverID, string receiverID, int voucherID)
+        public async Task<bool> GiveVoucher( string receiverID, int voucherID)
         {
-           
+            var giverID = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (string.IsNullOrEmpty(giverID) || string.IsNullOrEmpty(receiverID))
             {
                 throw new ArgumentException("GiverID and ReceiverID cannot be null or empty.");
@@ -99,8 +105,9 @@ namespace Cursus.Service.Services
 
             return true;
         }
-        public async Task<bool> ReceiveVoucher(string userId, int VoucherID)
+        public async Task<bool> ReceiveVoucher( int VoucherID)
         {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var voucher = await _voucherRepository.GetByVourcherIdAsync(VoucherID);
             if (voucher == null || !voucher.IsValid)
             {

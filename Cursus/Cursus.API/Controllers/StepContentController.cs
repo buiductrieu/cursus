@@ -14,7 +14,6 @@ namespace Cursus.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableRateLimiting("default")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
     public class StepContentController : ControllerBase
     {
         private readonly IStepContentService _stepContentService;

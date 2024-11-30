@@ -3,6 +3,7 @@ using Cursus.Common.Helper;
 using Cursus.Data.DTO;
 using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
@@ -23,6 +24,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("SalesAndRevenue-statistics")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> UpdateStatistics(DateTime? startDate, DateTime? endDate)
     {
         // Lấy số liệu từ Service
@@ -47,6 +49,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("Course-statistics")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> CourseStatistics()
     {
         var (totalCourses, activeCourse, inactiveCourse) = await _statisticService.GetCourseStatisticsAsync();
@@ -68,6 +71,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("Order-statistics")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> OrderStatistics(DateTime? startDate, DateTime? endDate)
     {
         var orderStatisticsDto = await _statisticService.GetOrderStatisticsAsync(startDate, endDate);
@@ -81,6 +85,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("monthly-overview")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> GetMonthlyOverview(DateTime? startDate)
     {
         var monthlyStatistics = await _statisticService.GetMonthlyStatisticsAsync(startDate);
@@ -91,6 +96,7 @@ public class StatisticsController : ControllerBase
         return Ok(_response);
     }
     [HttpGet("top-revenue")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> GetTopInstructorsByRevenue([FromQuery] int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
     {
         var result = await _statisticService.GetTopInstructorsByRevenueAsync(topN, startDate, endDate, pageNumber, pageSize);
@@ -102,6 +108,7 @@ public class StatisticsController : ControllerBase
     }
 
     [HttpGet("top-courses")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public async Task<IActionResult> GetTopInstructorsByCourses([FromQuery] int topN, DateTime? startDate, DateTime? endDate, int pageNumber = 1, int pageSize = 10)
     {
         var result = await _statisticService.GetTopInstructorsByCoursesAsync(topN, startDate, endDate, pageNumber, pageSize);
