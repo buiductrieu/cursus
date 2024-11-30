@@ -90,6 +90,11 @@ To develop and run .NET 8 applications, make sure your system meets the followin
     Drop-database(If you already have database)
     Update-Database
 
+### 3.Import Database InitialDatabase.sql
+    You need to create an Instructor first by using Register Instructor function
+    After that Execute the Trigger Transaction 
+    Finally Execute the Rest
+    
 # User Roles and Functionality Table
 
 | Function                                       | Guest | Student | Instructor | Admin |
