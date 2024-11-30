@@ -49,6 +49,7 @@ namespace Cursus.Repository
             services.AddTransient<ITermPolicyRepository, TermPolicyRepository>();
             services.AddTransient<IHomePageRepository, HomePageRepository>();
             services.AddTransient<IPrivacyPolicyRepository, PrivacyPolicyRepository>();
+            services.AddTransient<IInstructorCertificateRepository, InstructorCertificateRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
             // DI UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
