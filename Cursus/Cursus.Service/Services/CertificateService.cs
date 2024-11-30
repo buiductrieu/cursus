@@ -43,7 +43,7 @@ public class CertificateService : ICertificateService
         return $"{baseUrl}{downloadCertificateEndpoint}?userId={userId}&courseId={courseId}";
     }
     //Function Private
-    private byte[] GenerateCertificatePDF(string name, string courseName, string date, string completionTitle)
+    public byte[] GenerateCertificatePDF(string name, string courseName, string date, string completionTitle)
     {
        
         var document = Document.Create(container =>
@@ -276,10 +276,5 @@ public class CertificateService : ICertificateService
 
         return await ExportExcel(certificates);
     }
-
-
-
-
-
 
 }
