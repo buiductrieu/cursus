@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
+using System.Security.Claims;
 
 namespace Cursus.API.Controllers
 {
@@ -112,7 +113,7 @@ namespace Cursus.API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         public async Task<ActionResult<APIResponse>> AddCourseToCart( int courseId)
 		{
-			var userId = User.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
             await _cartService.AddCourseToCartAsync(courseId, userId);
 
 			_response.IsSuccess = true;
