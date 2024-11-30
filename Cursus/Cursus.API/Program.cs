@@ -213,10 +213,11 @@ namespace Cursus.API
                 }
 
             }
+			app.MapHub<NotificationHub>("/notificationHub");
 
 
-            // Configure the HTTP request pipeline.
-            app.UseSwagger(options =>
+			// Configure the HTTP request pipeline.
+			app.UseSwagger(options =>
             {
                 options.RouteTemplate = "/openapi/{documentname}.json";
             });

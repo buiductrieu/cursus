@@ -11,23 +11,21 @@ namespace Cursus.Service.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
 
-		public NotificationService(IUnitOfWork unitOfWork, IMapper autoMapper)
+		public NotificationService(IUnitOfWork unitOfWork, IMapper mapper)
 		{
 			_unitOfWork = unitOfWork;
-			_mapper = autoMapper;
+			_mapper = mapper;
 		}
 
 		public async Task SendNotificationAsync(string userId, string message)
 		{
-
-			var userExists = await _unitOfWork.UserRepository.GetAsync(c => c.Id == userId);
-			if (userExists == null)
-				throw new KeyNotFoundException("User not found.");
-
 			var notification = new Notification
 			{
 				UserId = userId,
-				Message = message
+				Message = message,
+				DateCreated = DateTime.Now,
+				IsRead = false,
+				IsNew = true
 			};
 
 			await _unitOfWork.NotificationRepository.AddAsync(notification);
@@ -36,13 +34,9 @@ namespace Cursus.Service.Services
 
 		public async Task<IEnumerable<NotificationDTO>> FetchNotificationsAsync(string userId)
 		{
-			var userExists = await _unitOfWork.UserRepository.GetAsync(c => c.Id == userId);
-			if (userExists == null)
-				throw new KeyNotFoundException("User not found.");
-
 			var notifications = await _unitOfWork.NotificationRepository.GetAllAsync(n => n.UserId == userId);
 
-			var notifiDTO = _mapper.Map<IEnumerable<NotificationDTO>>(notifications.OrderByDescending(n => n.DateCreated));
+			var notifyDTO = _mapper.Map<IEnumerable<NotificationDTO>>(notifications);
 
 			foreach (var notification in notifications)
 			{
@@ -54,7 +48,8 @@ namespace Cursus.Service.Services
 			}
 			await _unitOfWork.SaveChanges();
 
-			return notifiDTO;
+			return notifyDTO;
+
 		}
 	}
 }
