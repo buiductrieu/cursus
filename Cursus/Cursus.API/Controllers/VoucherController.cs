@@ -142,15 +142,14 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Receive Voucher
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="voucherId"></param>
         /// <returns></returns>
 
-        [HttpPost("ReceiveVoucher/{userId}/{voucherId}")]
+        [HttpPost("ReceiveVoucher/{voucherId}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<IActionResult> ReceiveVoucher(string userId, int voucherId)
+        public async Task<IActionResult> ReceiveVoucher( int voucherId)
         {
-            var voucher = await _voucherService.ReceiveVoucher(userId, voucherId);
+            var voucher = await _voucherService.ReceiveVoucher( voucherId);
             if (!voucher)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;
@@ -166,15 +165,14 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Give Voucher
         /// </summary>
-        /// <param name="GiverID"></param>
         /// <param name="RecieverID"></param>
         /// <param name="voucherId"></param>
         /// <returns></returns>
-        [HttpPost("GiveVoucher/{GiverID}/{RecieverID}/{voucherId}")]
+        [HttpPost("GiveVoucher/{RecieverID}/{voucherId}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<IActionResult> GiveVoucher(string GiverID, string RecieverID, int voucherId)
+        public async Task<IActionResult> GiveVoucher( string RecieverID, int voucherId)
         {
-            var voucher = await _voucherService.GiveVoucher(GiverID, RecieverID, voucherId);
+            var voucher = await _voucherService.GiveVoucher( RecieverID, voucherId);
             if(!voucher)
             {
                 _apiResponse.StatusCode = HttpStatusCode.BadRequest;

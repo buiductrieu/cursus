@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Cursus.Common.Middleware.AuthorizeHandler;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cursus.Common.Middleware
 {
@@ -12,6 +14,7 @@ namespace Cursus.Common.Middleware
             services.AddExceptionHandler<NotImplementExceptionHandler>();
             services.AddExceptionHandler<BadRequestExceptionHandler>();
             services.AddExceptionHandler<EmailNotConfirmedExceptionHandler>();
+            services.AddSingleton<IAuthorizationHandler, IsFPTAdminHandler>();
             return services;
         }
     }
