@@ -24,6 +24,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Cursus.Service.Hubs;
+using Cursus.Common.Middleware.AuthorizeHandler;
+
 
 namespace Cursus.API
 {
@@ -95,6 +97,15 @@ namespace Cursus.API
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
                 };
+
+            });
+
+            //policy authorize
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireAuthenticatedUser().RequireRole("Admin"));
+                options.AddPolicy("FPTAdminOnly", policy => policy.AddRequirements(new IsFPTAdminRequirement("fpt.edu.vn")));
+                //options.AddPolicy("FPTAdminOnly", policy => policy.RequireAssertion(context => context.User.HasClaim(claim => claim.Type == "Sub" && claim.Value.EndsWith("@fpt.edu.vn"))));
             });
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -202,8 +213,6 @@ namespace Cursus.API
                 }
 
             }
-
-
 
 
             // Configure the HTTP request pipeline.
