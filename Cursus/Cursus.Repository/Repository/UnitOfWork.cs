@@ -42,6 +42,7 @@ namespace Cursus.Repository.Repository
 
         public INotificationRepository NotificationRepository { get; }
         public IAdminDashboardRepository AdminDashboardRepository { get; }
+        public IInstructorCertificateRepository InstructorCertificateRepository { get; }
 
         public ITermPolicyRepository TermPolicyRepository { get; }
         public IHomePageRepository HomePageRepository { get; }
@@ -49,7 +50,7 @@ namespace Cursus.Repository.Repository
 
         public IMessageRepository MessageRepository { get; }
 
-        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository, IReasonRepository reasonRepository, IWalletRepository walletRepository, IPlatformWalletRepository platformWalletRepository, IPayoutRequestRepository payoutRequestRepository, IWalletHistoryRepository walletHistoryRepository, IInstructorDashboardRepository instructorDashboardRepository, IArchivedTransactionRepository archivedTransactionRepository, ICertificateRepository certificateRepository, INotificationRepository notificationRepository, IAdminDashboardRepository adminDashboardRepository, ITermPolicyRepository termPolicyRepository, IHomePageRepository homePageRepository, IPrivacyPolicyRepository privacyPolicyRepository, IVoucherRepository voucherRepository, IMessageRepository messageRepository)
+        public UnitOfWork(CursusDbContext db, ICategoryRepository categoryRepository, ICourseRepository courseRepository, IStepRepository stepRepository, IUserRepository userRepository, IStepContentRepository stepContentRepository, IInstructorInfoRepository instructorInfoRepository, UserManager<ApplicationUser> userManager, ICourseCommentRepository courseCommentRepository, IRefreshTokenRepository refreshTokenRepository, IStepCommentRepository stepCommentRepository, IProgressRepository progressRepository, ICartRepository cartRepository, IOrderRepository orderRepository, ICourseProgressRepository courseProgressRepository, IBookmarkRepository bookmarkRepository, ICartItemsRepository cartItemsRepository, ITransactionRepository transactionRepository, IReasonRepository reasonRepository, IWalletRepository walletRepository, IPlatformWalletRepository platformWalletRepository, IPayoutRequestRepository payoutRequestRepository, IWalletHistoryRepository walletHistoryRepository, IInstructorDashboardRepository instructorDashboardRepository, IArchivedTransactionRepository archivedTransactionRepository, ICertificateRepository certificateRepository, INotificationRepository notificationRepository, IAdminDashboardRepository adminDashboardRepository, ITermPolicyRepository termPolicyRepository, IHomePageRepository homePageRepository, IPrivacyPolicyRepository privacyPolicyRepository, IVoucherRepository voucherRepository, IMessageRepository messageRepository, IInstructorCertificateRepository instructorCertificateRepository)
         {
             _db = db;
             CategoryRepository = categoryRepository;
@@ -86,6 +87,7 @@ namespace Cursus.Repository.Repository
             HomePageRepository = homePageRepository;
             PrivacyPolicyRepository = privacyPolicyRepository;
             VoucherRepository = voucherRepository;
+            InstructorCertificateRepository = instructorCertificateRepository;
             MessageRepository = messageRepository;
         }
 
