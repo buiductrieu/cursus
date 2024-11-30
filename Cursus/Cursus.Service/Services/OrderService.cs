@@ -19,6 +19,15 @@ namespace Cursus.Service.Services
         private readonly IStatisticsNotificationService _notificationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService, IPaymentService paymentService)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _emailService = emailService;
+            _notificationService = notificationService;
+            _paymentService = paymentService;
+        }
+
         public OrderService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService, IStatisticsNotificationService notificationService, IPaymentService paymentService, IHttpContextAccessor httpContextAccessor)
 		{
 			_unitOfWork = unitOfWork;
