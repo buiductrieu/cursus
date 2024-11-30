@@ -10,8 +10,7 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface IInstructorCertificateRepository : IRepository<InstructorCertificate>
     {
-        Task<InstructorCertificate> FirstOrDefaultAsync(Expression<Func<InstructorCertificate, bool>> predicate);
-        Task<IEnumerable<InstructorCertificate>> GetInstructorCertificatesByInstructorIdAsync(int instructorId);
+        Task<int?> GetInstructorIdByUserIdAsync(Guid userId);
 
     }
 }

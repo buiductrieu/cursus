@@ -49,6 +49,7 @@ namespace Cursus.Service
             services.AddTransient<ITermPolicyService, TermPolicyService>();
             services.AddTransient<IPrivacyPolicyService, PrivacyPolicyService>();
             services.AddTransient<IMessageService, MessageService>();
+            services.AddTransient<IInstructorCertificateService, InstructorCertificateService>();
             return services;
         }
     }

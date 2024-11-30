@@ -327,6 +327,10 @@ namespace Cursus.Common.Helper
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.TimeStamp, opt => opt.MapFrom(src => src.TimeStamp))
                 .ForMember(dest => dest.Username, opt => opt.Ignore());
+
+            CreateMap<InstructorCertificateDto, InstructorCertificate>()
+               .ForMember(dest => dest.CertificateUrl, opt => opt.MapFrom(src => string.Join(",", src.FileUrls)))
+               .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow)); // Nếu cần thêm trường mặc định
         }
     }
 }

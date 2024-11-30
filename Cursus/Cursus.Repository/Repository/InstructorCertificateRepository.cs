@@ -1,6 +1,7 @@
 ﻿using Cursus.Data.Entities;
 using Cursus.Data.Models;
 using Cursus.RepositoryContract.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,15 @@ namespace Cursus.Repository.Repository
         private readonly CursusDbContext _db;
         public InstructorCertificateRepository(CursusDbContext db) : base(db) => _db = db;
 
-        public async Task<InstructorCertificate> FirstOrDefaultAsync(Expression<Func<InstructorCertificate, bool>> predicate)
+        public async Task<int?> GetInstructorIdByUserIdAsync(Guid userId)
         {
-            return await _db.InstructorCertificates.FirstOrDefaultAsync(predicate);
+            // Chuyển Guid sang string để so sánh
+            var instructor = await _db.InstructorInfos
+                .FirstOrDefaultAsync(i => i.UserId == userId.ToString());
+
+            return instructor?.Id;
         }
 
-        public async Task<IEnumerable<InstructorCertificate>> GetInstructorCertificatesByInstructorIdAsync(int instructorId)
-        {
-            return await _db.InstructorCertificates
-                .Where(c => c.InstructorId == instructorId)
-                .ToListAsync();
-        }
 
     }
 
