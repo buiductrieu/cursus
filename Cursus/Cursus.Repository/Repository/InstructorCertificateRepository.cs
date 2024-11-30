@@ -26,7 +26,6 @@ namespace Cursus.Repository.Repository
             return instructor?.Id;
         }
 
-
     }
 
 }
