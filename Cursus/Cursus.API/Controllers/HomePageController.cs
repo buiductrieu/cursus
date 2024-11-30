@@ -51,7 +51,7 @@ namespace Cursus.API.Controllers
         /// <param name="homePageDto"></param>
         /// <returns></returns>
         //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-        [Authorize(AuthenticationSchemes = "Bearer", Policy = "AdminOnly")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "FPTAdminOnly")]
         [HttpPut("{id}")]
         public async Task<ActionResult<APIResponse>> UpdateHomePage(int id, [FromBody] HomePageDTO homePageDto)
         {
