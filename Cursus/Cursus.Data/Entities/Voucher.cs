@@ -22,6 +22,7 @@ namespace Cursus.Data.Entities
         [Range(0, 100, ErrorMessage = "Percentage must be between 0 and 100")]
         public double Percentage { get; set; }
 
+        [ForeignKey("ApplicationUser")]
         public string? UserId { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
     }
