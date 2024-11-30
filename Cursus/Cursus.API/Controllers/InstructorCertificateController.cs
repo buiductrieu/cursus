@@ -17,7 +17,12 @@ namespace Cursus.API.Controllers
             _instructorCertificateService = instructorCertificateService;
         }
 
-
+        /// <summary>
+        /// Upload certificate
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="certificateType"></param>
+        /// <returns></returns>
         [HttpPost("upload-certificate")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Instructor")]
         public async Task<IActionResult> UploadCertificate([FromForm] List<IFormFile> files, [FromForm] string certificateType)
