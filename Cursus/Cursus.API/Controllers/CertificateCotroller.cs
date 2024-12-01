@@ -18,7 +18,7 @@ public class CertificateController : ControllerBase
     }
 
     [HttpPost("create-certificate")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
     public async Task<IActionResult> CreateCertificate(string userId, int courseId)
     {
         var apiResponse = new APIResponse();
