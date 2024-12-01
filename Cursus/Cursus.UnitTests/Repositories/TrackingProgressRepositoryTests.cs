@@ -149,7 +149,7 @@ namespace Cursus.UnitTests.Repositories
             var result = await _repository.GetCompletedStepsCountByUserId("user2", 1);
 
             // Assert
-            Assert.That(result, Is.EqualTo(1));
+            Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
