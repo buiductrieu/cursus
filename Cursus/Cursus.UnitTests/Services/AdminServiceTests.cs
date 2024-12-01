@@ -157,7 +157,8 @@ public class AdminServiceTests
                 "Instructor1",
                 "instructor1@example.com",
                 "123456789",
-                "Excellent"
+                "Excellent",
+                100
             ));
 
         _instructorInfoRepositoryMock.Setup(i => i.TotalCourse(1)).ReturnsAsync(5);
@@ -171,7 +172,7 @@ public class AdminServiceTests
         // Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result["UserName"], Is.EqualTo("Instructor1"));
-        Assert.That(result["TotalEarning"], Is.EqualTo(500));
+        Assert.That(result["TotalEarning"], Is.EqualTo(100));
     }
 
     [Test]
