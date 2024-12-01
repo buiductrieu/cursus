@@ -28,6 +28,7 @@ public class PayoutRequestServiceTests
     private Mock<DbSet<ApplicationUser>> _userDbSetMock;
     private CursusDbContext _dbContext;
     private PayoutRequestService _service;
+    private Mock<IAdminService> _adminServiceMock;
 
     [SetUp]
     public void Setup()
@@ -35,6 +36,7 @@ public class PayoutRequestServiceTests
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _emailServiceMock = new Mock<IEmailService>();
         _mapperMock = new Mock<IMapper>();
+        _adminServiceMock = new Mock<IAdminService>();
 
         var options = new DbContextOptionsBuilder<CursusDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -45,7 +47,8 @@ public class PayoutRequestServiceTests
             _unitOfWorkMock.Object,
             _dbContext,
             _mapperMock.Object,
-            _emailServiceMock.Object
+            _emailServiceMock.Object,
+            _adminServiceMock.Object
         );
     }
 
