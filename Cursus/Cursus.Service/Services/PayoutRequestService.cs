@@ -22,13 +22,16 @@ namespace Cursus.Service.Services
         private readonly IMapper _mapper;
         private readonly CursusDbContext _db;
         private readonly IEmailService _emailService;
+        private readonly IAdminService _adminService;
 
-        public PayoutRequestService(IUnitOfWork unitOfWork, CursusDbContext db, IMapper mapper, IEmailService emailService)
+        public PayoutRequestService(IUnitOfWork unitOfWork, CursusDbContext db, IMapper mapper, IEmailService emailService, IAdminService adminService)
         {
             _unitOfWork = unitOfWork;
             _db = db;
             _mapper = mapper;
             _emailService = emailService;
+            _adminService = adminService;
+
         }
 
         public async Task<IEnumerable<PayoutRequestDisplayDTO>> GetApprovedPayoutRequest()
@@ -113,6 +116,7 @@ namespace Cursus.Service.Services
             payoutRequest.PayoutRequestStatus = PayoutRequestStatus.Approved;
             var payoutAccept= _mapper.Map<PayoutAcceptDTO>(payoutRequest);
             payoutAccept.Instructor= instruct;
+            await _adminService.AcceptPayout(payoutAccept.TransactionId);
             await _unitOfWork.SaveChanges();
             string emailBody = $@"
 <!DOCTYPE html>
