@@ -136,7 +136,7 @@ namespace Cursus.UnitTests.Repositories
         public async Task GetCompletedStepsCountByUserId_ExistingUser_ReturnsCorrectCount()
         {
             // Act
-            var result = await _repository.GetCompletedStepsCountByUserId("user1");
+            var result = await _repository.GetCompletedStepsCountByUserId("user1", 1);
 
             // Assert
             Assert.That(result, Is.EqualTo(2));
@@ -146,7 +146,7 @@ namespace Cursus.UnitTests.Repositories
         public async Task GetCompletedStepsCountByUserId_UserWithSingleStep_ReturnsOne()
         {
             // Act
-            var result = await _repository.GetCompletedStepsCountByUserId("user2");
+            var result = await _repository.GetCompletedStepsCountByUserId("user2", 1);
 
             // Assert
             Assert.That(result, Is.EqualTo(1));
@@ -156,7 +156,7 @@ namespace Cursus.UnitTests.Repositories
         public async Task GetCompletedStepsCountByUserId_NonExistingUser_ReturnsZero()
         {
             // Act
-            var result = await _repository.GetCompletedStepsCountByUserId("nonexistentuser");
+            var result = await _repository.GetCompletedStepsCountByUserId("nonexistentuser", 1);
 
             // Assert
             Assert.That(result, Is.EqualTo(0));
@@ -170,7 +170,7 @@ namespace Cursus.UnitTests.Repositories
             await _context.Database.EnsureCreatedAsync();
 
             // Act
-            var result = await _repository.GetCompletedStepsCountByUserId("user1");
+            var result = await _repository.GetCompletedStepsCountByUserId("user1",  1);
 
             // Assert
             Assert.That(result, Is.EqualTo(0));
@@ -205,7 +205,7 @@ namespace Cursus.UnitTests.Repositories
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetCompletedStepsCountByUserId("user1");
+            var result = await _repository.GetCompletedStepsCountByUserId("user1", 1);
 
             // Assert
             Assert.That(result, Is.EqualTo(3));

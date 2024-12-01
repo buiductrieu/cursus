@@ -254,52 +254,53 @@ namespace Cursus.API.Controllers
             return Ok(_response);
         }
 
-        /// <summary>
-        /// Track progress of a course for a specific user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="courseId"></param>
-        /// <returns></returns>
-        [HttpGet("TrackProgress")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<ActionResult<APIResponse>> TrackProgress(string userId, int courseId)
-        {
-            try
-            {
-                var progressPercentage = await _courseProgressService.TrackingProgressAsync(userId, courseId);
+        ///// <summary>
+        ///// Track progress of a course for a specific user
+        ///// </summary>
+        ///// <param name="userId"></param>
+        ///// <param name="courseId"></param>
+        ///// <returns></returns>
+        //[HttpGet("TrackProgress")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        //public async Task<ActionResult<APIResponse>> TrackProgress(string userId, int courseId)
+        //{
+        //    try
+        //    {
+        //        var progressPercentage = await _courseProgressService.TrackingProgressAsync(userId, courseId);
 
-                if (double.IsNaN(progressPercentage))
-                {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.ErrorMessages.Add("Course or user not found.");
-                    return NotFound(_response);
-                }
+        //        if (double.IsNaN(progressPercentage))
+        //        {
+        //            _response.IsSuccess = false;
+        //            _response.StatusCode = HttpStatusCode.NotFound;
+        //            _response.ErrorMessages.Add("Course or user not found.");
+        //            return NotFound(_response);
+        //        }
 
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                _response.Result = progressPercentage;
-                return Ok(_response);
-            }
-            catch (DivideByZeroException)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.BadRequest;
-                _response.ErrorMessages.Add("No progress found for this course.");
-                return BadRequest(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ErrorMessages.Add($"An error occurred: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, _response);
-            }
-        }
+        //        _response.IsSuccess = true;
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        _response.Result = progressPercentage;
+        //        return Ok(_response);
+        //    }
+        //    catch (DivideByZeroException)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.StatusCode = HttpStatusCode.BadRequest;
+        //        _response.ErrorMessages.Add("No progress found for this course.");
+        //        return BadRequest(_response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.StatusCode = HttpStatusCode.InternalServerError;
+        //        _response.ErrorMessages.Add($"An error occurred: {ex.Message}");
+        //        return StatusCode(StatusCodes.Status500InternalServerError, _response);
+        //    }
+        //}
+
 
         /// <summary>
         /// 

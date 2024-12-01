@@ -9,7 +9,7 @@ namespace Cursus.RepositoryContract.Interfaces
 {
     public interface ITrackingProgressRepository : IRepository<TrackingProgress>
     {
-        Task<int> GetCompletedStepsCountByUserId(string userId);
+        Task<int> GetCompletedStepsCountByUserId(string userId, int ProgressID);
 
     }
 }
