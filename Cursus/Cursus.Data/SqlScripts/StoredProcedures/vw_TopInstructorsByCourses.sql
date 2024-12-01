@@ -9,8 +9,7 @@ SELECT
     ii.Id AS InstructorId,
     u.UserName AS InstructorName,
     COUNT_BIG(ci.CourseId) AS TotalCoursesSold,
-    COUNT_BIG(*) AS TotalRecords,
-    MAX(o.DateCreated) AS LastOrderDate
+    COUNT_BIG(*) AS TotalRecords
 FROM dbo.[Order] o
 INNER JOIN dbo.CartItems ci ON o.CartId = ci.CartId
 INNER JOIN dbo.Courses c ON ci.CourseId = c.Id
@@ -20,6 +19,7 @@ WHERE o.Status = 1
 GROUP BY ii.Id, u.UserName;
 GO
 
+-- Tạo chỉ mục duy nhất cho view
 CREATE UNIQUE CLUSTERED INDEX IDX_vw_TopInstructorsByCourses 
 ON dbo.vw_TopInstructorsByCourses (InstructorId);
 GO
