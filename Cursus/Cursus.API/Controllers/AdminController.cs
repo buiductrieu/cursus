@@ -152,23 +152,23 @@ namespace Cursus.API.Controllers
 
 
 
-        /// <summary>
-        /// Accept Payout
-        /// </summary>
-        /// <param name="transactionId"></param>
-        /// <returns></returns>
-        /// <response code="401">Authenticate error</response>
-        // POST api/admin/accept-payout
-        [HttpPost("accept-payout")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-        public async Task<IActionResult> AcceptPayout([FromQuery] int transactionId)
-        {
-            await _adminService.AcceptPayout(transactionId);
-            _response.IsSuccess = true;
-            _response.StatusCode = HttpStatusCode.OK;
-            _response.Result = "Payout accepted";
-            return Ok(_response);
-        }
+        ///// <summary>
+        ///// Accept Payout
+        ///// </summary>
+        ///// <param name="transactionId"></param>
+        ///// <returns></returns>
+        ///// <response code="401">Authenticate error</response>
+        //// POST api/admin/accept-payout
+        //[HttpPost("accept-payout")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //public async Task<IActionResult> AcceptPayout([FromQuery] int transactionId)
+        //{
+        //    await _adminService.AcceptPayout(transactionId);
+        //    _response.IsSuccess = true;
+        //    _response.StatusCode = HttpStatusCode.OK;
+        //    _response.Result = "Payout accepted";
+        //    return Ok(_response);
+        //}
 
     }
 }
