@@ -14,9 +14,9 @@ namespace Cursus.Repository.Repository
             _db = db;
         }
 
-        public async Task<int> GetCompletedStepsCountByUserId(string userId)
+        public async Task<int> GetCompletedStepsCountByUserId(string userId, int ProgressID)
         {
-            return await _db.TrackingProgresses.CountAsync(tp => tp.UserId == userId);
+            return await _db.TrackingProgresses.CountAsync(tp => tp.UserId == userId && tp.ProgressId == ProgressID );
         }
     }
 }

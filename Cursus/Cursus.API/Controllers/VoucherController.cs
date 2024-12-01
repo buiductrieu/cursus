@@ -43,7 +43,7 @@ namespace Cursus.API.Controllers
         /// <param name="VoucherCode"></param>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
 
         public async Task<IActionResult> GetVouchersByCode(string VoucherCode)
         {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace Cursus.API.Controllers
 {
@@ -180,15 +181,15 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Start new step for student
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="stepId"></param>
         /// <returns></returns>
         [HttpPost("start-step")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<ActionResult<APIResponse>> StartStepAsync(string userId, int stepId)
+        public async Task<ActionResult<APIResponse>> StartStepAsync(int stepId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId) || stepId <= 0)
             {
                 _response.IsSuccess = false;
@@ -217,15 +218,16 @@ namespace Cursus.API.Controllers
         /// <summary>
         /// Tracking progress for student
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="coureseProgressId"></param>
         /// <returns></returns>
         [HttpGet("progress-percentage")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
-        public async Task<ActionResult<APIResponse>> GetPercentageTrackingProgress(string userId, int coureseProgressId)
+        public async Task<ActionResult<APIResponse>> GetPercentageTrackingProgress( int coureseProgressId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (string.IsNullOrEmpty(userId) || coureseProgressId <= 0)
             {
                 _response.IsSuccess = false;
