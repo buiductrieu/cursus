@@ -1,231 +1,175 @@
-﻿using AutoMapper;
-using Cursus.Data.DTO;
-using Cursus.Data.Entities;
-using Cursus.RepositoryContract.Interfaces;
-using Cursus.Service.Services;
-using Cursus.ServiceContract.Interfaces;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Linq;
 using System.Threading.Tasks;
-
-namespace Cursus.UnitTests.Services
+using AutoMapper;
+using Cursus.Data.Entities;
+using Cursus.Repository.Repository;
+using Cursus.Service;
+using Cursus.Data.DTO;
+using Cursus.RepositoryContract.Interfaces;
+using Cursus.Service.Services;
+using Microsoft.AspNetCore.Http;
+namespace Cursus.UnitTests.Services;
+using System.Linq.Expressions;
+[TestFixture]
+public class CartServiceTests
 {
-    [TestFixture]
-    public class CartServiceTests
+    private Mock<IUnitOfWork> _unitOfWorkMock;
+    private Mock<IMapper> _mapperMock;
+    private CartService _service;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IUnitOfWork> _unitOfWorkMock;
-        private Mock<IMapper> _mapperMock;
-        private CartService _cartService;
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _mapperMock = new Mock<IMapper>();
+        _service = new CartService(_unitOfWorkMock.Object, _mapperMock.Object);
+    }
 
-        [SetUp]
-        public void SetUp()
+    [Test]
+    public async Task DeleteCart_ReturnsFalse_WhenCartNotFound()
+    {
+        // Arrange
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(1))
+            .ReturnsAsync((Cart)null);
+
+        // Act
+        var result = await _service.DeleteCart(1);
+
+        // Assert
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public async Task DeleteCart_ReturnsTrue_WhenCartDeleted()
+    {
+        // Arrange
+        var cart = new Cart { CartId = 1 };
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(1)).ReturnsAsync(cart);
+        _unitOfWorkMock.Setup(u => u.CartRepository.DeleteCart(cart)).ReturnsAsync(true);
+
+        // Act
+        var result = await _service.DeleteCart(1);
+
+        // Assert
+        Assert.That(result, Is.True);
+        _unitOfWorkMock.Verify(u => u.CartRepository.DeleteCart(cart), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAllCart_ReturnsCarts()
+    {
+        // Arrange
+        var carts = new List<Cart>
         {
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _mapperMock = new Mock<IMapper>();
-            _cartService = new CartService(_unitOfWorkMock.Object, _mapperMock.Object);
-        }
+            new Cart { CartId = 1, UserId = "user1" },
+            new Cart { CartId = 2, UserId = "user2" }
+        };
 
-        [TearDown]
-        public void TearDown()
-        {
-            _unitOfWorkMock = null;
-            _mapperMock = null;
-            _cartService = null;
-        }
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetCart()).ReturnsAsync(carts);
 
-        #region Happy Path Scenarios
+        // Act
+        var result = await _service.GetAllCart();
 
-        [Test]
-        public async Task GetAllCart_ReturnsAllCarts()
-        {
-            // Arrange
-            var carts = new List<Cart> { new Cart { CartId = 1 }, new Cart { CartId = 2 } };
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCart()).ReturnsAsync(carts);
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count(), Is.EqualTo(2));
+    }
 
-            // Act
-            var result = await _cartService.GetAllCart();
+    [Test]
+    public async Task GetCartByID_ReturnsCart()
+    {
+        // Arrange
+        var cart = new Cart { CartId = 1, UserId = "user1" };
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(1)).ReturnsAsync(cart);
 
-            // Assert
-            //Assert.AreEqual(2, result.Count());
-            Assert.That(result.Count, Is.EqualTo(2));
-        }
+        // Act
+        var result = await _service.GetCartByID(1);
 
-        [Test]
-        public async Task GetCartByID_ReturnsCart_WhenCartExists()
-        {
-            // Arrange
-            var cart = new Cart { CartId = 1 };
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(1)).ReturnsAsync(cart);
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CartId, Is.EqualTo(1));
+    }
 
-            // Act
-            var result = await _cartService.GetCartByID(1);
+    [Test]
+    public async Task AddCourseToCartAsync_AddsCourseToCart()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user1" };
+        var course = new Course { Id = 1, Price = 100 };
+        var cart = new Cart { CartId = 1, UserId = "user1", CartItems = new List<CartItems>(), Total = 0 };
 
-            // Assert
-            // Assert.AreEqual(1, result.CartId);
-            Assert.That(result.CartId, Is.EqualTo(1));
-        }
+        _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile("user1")).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null)).ReturnsAsync(course);
+        _unitOfWorkMock.Setup(u => u.CourseProgressRepository.GetAsync(It.IsAny<Expression<Func<CourseProgress, bool>>>(), null)).ReturnsAsync((CourseProgress)null);
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems")).ReturnsAsync(cart);
 
-        #endregion
+        // Act
+        await _service.AddCourseToCartAsync(1, "user1");
 
-        #region Edge Cases
+        // Assert
+        Assert.That(cart.CartItems.Count, Is.EqualTo(1));
+        Assert.That(cart.Total, Is.EqualTo(100));
+        _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Once);
+    }
 
-        [Test]
-        public async Task GetCartByID_ReturnsNull_WhenCartDoesNotExist()
-        {
-            // Arrange
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(It.IsAny<int>())).ReturnsAsync((Cart)null);
+    [Test]
+    public void AddCourseToCartAsync_ThrowsKeyNotFoundException_WhenUserNotFound()
+    {
+        // Arrange
+        _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile("user1")).ReturnsAsync((ApplicationUser)null);
 
-            // Act
-            var result = await _cartService.GetCartByID(1);
+        // Act & Assert
+        Assert.That(async () => await _service.AddCourseToCartAsync(1, "user1"), Throws.TypeOf<KeyNotFoundException>());
+    }
 
-            // Assert
-            Assert.That(result,Is.Null);
-        }
+    [Test]
+    public void AddCourseToCartAsync_ThrowsKeyNotFoundException_WhenCourseNotFound()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user1" };
+        _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile("user1")).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null)).ReturnsAsync((Course)null);
 
-        #endregion
+        // Act & Assert
+        Assert.That(async () => await _service.AddCourseToCartAsync(1, "user1"), Throws.TypeOf<KeyNotFoundException>());
+    }
 
-        #region Error Conditions
+    [Test]
+    public void AddCourseToCartAsync_ThrowsBadHttpRequestException_WhenCourseAlreadyPurchased()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user1" };
+        var course = new Course { Id = 1, Price = 100 };
+        var purchasedCourse = new CourseProgress { Course = course };
+        _unitOfWorkMock.Setup(u => u.CourseRepository.GetAsync(It.IsAny<Expression<Func<Course, bool>>>(), null)).ReturnsAsync(course);
+        _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile("user1")).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(u => u.CourseProgressRepository.GetAsync(It.IsAny<Expression<Func<CourseProgress, bool>>>(), null)).ReturnsAsync(purchasedCourse);
 
-        [Test]
-        public void GetAllCart_ThrowsException_WhenRepositoryFails()
-        {
-            // Arrange
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCart()).ThrowsAsync(new Exception("Database error"));
+        // Act & Assert
+        Assert.That(async () => await _service.AddCourseToCartAsync(1, "user1"), Throws.TypeOf<BadHttpRequestException>());
+    }
 
-            // Act & Assert
-            Assert.ThrowsAsync<Exception>(async () => await _cartService.GetAllCart());
-        }
+    [Test]
+    public async Task GetCartByUserIdAsync_ReturnsMappedCart()
+    {
+        // Arrange
+        var user = new ApplicationUser { Id = "user1" };
+        var cart = new Cart { CartId = 1, UserId = "user1", CartItems = new List<CartItems>() };
+        var cartDTO = new CartDTO {UserId = "user1", CartItems = new List<CartItemsDTO>() };
 
-        [Test]
-        public void GetCartByID_ThrowsException_WhenRepositoryFails()
-        {
-            // Arrange
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(It.IsAny<int>())).ThrowsAsync(new Exception("Database error"));
+        _unitOfWorkMock.Setup(u => u.UserRepository.ExiProfile("user1")).ReturnsAsync(user);
+        _unitOfWorkMock.Setup(u => u.CartRepository.GetAsync(It.IsAny<Expression<Func<Cart, bool>>>(), "CartItems,CartItems.Course"))
+            .ReturnsAsync(cart);
+        _mapperMock.Setup(m => m.Map<CartDTO>(cart)).Returns(cartDTO);
 
-            // Act & Assert
-            Assert.ThrowsAsync<Exception>(async () => await _cartService.GetCartByID(1));
-        }
+        // Act
+        var result = await _service.GetCartByUserIdAsync("user1");
 
-        #endregion
-
-        #region Boundary Values
-
-        [Test]
-        public async Task GetCartByID_ReturnsCart_WhenCartIdIsMinValue()
-        {
-            // Arrange
-            var cart = new Cart { CartId = int.MinValue };
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(int.MinValue)).ReturnsAsync(cart);
-
-            // Act
-            var result = await _cartService.GetCartByID(int.MinValue);
-
-            // Assert
-            Assert.That(result.CartId, Is.EqualTo(int.MinValue));
-        }
-
-        [Test]
-        public async Task GetCartByID_ReturnsCart_WhenCartIdIsMaxValue()
-        {
-            // Arrange
-            var cart = new Cart { CartId = int.MaxValue };
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(int.MaxValue)).ReturnsAsync(cart);
-
-            // Act
-            var result = await _cartService.GetCartByID(int.MaxValue);
-
-            // Assert
-            Assert.That(result.CartId, Is.EqualTo(int.MaxValue));
-        }
-
-        #endregion
-
-        #region Null/Empty Inputs
-
-        [Test]
-        public void AddCourseToCartAsync_ThrowsNullReferenceException_WhenUserIdIsNull()
-        {
-            // Arrange
-            var courseId = 1;
-
-            // Act & Assert
-            Assert.ThrowsAsync<NullReferenceException>(async () => await _cartService.AddCourseToCartAsync(courseId, null));
-        }
-
-        [Test]
-        public void AddCourseToCartAsync_ThrowsNullReferenceException_WhenUserIdIsEmpty()
-        {
-            // Arrange
-            var courseId = 1;
-
-            // Act & Assert
-            Assert.ThrowsAsync<NullReferenceException>(async () => await _cartService.AddCourseToCartAsync(courseId, string.Empty));
-        }
-
-        #endregion
-
-        #region Invalid Inputs
-
-        [Test]
-        public void AddCourseToCartAsync_ThrowsNullReferenceException_WhenCourseIdIsNegative()
-        {
-            // Arrange
-            var userId = "user1";
-            var courseId = -1;
-
-            // Act & Assert
-            Assert.ThrowsAsync<NullReferenceException>(async () => await _cartService.AddCourseToCartAsync(courseId, userId));
-        }
-
-        #endregion
-
-        #region State Verification
-
-        [Test]
-        public async Task DeleteCart_DeletesCart_WhenCartExists()
-        {
-            // Arrange
-            var cart = new Cart { CartId = 1 };
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(1)).ReturnsAsync(cart);
-            _unitOfWorkMock.Setup(u => u.CartRepository.DeleteCart(cart)).ReturnsAsync(true);
-
-            // Act
-            var result = await _cartService.DeleteCart(1);
-
-            // Assert
-            Assert.That(result, Is.True);
-        }
-
-        [Test]
-        public async Task DeleteCart_ReturnsFalse_WhenCartDoesNotExist()
-        {
-            // Arrange
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(It.IsAny<int>())).ReturnsAsync((Cart)null);
-
-            // Act
-            var result = await _cartService.DeleteCart(1);
-
-            // Assert
-            Assert.That(result, Is.False);
-        }
-
-        #endregion
-
-        #region Exception Handling
-
-        [Test]
-        public void DeleteCart_ThrowsException_WhenRepositoryFails()
-        {
-            // Arrange
-            _unitOfWorkMock.Setup(u => u.CartRepository.GetCartByID(It.IsAny<int>())).ThrowsAsync(new Exception("Database error"));
-
-            // Act & Assert
-            Assert.ThrowsAsync<Exception>(async () => await _cartService.DeleteCart(1));
-        }
-
-        #endregion
+        // Assert
+        Assert.That(result, Is.Not.Null);
     }
 }
