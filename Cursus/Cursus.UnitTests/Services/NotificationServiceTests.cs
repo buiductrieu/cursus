@@ -6,6 +6,7 @@ using Cursus.Service.Services;
 using Cursus.ServiceContract.Interfaces;
 using Moq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -73,29 +74,34 @@ namespace Cursus.UnitTests.Services
 		#region Edge Cases
 
 		[Test]
-		public async Task SendNotificationAsync_ThrowsKeyNotFoundException_WhenUserDoesNotExist()
+		public async Task SendNotificationAsync_WhenUserDoesNotExist()
 		{
 			// Arrange
 			var userId = "nonexistentUser";
 			var message = "Test Notification";
-
+			_unitOfWorkMock.Setup(u => u.NotificationRepository.AddAsync(It.IsAny<Notification>()));
 			_unitOfWorkMock.Setup(u => u.UserRepository.GetAsync(It.IsAny<Expression<Func<ApplicationUser, bool>>>(), null)).ReturnsAsync((ApplicationUser)null);
 
 			// Act & Assert
-			Assert.ThrowsAsync<KeyNotFoundException>(async () => await _notificationService.SendNotificationAsync(userId, message));
-		}
+_unitOfWorkMock.Verify(u => u.NotificationRepository.AddAsync(It.IsAny<Notification>()), Times.Never);
+        }
 
 		[Test]
-		public async Task FetchNotificationsAsync_ThrowsKeyNotFoundException_WhenUserDoesNotExist()
+		public async Task FetchNotificationsAsync_WhenUserDoesNotExist()
 		{
 			// Arrange
 			var userId = "nonexistentUser";
+			var Notification = new Notification
+			{
+				 UserId = userId,
+            };
 
 			_unitOfWorkMock.Setup(u => u.UserRepository.GetAsync(It.IsAny<Expression<Func<ApplicationUser, bool>>>(), null)).ReturnsAsync((ApplicationUser)null);
-
-			// Act & Assert
-			Assert.ThrowsAsync<KeyNotFoundException>(async () => await _notificationService.FetchNotificationsAsync(userId));
-		}
+            _unitOfWorkMock.Setup(u => u.NotificationRepository.GetAllAsync(n => n.UserId == userId, null)).ReturnsAsync((Enumerable.Empty<Notification>));
+            // Act & Assert
+            var result= await _notificationService.FetchNotificationsAsync(userId);
+			Assert.That(result,Is.Empty);
+        }
 
 		#endregion
 

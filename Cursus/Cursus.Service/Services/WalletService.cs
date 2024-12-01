@@ -53,6 +53,8 @@ namespace Cursus.Service.Services
                 throw new BadHttpRequestException($"Your wallet do not have enough money for a {amount} payout");
             }
 
+
+
             await _unitOfWork.TransactionRepository.AddAsync(transaction);
             await _unitOfWork.SaveChanges();
 
