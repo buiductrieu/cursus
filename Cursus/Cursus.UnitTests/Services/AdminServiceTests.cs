@@ -172,7 +172,7 @@ namespace Cursus.UnitTests.Services
         public async Task GetInformationInstructor_ShouldReturnPartialData_WhenInstructorInfoIsIncomplete()
         {
             // Arrange
-            var partialInstructorInfo = (UserName: "PartialName", Email: (string?)null, PhoneNumber: (string?)null, AdminComment: (string?)null);
+            var partialInstructorInfo = (UserName: "PartialName", Email: (string?)null, PhoneNumber: (string?)null, AdminComment: (string?)null, TotalEarning: 0.0);
             _adminRepositoryMock.Setup(repo => repo.GetInformationInstructorAsync(2))
                                 .ReturnsAsync(partialInstructorInfo);
 

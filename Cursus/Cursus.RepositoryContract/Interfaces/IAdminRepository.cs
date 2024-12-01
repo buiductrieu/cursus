@@ -13,6 +13,6 @@ namespace Cursus.RepositoryContract.Interfaces
         
         Task<bool> AdminComments(string userId, string comment);
 
-        Task<(string? UserName, string? Email, string? PhoneNumber, string? AdminComment)> GetInformationInstructorAsync(int instructorId);
+        Task<(string? UserName, string? Email, string? PhoneNumber, string? AdminComment, double TotalEarning )> GetInformationInstructorAsync(int instructorId);
     }
 }

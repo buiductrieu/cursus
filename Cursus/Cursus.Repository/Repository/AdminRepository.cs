@@ -62,7 +62,7 @@ namespace Cursus.Repository.Repository
 
         }
 
-        public async Task<(string? UserName, string? Email, string? PhoneNumber, string? AdminComment)> GetInformationInstructorAsync(int instructorId)
+        public async Task<(string? UserName, string? Email, string? PhoneNumber, string? AdminComment, double TotalEarning )> GetInformationInstructorAsync(int instructorId)
         {
             var instructorInfo = await db.InstructorInfos.FirstOrDefaultAsync(i => i.Id == instructorId);
             if (instructorInfo != null)
@@ -74,12 +74,12 @@ namespace Cursus.Repository.Repository
                                           .FirstOrDefaultAsync();
                 if (user != null)
                 {
-                    return (user.UserName, user.Email, user.PhoneNumber, comment?.CommentText);
+                    return (user.UserName, user.Email, user.PhoneNumber, comment?.CommentText, instructorInfo.TotalEarning);
                 }
             }
 
             // Trả về giá trị mặc định nếu không tìm thấy
-            return (null, null, null, null);
+            return (null, null, null, null,0);
         }
 
 
