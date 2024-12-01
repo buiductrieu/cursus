@@ -113,7 +113,10 @@ namespace Cursus.Service.Services
             {
                 throw new Exception("Voucher is not valid or does not exist.");
             }
-
+            if (voucher.UserId != null)
+            {
+                throw new Exception("Voucher has already been used.");
+            }
             voucher.UserId = userId;
             await _voucherRepository.UpdateAsync(voucher);
             await _unitOfWork.SaveChanges();

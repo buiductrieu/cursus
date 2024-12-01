@@ -1,4 +1,4 @@
-	
+﻿	
 			CREATE TRIGGER trg_Transaction_Log
 			ON [Transactions]
 			AFTER INSERT, UPDATE, DELETE
@@ -218,6 +218,14 @@
 		(12, 'Creating a Flutter App', 2, 'Build a cross-platform app', GETDATE()),
 		(12, 'Managing State in Flutter', 3, 'Handle state with Provider', GETDATE());
 
+		INSERT INTO [Cursus].[dbo].[Vouchers] 
+       ([VoucherCode], [IsValid], [Name], [CreateDate], [ExpireDate], [Percentage])
+		VALUES 
+       ('SUMMER2024', 1, 'Giảm giá mùa hè 2024', GETDATE(), DATEADD(DAY, 30, GETDATE()), 10),
+       ('BACKTOSCHOOL', 1, 'Ưu đãi tựu trường', GETDATE(), DATEADD(DAY, 60, GETDATE()), 15),
+       ('NEWYEAR2025', 1, 'Khuyến mãi năm mới 2025', GETDATE(), DATEADD(DAY, 90, GETDATE()), 20),
+       ('BLACKFRIDAY', 1, 'Giảm giá Black Friday', GETDATE(), DATEADD(DAY, 15, GETDATE()), 50),
+       ('FREESHIP', 1, 'Miễn phí vận chuyển', GETDATE(), DATEADD(DAY, 45, GETDATE()), 5);
 
 
 

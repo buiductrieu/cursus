@@ -156,7 +156,7 @@ namespace Cursus.Service.Services
             }
 
             var totalSteps = await _stepRepository.GetToTalSteps(courseProgress.CourseId);
-            var completedSteps = await _trackingProgressRepository.GetCompletedStepsCountByUserId(userId);
+            var completedSteps = await _trackingProgressRepository.GetCompletedStepsCountByUserId(userId, courseProgressId);
 
             double completionPercentage = totalSteps > 0 ? (completedSteps / (double)totalSteps) * 100 : 0;
 
