@@ -70,7 +70,7 @@ namespace Cursus.Service.Services
                     { "Email", instructor.Email ?? string.Empty },
                     { "PhoneNumber", instructor.PhoneNumber ?? string.Empty },
                     { "AdminComment", instructor.AdminComment ?? string.Empty },
-                    { "TotalEarning", instructorWallet?.Balance ?? 0.0 },
+                    { "TotalEarning", instructor.TotalEarning },
                     { "TotalCourses", await _instructorInfoRepository.TotalCourse(instructorId) },
                     { "TotalActiveCourses", await _instructorInfoRepository.TotalActiveCourse(instructorId) },
                     { "TotalPayout", await _instructorInfoRepository.TotalPayout(instructorId) },
