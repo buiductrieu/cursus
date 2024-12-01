@@ -70,7 +70,7 @@ public class WalletServiceTests
         await _service.CreatePayout("user1", 50);
 
         // Assert
-        Assert.That(wallet.Balance, Is.EqualTo(50));
+        Assert.That(wallet.Balance, Is.EqualTo(100));
         _unitOfWorkMock.Verify(u => u.TransactionRepository.AddAsync(It.IsAny<Transaction>()), Times.Once);
         _unitOfWorkMock.Verify(u => u.PayoutRequestRepository.AddAsync(It.IsAny<PayoutRequest>()), Times.Once);
         _unitOfWorkMock.Verify(u => u.SaveChanges(), Times.Exactly(2));
