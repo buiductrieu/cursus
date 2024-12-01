@@ -32,7 +32,7 @@ namespace Cursus.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,User,Instructor")]
         public async Task<ActionResult<APIResponse>> CreateReason([FromBody] CreateReasonDTO createReasonDTO)
         {
             var reason = await _reasonService.CreateReason(createReasonDTO);
@@ -74,19 +74,6 @@ namespace Cursus.API.Controllers
             _response.StatusCode = HttpStatusCode.NoContent;
             return NoContent();
         }
-
-        //[HttpGet("course/{courseId}")]
-        //public async Task<IActionResult> GetByCourseId(int courseId)
-        //{
-        //    var response = await _reasonService.GetByCourseIdAsync(courseId);
-
-        //    if (!response.Success)
-        //    {
-        //        return NotFound(response.Message);
-        //    }
-
-        //    return Ok(response.Data);
-        //}
 
     }
 }
