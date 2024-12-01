@@ -171,7 +171,6 @@
                     localStorage.setItem('token', data.result.token);
 
                     localStorage.setItem('userId', data.result.user.id);
-                    localStorage.setItem('email', data.result.user.email);
 
                     localStorage.setItem('userRole', data.result.role[0]);
 
@@ -306,18 +305,14 @@
             const storedUserRole = localStorage.getItem('userRole');
 
             if (storedToken && storedUserId && storedUserRole) {
-                // Restore session variables
                 token = storedToken;
                 userId = storedUserId;
                 userRole = storedUserRole;
 
-                // Hide login section
                 document.getElementById('login-section').style.display = 'none';
 
-                // Show appropriate panel based on role
                 if (userRole === 'Admin') {
                     document.getElementById('admin-panel').style.display = 'block';
-                    document.getElementById('user-panel').style.display = 'block';
                     populateUserDropdown();
                 } else if (userRole === 'User') {
                     document.getElementById('user-panel').style.display = 'block';
@@ -327,24 +322,20 @@
         });
 
         function logout() {
-            // Clear all localStorage items
             localStorage.removeItem('token');
             localStorage.removeItem('userId');
             localStorage.removeItem('userRole');
             localStorage.removeItem('user');
 
-            // Reset variables
             token = null;
             userId = null;
             userRole = null;
 
-            // Reset UI
             document.getElementById('login-section').style.display = 'flex';
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('user-panel').style.display = 'none';
             document.getElementById('notifications').innerHTML = '';
 
-            // Stop SignalR connection
             stopConnection();
 
         }

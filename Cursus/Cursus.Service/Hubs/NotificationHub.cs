@@ -14,7 +14,7 @@ namespace Cursus.Service.Hubs
 
 		public async Task SendNotificationToUser(string userId, string message)
 		{
-			await Clients.User(userId).SendAsync("ReceiveNotification", userId, message);
+			await Clients.All.SendAsync("ReceiveNotification", userId, message);
 		}
 	}
 }
