@@ -155,5 +155,14 @@ To develop and run .NET 8 applications, make sure your system meets the followin
 
 ## Frontend Used In Project
 
-Chat Hub: 
+#Chat Hub: 
 ![ChatHub](https://firebasestorage.googleapis.com/v0/b/fdiamond-shop.appspot.com/o/FEChatHub.png?alt=media&token=39e72847-29b1-4128-98b6-0287b18aa106)
+
+
+#Notification System:
+
+1. Admin Page:
+![AdminPage](https://firebasestorage.googleapis.com/v0/b/fdiamond-shop.appspot.com/o/adminpage.jpg?alt=media&token=511b2967-5bc0-4eea-adda-a6270ba0fd58)
+
+2. User Page:
+![UserPage](https://firebasestorage.googleapis.com/v0/b/fdiamond-shop.appspot.com/o/userpage.jpg?alt=media&token=e15a42b0-4a16-4a01-9aad-765795dce8c4)
