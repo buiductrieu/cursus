@@ -31,7 +31,7 @@ public class CertificateController : ControllerBase
     }
 
     [HttpGet("download-certificate")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "User,Admin")]
+    [AllowAnonymous]
     public async Task<IActionResult> DownloadCertificate(string userId, int courseId)
     {
         var apiResponse = new APIResponse();
