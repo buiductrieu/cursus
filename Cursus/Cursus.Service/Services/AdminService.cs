@@ -73,7 +73,7 @@ namespace Cursus.Service.Services
                     { "TotalEarning", instructor.TotalEarning },
                     { "TotalCourses", await _instructorInfoRepository.TotalCourse(instructorId) },
                     { "TotalActiveCourses", await _instructorInfoRepository.TotalActiveCourse(instructorId) },
-                    { "TotalPayout", await _instructorInfoRepository.TotalPayout(instructorId) },
+                    { "TotalPayout",  instructorWallet.Balance },
                     { "AverageRating", await _instructorInfoRepository.RatingNumber(instructorId) }
                 };
 
