@@ -152,3 +152,8 @@ To develop and run .NET 8 applications, make sure your system meets the followin
 **Legend:**
 - **O**: Available
 - **X**: Not Available
+
+## Frontend Used In Project
+
+Chat Hub: 
+![ChatHub](https://firebasestorage.googleapis.com/v0/b/fdiamond-shop.appspot.com/o/FEChatHub.png?alt=media&token=39e72847-29b1-4128-98b6-0287b18aa106)
