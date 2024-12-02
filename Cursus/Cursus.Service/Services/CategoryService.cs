@@ -69,7 +69,7 @@ namespace Cursus.Service.Services
 
         public async Task<CategoryDTO> GetCategoryById(int id)
         {
-            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id, includeProperties: "Courses") ?? throw new KeyNotFoundException("Category is not found");
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id) ?? throw new KeyNotFoundException("Category is not found");
             return _mapper.Map<CategoryDTO>(category);
         }
         public async Task<CategoryDTO> CreateCategory(CreateCategoryDTO dto)
